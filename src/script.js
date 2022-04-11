@@ -37,6 +37,8 @@ function init() {
     floor.rotation.x = -Math.PI / 2;
     scene.add(floor);
 
+    //freiwild
+
 
 
     //light 
