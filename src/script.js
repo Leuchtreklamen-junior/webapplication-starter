@@ -5,6 +5,7 @@ let scene;
 let clock;
 let mixer;
 let character;
+let planeCamera;
 
 
 function init() {
@@ -27,29 +28,51 @@ function init() {
 
     //plane
 
-    const floor = new THREE.Mesh(
-        new THREE.PlaneGeometry(100, 100, 1, 1), new THREE.MeshStandardMaterial({
-            color: 0x333333
-        }));
+    // const cubeRenderTarget = new THREE.WebGLCubeRenderTarget( 128, { generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
 
-    floor.castShadow = false;
+    // const cubeCamera = new THREE.CubeCamera( 1, 100000, cubeRenderTarget );
+    // scene.add( cubeCamera );
+
+    const planeMaterial = new THREE.MeshLambertMaterial({
+        color: 0x333333
+    });
+
+    const plane = new THREE.PlaneGeometry(100, 100, 1);
+    const floor = new THREE.Mesh(plane, planeMaterial);
+
+    // floor.castShadow = false;
     floor.receiveShadow = true;
     floor.rotation.x = -Math.PI / 2;
+
     scene.add(floor);
 
-    //freiwild
+    // cubeCamera.position.copy( floor.position );
+
+
 
 
 
     //light 
-    const ambient = new THREE.AmbientLight(0xf2edd5, 0.2);
-    scene.add(ambient);
+
+    //AMBIENT
+
+    // const ambient = new THREE.AmbientLight(0xf2edd5, 0.2);
+    // scene.add(ambient);
+
+    //POINTLIGHT
 
     const plight = new THREE.PointLight(0x8f9eff, 2);
     plight.position.set(0.05, 1.7, 0.6);
-    plight.castShadow = true;
+    plight.castShadow = false;
+    //scene.add(plight);
 
-    //directional
+
+    //HEMISSPHERELIGHT
+
+    const light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
+    scene.add(light);
+
+    //SUN
 
     const sun = new THREE.DirectionalLight(0xffffff, 1);
     sun.position.set(2, 10, 1);
@@ -59,18 +82,18 @@ function init() {
     scene.add(sun);
     scene.add(sun.target);
 
-    scene.add(plight);
+
 
     //lighthelper
 
     const sphereSize = 0.05;
     const pointLightHelper = new THREE.PointLightHelper(plight, sphereSize);
-    scene.add(pointLightHelper);
+    //scene.add(pointLightHelper);
 
-    const helper = new THREE.DirectionalLightHelper(sun, 5 );
-    scene.add( helper );
+    // const helper = new THREE.DirectionalLightHelper(sun, 5);
+    // scene.add(helper);
 
-    
+
 
     //renderer
     renderer = new THREE.WebGLRenderer({
@@ -81,7 +104,7 @@ function init() {
     renderer.setPixelRatio(window.decivePixelRatio);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
+    //cubeCamera.update(renderer, scene)
     container.appendChild(renderer.domElement);
 
 
@@ -98,16 +121,19 @@ function init() {
     //load Model 
     let loader = new THREE.GLTFLoader();
     loader.load("/src/3D/antonwithanimations.glb", function (gltf) {
+        gltf.scene.traverse(function (node) {
+
+            if (node.isMesh) {
+                node.castShadow = true;
+            }
+
+        });
         character = gltf;
         scene.add(gltf.scene);
         mixer = new THREE.AnimationMixer(gltf.scene);
         //[0] = idle1;
         //[1] = idle2;
         //[2] = walk;
-        character.castShadow = true;
-        character.receiveShadow = true;
-
-
 
         const crouch = mixer.clipAction(character.animations[0]);
         const idle1 = mixer.clipAction(character.animations[1]);
