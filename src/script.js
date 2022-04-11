@@ -24,7 +24,8 @@ function init() {
 
     camera = new THREE.PerspectiveCamera(fov, aspect, nearlimit, farlimit);
 
-    camera.position.set(75, 20, 0);
+
+    camera.position.set(0, 0, 3);
 
     //plane
 
@@ -84,6 +85,10 @@ function init() {
 
 
 
+    //fog
+
+    //scene.fog = new THREE.Fog(0x000000, 2, 20);
+
     //lighthelper
 
     const sphereSize = 0.05;
@@ -109,38 +114,32 @@ function init() {
 
 
     //orbitcontrols
+    
     const orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
     orbitControls.enableDamping = true;
-    orbitControls.minDistance = 1;
-    orbitControls.maxDistance = 15;
+    orbitControls.minDistance = 2;
+    orbitControls.maxDistance = 10;
     orbitControls.enablePan = false;
+    orbitControls.target.set(0,1.3,0);
     orbitControls.maxPolarAngle = Math.PI / 2 - 0.05;
     orbitControls.update();
 
 
     //load Model 
     let loader = new THREE.GLTFLoader();
-    loader.load("/src/3D/antonwithanimations.glb", function (gltf) {
+    loader.load("/src/3D/anton.glb", function (gltf) {
         gltf.scene.traverse(function (node) {
-
             if (node.isMesh) {
                 node.castShadow = true;
             }
-
         });
         character = gltf;
         scene.add(gltf.scene);
         mixer = new THREE.AnimationMixer(gltf.scene);
-        //[0] = idle1;
-        //[1] = idle2;
-        //[2] = walk;
 
-        const crouch = mixer.clipAction(character.animations[0]);
-        const idle1 = mixer.clipAction(character.animations[1]);
-        const idle2 = mixer.clipAction(character.animations[2]);
-        const run = mixer.clipAction(character.animations[3]);
-        const jump = mixer.clipAction(character.animations[4]);
-        const walk = mixer.clipAction(character.animations[5]);
+        
+        const idle1 = mixer.clipAction(character.animations[0]);
+    
         idle1.play();
 
         document.addEventListener("keydown", (e) => onKeyDown(e), false);
