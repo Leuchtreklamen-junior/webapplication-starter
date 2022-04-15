@@ -1,14 +1,18 @@
 import { CharacterControls } from "./characterControls.js";
 
 let container = document.querySelector(".scene");
-let camera, renderer, scene, clock, mixer, orbitControls, characterControls, keysPressed;
-let debug = false;
+let camera, renderer, scene, clock, mixer, orbitControls, characterControls, keysPressed, loadingManager, pBar;
+let debug = true;
 
 
 function init() {
+    
+
     loadControls();
     loadWorld();
     loadCharacter();
+
+    
     
 }
 
@@ -94,7 +98,7 @@ function loadControls() {
 
 function loadCharacter() {
     //load Model 
-    let loader = new THREE.GLTFLoader();
+    let loader = new THREE.GLTFLoader(loadingManager);
     loader.load("/src/3D/anton.glb", function (gltf) {
             gltf.scene.traverse(function (node) {
                 if (node.isMesh) {
