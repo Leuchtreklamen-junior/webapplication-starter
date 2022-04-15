@@ -1,10 +1,29 @@
 let container = document.querySelector(".scene");
 let camera, renderer, scene, clock, mixer, character;
 let debug = true;
+ 
 
 
 function init() {
 
+
+
+    //loadingManager
+    loadingManager = new THREE.LoadingManager();
+    pBar = document.querySelector(".progress");
+
+    loadingManager.onProgress = function(item, loaded, total){
+        console.log(item, loaded, total);
+        let currentItem = loaded * (100/total)
+        console.log(currentItem);
+        updateProgressBar(pBar, currentItem)
+    };
+
+    // loadingManager.onLoad = function(){
+    //     console.log("scene loaded");
+    //     updateProgressBar(pBar, 100);
+    // };
+    
     //create scene
     scene = new THREE.Scene();
 
@@ -40,6 +59,7 @@ function init() {
 
     const planegeometry = new THREE.PlaneGeometry(100, 100, 1);
     const floor = new THREE.Mesh(planegeometry, planeMaterial);
+    const gridHelper = new THREE.GridHelper(20, 30, 0xff0000, 0xffffff);
 
     floor.castShadow = false;
     floor.receiveShadow = true;
@@ -138,6 +158,7 @@ function init() {
         scene.add(helper);
         scene.add(pointLightHelper);
         scene.add(pointLightHelper2);
+        scene.add(gridHelper);
     }
 
 
@@ -172,7 +193,7 @@ function init() {
 
 
     //load Model 
-    let loader = new THREE.GLTFLoader();
+    let loader = new THREE.GLTFLoader(loadingManager);
     loader.load("/src/3D/anton.glb", function (gltf) {
             gltf.scene.traverse(function (node) {
                 if (node.isMesh) {
@@ -236,6 +257,8 @@ function init() {
         },
         // onProgress callback
         function (xhr) {
+            console.log(xhr);
+
             if ((xhr.loaded / xhr.total) == 1) {
                 console.log("Anton " + 100 + '% loaded');
             };
@@ -264,8 +287,9 @@ function init() {
         },
         // onProgress callback
         function (xhr) {
-
+            console.log(xhr);
             if ((xhr.loaded / xhr.total) == 1) {
+                
                 console.log("Peter " + 100 + '% loaded');
             };
         },
@@ -276,8 +300,19 @@ function init() {
         });
 }
 
-//Animation
+//const pBar = document.querySelector(".progress");
+//updateProgressBar(pBar, 40);
 
+//update loading Bar
+function updateProgressBar(progressBar, value){
+    progressBar.querySelector(".progress-value").style.width = `${value}%`;
+    if (value == 100) {
+        setTimeout(function() {document.querySelector(".loadingBody").classList.remove("active")}, 2000);
+    }
+    //loadingbody = document.querySelector(".loadingBody")  
+}
+
+//Animation
 function animate() {
     requestAnimationFrame(animate);
     var delta = clock.getDelta();
@@ -286,7 +321,6 @@ function animate() {
 }
 
 //Keep Camera Centered on window Resize
-
 function onWindowResize() {
     camera.aspect = container.clientWidth / container.clientHeight;
     camera.updateProjectionMatrix();
