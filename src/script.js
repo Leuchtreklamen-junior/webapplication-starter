@@ -216,7 +216,7 @@ function loadWorld() {
 
     if (debug) {
 
-        const ambient = new THREE.AmbientLight(0xf2edd5, 0.5);
+        const ambient = new THREE.AmbientLight(0xf2edd5, 0);
         scene.add(ambient);
         
     }
@@ -231,8 +231,8 @@ function loadWorld() {
     plight2.castShadow = false;
 
     //HEMISSPHERELIGHT
-    const light = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.8);
-    //scene.add(light);
+    const light = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.5);
+    
 
     //sun
     const sun = new THREE.DirectionalLight(0xffffff, 0.5);
@@ -240,7 +240,7 @@ function loadWorld() {
     sun.target.position.set(0, 0, 0);
     sun.castShadow = true;
 
-    scene.add(sun.target);
+    // scene.add(sun.target);
 
     //spotlight front
     const spotLight = new THREE.SpotLight(0xff6ec7, 1, 25, 0.2, 0, 1);
@@ -265,11 +265,12 @@ function loadWorld() {
     spotLight2.shadow.camera.far = 500;
     spotLight2.shadow.focus = 1;
 
-    scene.add(plight);
-    scene.add(plight2);
+    // scene.add(plight);
+    // scene.add(plight2);
     scene.add(sun);
-    scene.add(spotLight);
-    scene.add(spotLight2);
+    // scene.add(spotLight);
+    // scene.add(spotLight2);
+    //scene.add(light);
 
     //lighthelper
     const spotLightHelper = new THREE.SpotLightHelper(spotLight);

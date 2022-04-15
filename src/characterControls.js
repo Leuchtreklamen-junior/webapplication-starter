@@ -11,7 +11,7 @@ export class CharacterControls {
 
     //constants 
     fadeDuration = 0.5;
-    runVelocity = 5;
+    runVelocity = 4;
     walkVelocity = 2;
 
     constructor(model, mixer, animationsMap, orbitControl, camera, currentAction) {
@@ -31,7 +31,6 @@ export class CharacterControls {
 
     switchRunToggle() {
         this.toggleRun = !this.toggleRun;
-        console.log("switch");
     }
 
     update(delta, keysPressed) {
@@ -70,7 +69,7 @@ export class CharacterControls {
 
             this.currentAction = play;
 
-            console.log(this.currentAction);
+            // console.log(this.currentAction);
         }
 
         this.mixer.update(delta);
@@ -81,16 +80,20 @@ export class CharacterControls {
             // diagonal movement angle offset
             var directionOffset = this.directionOffset(keysPressed);
             // rotate model
-            this.rotateQuarternion.setFromAxisAngle(this.rotateAngle, angleYCameraDirection + directionOffset);
-            this.model.quaternion.rotateTowards(this.rotateQuarternion, 0.2);
+            this.rotateQuarternion.setFromAxisAngle(this.rotateAngle, angleYCameraDirection + directionOffset +  Math.PI);
+            this.model.quaternion.rotateTowards(this.rotateQuarternion, 0.05);
             // calculate direction
             this.camera.getWorldDirection(this.walkDirection);
+            console.log(this.walkDirection);
             this.walkDirection.y = 0;
             this.walkDirection.normalize();
             this.walkDirection.applyAxisAngle(this.rotateAngle, directionOffset);
+
             // run/walk velocity
             var velocity = this.currentAction == 'run' ? this.runVelocity : this.walkVelocity;
             // move model & camera
+            
+
             var moveX = this.walkDirection.x * velocity * delta;
             var moveZ = this.walkDirection.z * velocity * delta;
             this.model.position.x += moveX;
@@ -113,12 +116,14 @@ export class CharacterControls {
     directionOffset(keysPressed) {
         var directionOffset = 0; // w
         if (keysPressed["w"]) {
+            console.log(this.rotateAngle);
             if (keysPressed["a"]) {
                 directionOffset = Math.PI / 4; // w+a
             } else if (keysPressed["d"]) {
                 directionOffset = -Math.PI / 4; // w+d
             }
         } else if (keysPressed["s"]) {
+            console.log(this.rotateAngle);
             if (keysPressed["a"]) {
                 directionOffset = Math.PI / 4 + Math.PI / 2; // s+a
             } else if (keysPressed["d"]) {
