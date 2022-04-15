@@ -1,10 +1,148 @@
+import { CharacterControls } from "./characterControls.js";
+
 let container = document.querySelector(".scene");
-let camera, renderer, scene, clock, mixer, character;
-let debug = true;
- 
+let camera, renderer, scene, clock, mixer, orbitControls, characterControls, keysPressed;
+let debug = false;
 
 
 function init() {
+    loadControls();
+    loadWorld();
+    loadCharacter();
+    
+}
+
+function loadControls() {
+
+
+    keysPressed = {};
+    document.addEventListener("keydown", (e) => {
+        switch (e.key.toLocaleLowerCase()) {
+            case "w": //w
+                (keysPressed)[e.key.toLocaleLowerCase()] = true;
+                document.getElementById("W").classList.add("active");
+                break;
+            case "a": //a
+                (keysPressed)[e.key.toLocaleLowerCase()] = true;
+                document.getElementById("A").classList.add("active");
+                break;
+            case "s": //s
+                (keysPressed)[e.key.toLocaleLowerCase()] = true;
+                document.getElementById("S").classList.add("active");
+                break;
+            case "d": //d
+                (keysPressed)[e.key.toLocaleLowerCase()] = true;
+                document.getElementById("D").classList.add("active");
+                break;
+            case " ": // SPACE
+                (keysPressed)[e.key.toLocaleLowerCase()] = true;
+                document.getElementById("space").classList.add("active");
+                break;
+            case "shift": // SHIFT
+                if(characterControls){
+                //characterControls.switchRunToggle(); 
+                (keysPressed)[e.key.toLocaleLowerCase()] = true;      
+                document.getElementById("shift").classList.add("active");
+                }
+                break;
+            default:
+                console.log("irrelevant key");
+                break;
+        }
+
+
+    }, false);
+    document.addEventListener("keyup", (e) => {
+        switch (e.key.toLocaleLowerCase()) {
+            case "w": //w
+                (keysPressed)[e.key.toLocaleLowerCase()] = false;
+                document.getElementById("W").classList.remove("active");
+                break;
+            case "a": //a
+                (keysPressed)[e.key.toLocaleLowerCase()] = false;
+                document.getElementById("A").classList.remove("active");
+                break;
+            case "s": //s
+                (keysPressed)[e.key.toLocaleLowerCase()] = false;
+                document.getElementById("S").classList.remove("active");
+                break;
+            case "d": //d
+                (keysPressed)[e.key.toLocaleLowerCase()] = false;
+                document.getElementById("D").classList.remove("active");
+                break;
+            case " ": // SPACE
+                (keysPressed)[e.key.toLocaleLowerCase()] = false;
+                document.getElementById("space").classList.remove("active");
+                break;
+            case "shift": // SHIFT
+            if(characterControls){
+                //characterControls.switchRunToggle();   
+                (keysPressed)[e.key.toLocaleLowerCase()] = false;     
+                document.getElementById("shift").classList.remove("active");
+                }
+                break;
+            default:
+                console.log("irrelevant key");
+                console.log(keysPressed);
+                break;
+        }
+    }, false);
+
+
+
+};
+
+function loadCharacter() {
+    //load Model 
+    let loader = new THREE.GLTFLoader();
+    loader.load("/src/3D/anton.glb", function (gltf) {
+            gltf.scene.traverse(function (node) {
+                if (node.isMesh) {
+                    node.castShadow = true;
+                }
+            });
+            const model = gltf.scene;
+            model.position.set(0, 0, 0);
+
+            scene.add(model);
+
+            const gltfAnimations = gltf.animations;
+            const mixer = new THREE.AnimationMixer(model);
+
+            var animationsMap = new Map();
+            gltfAnimations.filter(function (a) {
+                return a.name != "T-Pose";
+            }).forEach(function (a) {
+                animationsMap.set(a.name, mixer.clipAction(a));
+            });
+
+            console.log(model);
+
+            characterControls = new CharacterControls(model, mixer, animationsMap, orbitControls, camera, "lookaround");
+
+            console.log(animationsMap);
+
+
+            if (debug) {
+                const skeletonhelper = new THREE.SkeletonHelper(model);
+                scene.add(skeletonhelper);
+            }
+        },
+        // onProgress callback
+        function (xhr) {
+            if ((xhr.loaded / xhr.total) == 1) {
+                console.log("Anton " + 100 + '% loaded');
+            };
+        },
+
+        // onError callback
+        function (err) {
+            console.error('Error Loading Peter');
+        });
+}
+
+
+function loadWorld() {
 
 
 
@@ -68,43 +206,38 @@ function init() {
     scene.add(floor);
 
 
-    //light 
+    //LIGHTS
 
     //AMBIENT
 
-    // const ambient = new THREE.AmbientLight(0xf2edd5, 0.2);
-    // scene.add(ambient);
+    if (debug) {
+
+        const ambient = new THREE.AmbientLight(0xf2edd5, 0.5);
+        scene.add(ambient);
+    }
 
     //POINTLIGHT
-
     const plight = new THREE.PointLight(0x8f9eff, 2);
     plight.position.set(-0.8, 1.7, 0.6);
     plight.castShadow = false;
-    
 
     const plight2 = new THREE.PointLight(0x8f9eff, 2);
     plight2.position.set(0.8, 1.7, 0.6);
     plight2.castShadow = false;
-    
-
 
     //HEMISSPHERELIGHT
-
     const light = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.8);
     //scene.add(light);
 
     //sun
-
     const sun = new THREE.DirectionalLight(0xffffff, 0.5);
     sun.position.set(2, 10, 1);
     sun.target.position.set(0, 0, 0);
     sun.castShadow = true;
 
-    
     scene.add(sun.target);
 
     //spotlight front
-
     const spotLight = new THREE.SpotLight(0xff6ec7, 1, 25, 0.2, 0, 1);
     spotLight.position.set(10, 5, 2);
 
@@ -114,10 +247,9 @@ function init() {
     spotLight.shadow.camera.near = 0.5;
     spotLight.shadow.camera.far = 500;
     spotLight.shadow.focus = 1;
-    
+
 
     //spotlight back
-
     const spotLight2 = new THREE.SpotLight(0x21f8f6, 1, 25, 0.2, 0, 1);
     spotLight2.position.set(-10, 3, -2);
 
@@ -128,7 +260,6 @@ function init() {
     spotLight2.shadow.camera.far = 500;
     spotLight2.shadow.focus = 1;
 
-
     scene.add(plight);
     scene.add(plight2);
     scene.add(sun);
@@ -136,7 +267,6 @@ function init() {
     scene.add(spotLight2);
 
     //lighthelper
-
     const spotLightHelper = new THREE.SpotLightHelper(spotLight);
 
     const spotLightHelper2 = new THREE.SpotLightHelper(spotLight2);
@@ -150,7 +280,6 @@ function init() {
     const pointLightHelper = new THREE.PointLightHelper(plight, sphereSizePoint);
     const pointLightHelper2 = new THREE.PointLightHelper(plight2, sphereSizePoint);
 
-
     if (debug) {
         scene.add(spotLightHelper);
         scene.add(spotLightHelper2);
@@ -161,10 +290,7 @@ function init() {
         scene.add(gridHelper);
     }
 
-
-
     //fog
-
     scene.fog = new THREE.Fog(0x000000, 1, 15);
 
     //renderer
@@ -176,128 +302,19 @@ function init() {
     renderer.setPixelRatio(window.decivePixelRatio);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
     //cubeCamera.update(renderer, scene)
     container.appendChild(renderer.domElement);
 
-
     //orbitcontrols
-
-    const orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
+    orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
     orbitControls.enableDamping = true;
     orbitControls.minDistance = 2;
     orbitControls.maxDistance = 10;
     orbitControls.enablePan = false;
     orbitControls.target.set(0, 1.3, 0);
     orbitControls.maxPolarAngle = Math.PI / 2 + 0.1;
-    orbitControls.update();
-
-
-    //load Model 
-    let loader = new THREE.GLTFLoader(loadingManager);
-    loader.load("/src/3D/anton.glb", function (gltf) {
-            gltf.scene.traverse(function (node) {
-                if (node.isMesh) {
-                    node.castShadow = true;
-                }
-            });
-            const model = gltf.scene;
-            model.position.set(-.5, 0, 0);
-            character = gltf;
-            scene.add(gltf.scene);
-            mixer = new THREE.AnimationMixer(gltf.scene);
-
-            if (debug) {
-                const skeletonhelper = new THREE.SkeletonHelper(character.scene);
-                scene.add(skeletonhelper);
-            }
-
-            const idle1 = mixer.clipAction(character.animations[0]);
-            const dance = mixer.clipAction(character.animations[1]);
-            const walk = mixer.clipAction(character.animations[9]);
-
-
-            idle1.play();
-
-            // document.addEventListener("keydown", (e) => onKeyDown(e), false);
-            // function onKeyDown(event) {
-            //     switch (event.keyCode) {
-            //         case 87: //w
-            //             break;
-            //         case 65: //a
-            //             break;
-            //         case 83: //s
-            //             break;
-            //         case 68: //d
-            //            break;
-            //         case 32: // SPACE
-            //             break;
-            //         case 16: // SHIFT
-            //             break;
-            //     }
-            // }
-            // document.addEventListener("keyup", (e) => onKeyUp(e), false);
-            // function onKeyUp(event) {
-            //     switch (event.keyCode) {
-            //         case 87: //w
-            //             break;
-            //         case 65: //a
-            //             break;
-            //         case 83: //s
-            //             break;
-            //         case 68: //d
-            //            break;
-            //         case 32: // SPACE
-            //             break;
-            //         case 16: // SHIFT
-            //             break;
-            //     }
-            // }
-
-
-        },
-        // onProgress callback
-        function (xhr) {
-            console.log(xhr);
-
-            if ((xhr.loaded / xhr.total) == 1) {
-                console.log("Anton " + 100 + '% loaded');
-            };
-        },
-
-        // onError callback
-        function (err) {
-            console.error('Error Loading Peter');
-        });
-
-    loader.load("/src/3D/PeterTrenkle.glb", function (gltf) {
-            gltf.scene.traverse(function (node) {
-                if (node.isMesh) {
-                    node.castShadow = true;
-                }
-            });
-            const model = gltf.scene;
-            model.position.set(.5, 0, 0);
-            character = gltf;
-            scene.add(gltf.scene);
-            if (debug) {
-                const skeletonhelper = new THREE.SkeletonHelper(character.scene);
-                scene.add(skeletonhelper);
-            }
-
-        },
-        // onProgress callback
-        function (xhr) {
-            console.log(xhr);
-            if ((xhr.loaded / xhr.total) == 1) {
-                
-                console.log("Peter " + 100 + '% loaded');
-            };
-        },
-
-        // onError callback
-        function (err) {
-            console.error('Error Loading Peter');
-        });
+    
 }
 
 //const pBar = document.querySelector(".progress");
@@ -315,9 +332,14 @@ function updateProgressBar(progressBar, value){
 //Animation
 function animate() {
     requestAnimationFrame(animate);
+
     var delta = clock.getDelta();
-    if (mixer) mixer.update(delta);
+    
+    if (characterControls) characterControls.update(delta, keysPressed);
+
+    orbitControls.update();
     renderer.render(scene, camera);
+
 }
 
 //Keep Camera Centered on window Resize
