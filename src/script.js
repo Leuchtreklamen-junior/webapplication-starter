@@ -91,9 +91,6 @@ function loadControls() {
                 break;
         }
     }, false);
-
-
-
 };
 
 function loadCharacter() {
@@ -107,6 +104,7 @@ function loadCharacter() {
             });
             const model = gltf.scene;
             model.position.set(0, 0, 0);
+
 
             scene.add(model);
 
@@ -209,6 +207,8 @@ function loadWorld() {
 
     scene.add(floor);
 
+    
+
 
     //LIGHTS
 
@@ -218,6 +218,7 @@ function loadWorld() {
 
         const ambient = new THREE.AmbientLight(0xf2edd5, 0.5);
         scene.add(ambient);
+        
     }
 
     //POINTLIGHT
