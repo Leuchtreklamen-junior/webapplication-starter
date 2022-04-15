@@ -2,10 +2,11 @@ import { CharacterControls } from "./characterControls.js";
 
 let container = document.querySelector(".scene");
 let camera, renderer, scene, clock, mixer, orbitControls, characterControls, keysPressed;
-let debug = false;
+let debug = true;
 
 
 function init() {
+
     loadControls();
     loadWorld();
     loadCharacter();
@@ -87,9 +88,6 @@ function loadControls() {
                 break;
         }
     }, false);
-
-
-
 };
 
 function loadCharacter() {
@@ -103,6 +101,7 @@ function loadCharacter() {
             });
             const model = gltf.scene;
             model.position.set(0, 0, 0);
+
 
             scene.add(model);
 
@@ -179,12 +178,15 @@ function loadWorld() {
 
     const planegeometry = new THREE.PlaneGeometry(100, 100, 1);
     const floor = new THREE.Mesh(planegeometry, planeMaterial);
+    const gridHelper = new THREE.GridHelper(20, 30, 0xff0000, 0xffffff);
 
     floor.castShadow = false;
     floor.receiveShadow = true;
     floor.rotation.x = -Math.PI / 2;
 
     scene.add(floor);
+
+    
 
 
     //LIGHTS
@@ -195,6 +197,7 @@ function loadWorld() {
 
         const ambient = new THREE.AmbientLight(0xf2edd5, 0.5);
         scene.add(ambient);
+        
     }
 
     //POINTLIGHT
@@ -268,6 +271,7 @@ function loadWorld() {
         scene.add(helper);
         scene.add(pointLightHelper);
         scene.add(pointLightHelper2);
+        scene.add(gridHelper);
     }
 
     //fog
