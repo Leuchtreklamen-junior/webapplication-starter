@@ -84,7 +84,7 @@ export class CharacterControls {
             this.model.quaternion.rotateTowards(this.rotateQuarternion, 0.05);
             // calculate direction
             this.camera.getWorldDirection(this.walkDirection);
-            console.log(this.walkDirection);
+            
             this.walkDirection.y = 0;
             this.walkDirection.normalize();
             this.walkDirection.applyAxisAngle(this.rotateAngle, directionOffset);
@@ -116,14 +116,12 @@ export class CharacterControls {
     directionOffset(keysPressed) {
         var directionOffset = 0; // w
         if (keysPressed["w"]) {
-            console.log(this.rotateAngle);
             if (keysPressed["a"]) {
                 directionOffset = Math.PI / 4; // w+a
             } else if (keysPressed["d"]) {
                 directionOffset = -Math.PI / 4; // w+d
             }
         } else if (keysPressed["s"]) {
-            console.log(this.rotateAngle);
             if (keysPressed["a"]) {
                 directionOffset = Math.PI / 4 + Math.PI / 2; // s+a
             } else if (keysPressed["d"]) {

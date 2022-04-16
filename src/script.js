@@ -1,19 +1,21 @@
-import { CharacterControls } from "./characterControls.js";
+import {
+    CharacterControls
+} from "./characterControls.js";
 
 let container = document.querySelector(".scene");
-let camera, renderer, scene, clock, mixer, orbitControls, characterControls, keysPressed, loadingManager, pBar;
-let debug = true;
+let camera, renderer, scene, clock, mixer, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash;
+let debug = false;
 
 
 function init() {
-    
+
 
     loadControls();
     loadWorld();
     loadCharacter();
+    loadObjects();
 
-    
-    
+
 }
 
 function loadControls() {
@@ -43,10 +45,10 @@ function loadControls() {
                 document.getElementById("space").classList.add("active");
                 break;
             case "shift": // SHIFT
-                if(characterControls){
-                //characterControls.switchRunToggle(); 
-                (keysPressed)[e.key.toLocaleLowerCase()] = true;      
-                document.getElementById("shift").classList.add("active");
+                if (characterControls) {
+                    //characterControls.switchRunToggle(); 
+                    (keysPressed)[e.key.toLocaleLowerCase()] = true;
+                    document.getElementById("shift").classList.add("active");
                 }
                 break;
             default:
@@ -79,19 +81,33 @@ function loadControls() {
                 document.getElementById("space").classList.remove("active");
                 break;
             case "shift": // SHIFT
-            if(characterControls){
-                //characterControls.switchRunToggle();   
-                (keysPressed)[e.key.toLocaleLowerCase()] = false;     
-                document.getElementById("shift").classList.remove("active");
+                if (characterControls) {
+                    //characterControls.switchRunToggle();   
+                    (keysPressed)[e.key.toLocaleLowerCase()] = false;
+                    document.getElementById("shift").classList.remove("active");
                 }
                 break;
             default:
                 console.log("irrelevant key");
-                console.log(keysPressed);
+                //console.log(keysPressed);
                 break;
         }
     }, false);
 };
+
+
+function loadObjects() {
+    let loader = new THREE.GLTFLoader(loadingManager);
+    loader.load("/src/3D/lantern.glb", function (gltf) {
+        const streetlight = gltf.scene;
+        streetlight.position.set(-4, -1, 0);
+        streetlight.rotateY(Math.PI / 4);
+
+
+        scene.add(streetlight);
+    });
+}
+
 
 function loadCharacter() {
     //load Model 
@@ -117,17 +133,10 @@ function loadCharacter() {
             }).forEach(function (a) {
                 animationsMap.set(a.name, mixer.clipAction(a));
             });
-
-            console.log(model);
-
             characterControls = new CharacterControls(model, mixer, animationsMap, orbitControls, camera, "lookaround");
-
-            console.log(animationsMap);
-
-
             if (debug) {
                 const skeletonhelper = new THREE.SkeletonHelper(model);
-                scene.add(skeletonhelper);
+                //scene.add(skeletonhelper);
             }
         },
         // onProgress callback
@@ -152,10 +161,10 @@ function loadWorld() {
     loadingManager = new THREE.LoadingManager();
     pBar = document.querySelector(".progress");
 
-    loadingManager.onProgress = function(item, loaded, total){
-        console.log(item, loaded, total);
-        let currentItem = loaded * (100/total)
-        console.log(currentItem);
+    loadingManager.onProgress = function (item, loaded, total) {
+        //console.log(item, loaded, total);
+        let currentItem = loaded * (100 / total)
+        //console.log(currentItem);
         updateProgressBar(pBar, currentItem)
     };
 
@@ -163,7 +172,7 @@ function loadWorld() {
     //     console.log("scene loaded");
     //     updateProgressBar(pBar, 100);
     // };
-    
+
     //create scene
     scene = new THREE.Scene();
 
@@ -194,12 +203,12 @@ function loadWorld() {
     // scene.add( cubeCamera );
 
     const planeMaterial = new THREE.MeshLambertMaterial({
-        color: 0xffffff
+        color: 0x060606
     });
 
     const planegeometry = new THREE.PlaneGeometry(100, 100, 1);
     const floor = new THREE.Mesh(planegeometry, planeMaterial);
-    const gridHelper = new THREE.GridHelper(20, 30, 0xff0000, 0xffffff);
+    const gridHelper = new THREE.GridHelper(100, 30, 0xff0000, 0x000000);
 
     floor.castShadow = false;
     floor.receiveShadow = true;
@@ -207,18 +216,18 @@ function loadWorld() {
 
     scene.add(floor);
 
-    
-
 
     //LIGHTS
+    //flash
+    flash = new THREE.PointLight(0x062d89, 30, 500, 1.7);
+    flash.position.set(200, 300, 100);
+    //scene.add(flash);
 
     //AMBIENT
 
     if (debug) {
-
-        const ambient = new THREE.AmbientLight(0xf2edd5, 0);
+        const ambient = new THREE.AmbientLight(0xf2edd5, 1);
         scene.add(ambient);
-        
     }
 
     //POINTLIGHT
@@ -231,16 +240,16 @@ function loadWorld() {
     plight2.castShadow = false;
 
     //HEMISSPHERELIGHT
-    const light = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.5);
-    
+    const light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
 
-    //sun
-    const sun = new THREE.DirectionalLight(0xffffff, 0.5);
-    sun.position.set(2, 10, 1);
-    sun.target.position.set(0, 0, 0);
-    sun.castShadow = true;
 
-    // scene.add(sun.target);
+    //moon
+    const moon = new THREE.DirectionalLight(0xbfcad8, 1);
+    moon.position.set(2, 10, 1);
+    moon.target.position.set(0, 0, 0);
+    moon.castShadow = true;
+
+    scene.add(moon.target);
 
     //spotlight front
     const spotLight = new THREE.SpotLight(0xff6ec7, 1, 25, 0.2, 0, 1);
@@ -267,43 +276,32 @@ function loadWorld() {
 
     // scene.add(plight);
     // scene.add(plight2);
-    scene.add(sun);
+    scene.add(moon);
     // scene.add(spotLight);
     // scene.add(spotLight2);
     //scene.add(light);
 
+
     //lighthelper
-    const spotLightHelper = new THREE.SpotLightHelper(spotLight);
-
-    const spotLightHelper2 = new THREE.SpotLightHelper(spotLight2);
-
     const sphereSize = 10;
     const hemissphereLightHelper = new THREE.HemisphereLightHelper(light, sphereSize);
-
-    const helper = new THREE.DirectionalLightHelper(sun, 5);
-
+    const helper = new THREE.DirectionalLightHelper(moon, 5)
     const sphereSizePoint = 0.1;
-    const pointLightHelper = new THREE.PointLightHelper(plight, sphereSizePoint);
-    const pointLightHelper2 = new THREE.PointLightHelper(plight2, sphereSizePoint);
+
+
 
     if (debug) {
-        scene.add(spotLightHelper);
-        scene.add(spotLightHelper2);
         scene.add(hemissphereLightHelper);
         scene.add(helper);
-        scene.add(pointLightHelper);
-        scene.add(pointLightHelper2);
         scene.add(gridHelper);
     }
-
-    //fog
-    scene.fog = new THREE.Fog(0x000000, 1, 15);
 
     //renderer
     renderer = new THREE.WebGLRenderer({
         antialias: true,
         alpha: true
     });
+
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(window.decivePixelRatio);
     renderer.shadowMap.enabled = true;
@@ -312,25 +310,31 @@ function loadWorld() {
     //cubeCamera.update(renderer, scene)
     container.appendChild(renderer.domElement);
 
+    //fog
+    // scene.fog = new THREE.FogExp2(0x1c1c2a, 0.002);
+    // renderer.setClearColor(scene.fog.color);
+
     //orbitcontrols
     orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
     orbitControls.enableDamping = true;
     orbitControls.minDistance = 2;
-    orbitControls.maxDistance = 10;
+    orbitControls.maxDistance = 100;
     orbitControls.enablePan = false;
     orbitControls.target.set(0, 1.3, 0);
     orbitControls.maxPolarAngle = Math.PI / 2 + 0.1;
-    
+
 }
 
 //const pBar = document.querySelector(".progress");
 //updateProgressBar(pBar, 40);
 
 //update loading Bar
-function updateProgressBar(progressBar, value){
+function updateProgressBar(progressBar, value) {
     progressBar.querySelector(".progress-value").style.width = `${value}%`;
     if (value == 100) {
-        setTimeout(function() {document.querySelector(".loadingBody").classList.remove("active")}, 2000);
+        setTimeout(function () {
+            document.querySelector(".loadingBody").classList.remove("active")
+        }, 2000);
     }
     //loadingbody = document.querySelector(".loadingBody")  
 }
@@ -340,8 +344,26 @@ function animate() {
     requestAnimationFrame(animate);
 
     var delta = clock.getDelta();
-    
+
     if (characterControls) characterControls.update(delta, keysPressed);
+
+
+    //Moonlight and Rain
+
+
+    if (Math.random() > 0.93 || flash.power > 100) {
+        if (flash.power < 100)
+            flash.position.set(
+                Math.random() * 400,
+                300 + Math.random() * 200,
+                100
+            );
+        flash.power = 50 + Math.random() * 500;
+    }
+
+
+
+    //END
 
     orbitControls.update();
     renderer.render(scene, camera);
