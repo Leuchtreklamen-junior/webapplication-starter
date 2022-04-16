@@ -5,22 +5,18 @@ import {
 let container = document.querySelector(".scene");
 let camera, renderer, scene, clock, mixer, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash;
 let debug = false;
+let toggleday = true;
 
 
 function init() {
-
-
     loadControls();
-    loadWorld();
+    loadWorldDay();
     loadCharacter();
     loadObjects();
-
-
+    loadaudio();
 }
 
 function loadControls() {
-
-
     keysPressed = {};
     document.addEventListener("keydown", (e) => {
         switch (e.key.toLocaleLowerCase()) {
@@ -101,11 +97,27 @@ function loadObjects() {
     loader.load("/src/3D/lantern.glb", function (gltf) {
         const streetlight = gltf.scene;
         streetlight.position.set(-4, -1, 0);
+        streetlight.traverse(function (node) {
+            if (node.isMesh) {
+                node.castShadow = true;
+            }
+        });
         streetlight.rotateY(Math.PI / 4);
-
-
         scene.add(streetlight);
     });
+
+    loader.load("/src/3D/shieldwithoutlight.glb", function (gltf) {
+        const shield = gltf.scene;
+        shield.position.set(0, 0, 0);
+        shield.traverse(function (node) {
+            if (node.isMesh) {
+                node.castShadow = true;
+            }
+        });
+        shield.rotateY(Math.PI / 4);
+        scene.add(shield);
+    });
+
 }
 
 
@@ -153,9 +165,7 @@ function loadCharacter() {
 }
 
 
-function loadWorld() {
-
-
+function loadWorldDay() {
 
     //loadingManager
     loadingManager = new THREE.LoadingManager();
@@ -167,11 +177,6 @@ function loadWorld() {
         //console.log(currentItem);
         updateProgressBar(pBar, currentItem)
     };
-
-    // loadingManager.onLoad = function(){
-    //     console.log("scene loaded");
-    //     updateProgressBar(pBar, 100);
-    // };
 
     //create scene
     scene = new THREE.Scene();
@@ -203,8 +208,10 @@ function loadWorld() {
     // scene.add( cubeCamera );
 
     const planeMaterial = new THREE.MeshLambertMaterial({
-        color: 0x060606
+        color: 0x333333
     });
+
+
 
     const planegeometry = new THREE.PlaneGeometry(100, 100, 1);
     const floor = new THREE.Mesh(planegeometry, planeMaterial);
@@ -219,9 +226,9 @@ function loadWorld() {
 
     //LIGHTS
     //flash
-    flash = new THREE.PointLight(0x062d89, 30, 500, 1.7);
+    flash = new THREE.PointLight(0x062d89, 10, 470, 2);
     flash.position.set(200, 300, 100);
-    //scene.add(flash);
+    scene.add(flash);
 
     //AMBIENT
 
@@ -231,13 +238,9 @@ function loadWorld() {
     }
 
     //POINTLIGHT
-    const plight = new THREE.PointLight(0x8f9eff, 2);
-    plight.position.set(-0.8, 1.7, 0.6);
-    plight.castShadow = false;
-
-    const plight2 = new THREE.PointLight(0x8f9eff, 2);
-    plight2.position.set(0.8, 1.7, 0.6);
-    plight2.castShadow = false;
+    const plight = new THREE.PointLight(0x8f9eff, 3, 8, 2);
+    plight.position.set(-3.3, 3.5, -0.6);
+    plight.castShadow = true;
 
     //HEMISSPHERELIGHT
     const light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
@@ -247,7 +250,7 @@ function loadWorld() {
     const moon = new THREE.DirectionalLight(0xbfcad8, 1);
     moon.position.set(2, 10, 1);
     moon.target.position.set(0, 0, 0);
-    moon.castShadow = true;
+    moon.castShadow = false;
 
     scene.add(moon.target);
 
@@ -274,8 +277,7 @@ function loadWorld() {
     spotLight2.shadow.camera.far = 500;
     spotLight2.shadow.focus = 1;
 
-    // scene.add(plight);
-    // scene.add(plight2);
+    scene.add(plight);
     scene.add(moon);
     // scene.add(spotLight);
     // scene.add(spotLight2);
@@ -287,6 +289,8 @@ function loadWorld() {
     const hemissphereLightHelper = new THREE.HemisphereLightHelper(light, sphereSize);
     const helper = new THREE.DirectionalLightHelper(moon, 5)
     const sphereSizePoint = 0.1;
+    const plighthelper = new THREE.PointLightHelper(plight, sphereSizePoint, 0xffffff);
+    //scene.add(plighthelper);
 
 
 
@@ -310,7 +314,10 @@ function loadWorld() {
     //cubeCamera.update(renderer, scene)
     container.appendChild(renderer.domElement);
 
-    //fog
+    //fog + background
+    let backColor = 0x060606;
+    scene.background = new THREE.Color(backColor);
+    //scene.fog = new THREE.Fog(backColor, 1, 25);
     // scene.fog = new THREE.FogExp2(0x1c1c2a, 0.002);
     // renderer.setClearColor(scene.fog.color);
 
@@ -322,6 +329,35 @@ function loadWorld() {
     orbitControls.enablePan = false;
     orbitControls.target.set(0, 1.3, 0);
     orbitControls.maxPolarAngle = Math.PI / 2 + 0.1;
+
+}
+
+function loadaudio() {
+    // create an AudioListener and add it to the camera
+    const listener = new THREE.AudioListener();
+    camera.add(listener);
+
+    // create a global audio source
+    const sound = new THREE.Audio(listener);
+
+    // load a sound and set it as the Audio object's buffer
+    const audioLoader = new THREE.AudioLoader();
+    audioLoader.load('/src/audio/rain.wav', function (buffer) {
+        sound.setBuffer(buffer);
+        sound.setLoop(true);
+        sound.setVolume(0.5);
+        sound.autoplay = true;
+        sound.play();
+    });
+
+    audioLoader.load('/src/audio/thunder1.wav', function (buffer) {
+        sound.setBuffer(buffer);
+        sound.setLoop(true);
+        sound.setVolume(0.5);
+        sound.autoplay = true;
+        //sound.play();
+    });
+
 
 }
 
@@ -369,6 +405,7 @@ function animate() {
     renderer.render(scene, camera);
 
 }
+
 
 //Keep Camera Centered on window Resize
 function onWindowResize() {
