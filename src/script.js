@@ -237,13 +237,21 @@ function loadWorldDay() {
         scene.add(ambient);
     }
 
-    //POINTLIGHT
-    const plight = new THREE.PointLight(0x8f9eff, 3, 8, 2);
-    plight.position.set(-3.3, 3.5, -0.6);
-    plight.castShadow = true;
+    const axesHelper = new THREE.AxesHelper(5);
+    scene.add(axesHelper);
+
+    //POINTLIGHT Lantern 1
+    const pointlightlantern1 = new THREE.PointLight(0x8f9eff, 0.8, 8, 2);
+    pointlightlantern1.position.set(-3.3, 3.5, -0.6);
+    pointlightlantern1.castShadow = true;
+
+    //POINTLIGHT shield 1
+    const pointlightshield1 = new THREE.PointLight(0x8f9eff, 0.5, 3, 2);
+    pointlightshield1.position.set(-0.3, 1, 10);
+    pointlightshield1.castShadow = true;
 
     //HEMISSPHERELIGHT
-    const light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1);
+    const light = new THREE.HemisphereLight(0xbfcad8, 0xbfcad8, 0.1);
 
 
     //moon
@@ -254,34 +262,33 @@ function loadWorldDay() {
 
     scene.add(moon.target);
 
-    //spotlight front
-    const spotLight = new THREE.SpotLight(0xff6ec7, 1, 25, 0.2, 0, 1);
-    spotLight.position.set(10, 5, 2);
+    // //spotlight front
+    // const spotLight = new THREE.SpotLight(0xff6ec7, 1, 25, 0.2, 0, 1);
+    // spotLight.position.set(10, 5, 2);
 
-    spotLight.castShadow = false;
-    spotLight.shadow.mapSize.width = 512;
-    spotLight.shadow.mapSize.height = 512;
-    spotLight.shadow.camera.near = 0.5;
-    spotLight.shadow.camera.far = 500;
-    spotLight.shadow.focus = 1;
+    // spotLight.castShadow = false;
+    // spotLight.shadow.mapSize.width = 512;
+    // spotLight.shadow.mapSize.height = 512;
+    // spotLight.shadow.camera.near = 0.5;
+    // spotLight.shadow.camera.far = 500;
+    // spotLight.shadow.focus = 1;
 
 
-    //spotlight back
-    const spotLight2 = new THREE.SpotLight(0x21f8f6, 1, 25, 0.2, 0, 1);
-    spotLight2.position.set(-10, 3, -2);
+    // //spotlight back
+    // const spotLight2 = new THREE.SpotLight(0x21f8f6, 1, 25, 0.2, 0, 1);
+    // spotLight2.position.set(-10, 3, -2);
 
-    spotLight2.castShadow = false;
-    spotLight2.shadow.mapSize.width = 512;
-    spotLight2.shadow.mapSize.height = 512;
-    spotLight2.shadow.camera.near = 0.5;
-    spotLight2.shadow.camera.far = 500;
-    spotLight2.shadow.focus = 1;
+    // spotLight2.castShadow = false;
+    // spotLight2.shadow.mapSize.width = 512;
+    // spotLight2.shadow.mapSize.height = 512;
+    // spotLight2.shadow.camera.near = 0.5;
+    // spotLight2.shadow.camera.far = 500;
+    // spotLight2.shadow.focus = 1;
 
-    scene.add(plight);
+    //scene.add(pointlightlantern1);
+    scene.add(pointlightshield1);
     scene.add(moon);
-    // scene.add(spotLight);
-    // scene.add(spotLight2);
-    //scene.add(light);
+    scene.add(light);
 
 
     //lighthelper
@@ -289,8 +296,10 @@ function loadWorldDay() {
     const hemissphereLightHelper = new THREE.HemisphereLightHelper(light, sphereSize);
     const helper = new THREE.DirectionalLightHelper(moon, 5)
     const sphereSizePoint = 0.1;
-    const plighthelper = new THREE.PointLightHelper(plight, sphereSizePoint, 0xffffff);
-    //scene.add(plighthelper);
+    const pointlightlantern1helper = new THREE.PointLightHelper(pointlightlantern1, sphereSizePoint, 0xffffff);
+    scene.add(pointlightlantern1helper);
+    const pointlightshield1helper = new THREE.PointLightHelper(pointlightshield1, sphereSizePoint, 0xffffff);
+    scene.add(pointlightshield1helper);
 
 
 
@@ -315,9 +324,9 @@ function loadWorldDay() {
     container.appendChild(renderer.domElement);
 
     //fog + background
-    let backColor = 0x060606;
+    let backColor = 0xffffff;
     scene.background = new THREE.Color(backColor);
-    //scene.fog = new THREE.Fog(backColor, 1, 25);
+    scene.fog = new THREE.Fog(backColor, 1, 25);
     // scene.fog = new THREE.FogExp2(0x1c1c2a, 0.002);
     // renderer.setClearColor(scene.fog.color);
 
