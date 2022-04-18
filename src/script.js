@@ -5,7 +5,6 @@ import {
 let container = document.querySelector(".scene");
 let camera, renderer, scene, clock, mixer, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash;
 let debug = false;
-let toggleday = true;
 
 
 function init() {
@@ -14,6 +13,7 @@ function init() {
     loadCharacter();
     loadObjects();
     loadaudio();
+    loadLightbulbs();
 }
 
 function loadControls() {
@@ -91,6 +91,22 @@ function loadControls() {
     }, false);
 };
 
+function loadLightbulbs() {
+    const color = new THREE.Color("#FF0000");
+    const geo = new THREE.IcosahedronGeometry(0.01, 5);
+    const material = new THREE.MeshBasicMaterial({
+        color: color
+    });
+
+    for ( let i = 0; i < 50; i ++ ) {
+    const sphere = new THREE.Mesh(geo, material);
+    sphere.position.y = Math.random() * 0.3 + 1;
+	sphere.position.z = Math.random() * 0.3 + 1;
+    sphere.position.x = Math.random() * 0.3 - 0.15;
+    scene.add(sphere);
+    }
+}
+
 
 function loadObjects() {
     let loader = new THREE.GLTFLoader(loadingManager);
@@ -118,6 +134,7 @@ function loadObjects() {
         scene.add(shield);
     });
 
+  
 }
 
 
@@ -228,7 +245,7 @@ function loadWorldDay() {
     //flash
     flash = new THREE.PointLight(0x062d89, 10, 470, 2);
     flash.position.set(200, 300, 100);
-    scene.add(flash);
+    //scene.add(flash);
 
     //AMBIENT
 
@@ -240,18 +257,16 @@ function loadWorldDay() {
     const axesHelper = new THREE.AxesHelper(5);
     scene.add(axesHelper);
 
-    //POINTLIGHT Lantern 1
-    const pointlightlantern1 = new THREE.PointLight(0x8f9eff, 0.8, 8, 2);
-    pointlightlantern1.position.set(-3.3, 3.5, -0.6);
-    pointlightlantern1.castShadow = true;
-
-    //POINTLIGHT shield 1
-    const pointlightshield1 = new THREE.PointLight(0x8f9eff, 0.5, 3, 2);
-    pointlightshield1.position.set(-0.3, 1, 10);
-    pointlightshield1.castShadow = true;
-
     //HEMISSPHERELIGHT
     const light = new THREE.HemisphereLight(0xbfcad8, 0xbfcad8, 0.1);
+
+    //Light in Front
+
+    const front = new THREE.PointLight(0xff0000, 10, 4,10);
+    front.position.set(0, 1.15, 1.15);
+    scene.add(front);
+    const frontlighthelper = new THREE.PointLightHelper(front, 0.1, 0xffffff);
+    scene.add(frontlighthelper);
 
 
     //moon
@@ -286,7 +301,7 @@ function loadWorldDay() {
     // spotLight2.shadow.focus = 1;
 
     //scene.add(pointlightlantern1);
-    scene.add(pointlightshield1);
+    // scene.add(pointlightshield1);
     scene.add(moon);
     scene.add(light);
 
@@ -296,10 +311,10 @@ function loadWorldDay() {
     const hemissphereLightHelper = new THREE.HemisphereLightHelper(light, sphereSize);
     const helper = new THREE.DirectionalLightHelper(moon, 5)
     const sphereSizePoint = 0.1;
-    const pointlightlantern1helper = new THREE.PointLightHelper(pointlightlantern1, sphereSizePoint, 0xffffff);
-    scene.add(pointlightlantern1helper);
-    const pointlightshield1helper = new THREE.PointLightHelper(pointlightshield1, sphereSizePoint, 0xffffff);
-    scene.add(pointlightshield1helper);
+    // const pointlightlantern1helper = new THREE.PointLightHelper(pointlightlantern1, sphereSizePoint, 0xffffff);
+    // //scene.add(pointlightlantern1helper);
+    // const pointlightshield1helper = new THREE.PointLightHelper(pointlightshield1, sphereSizePoint, 0xffffff);
+    //scene.add(pointlightshield1helper);
 
 
 
@@ -324,7 +339,7 @@ function loadWorldDay() {
     container.appendChild(renderer.domElement);
 
     //fog + background
-    let backColor = 0xffffff;
+    let backColor = 0x000000;
     scene.background = new THREE.Color(backColor);
     scene.fog = new THREE.Fog(backColor, 1, 25);
     // scene.fog = new THREE.FogExp2(0x1c1c2a, 0.002);
