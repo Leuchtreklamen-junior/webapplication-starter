@@ -15,7 +15,7 @@ import {
 } from 'https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/postprocessing/ShaderPass.js';
 
 let container = document.querySelector(".scene");
-let camera, renderer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash, sound, tempsound = 0.1;
+let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash, sound, tempsound = 0.1, glowworms = [];
 let debug = false;
 const ENTIRE_SCENE = 0,
     BLOOM_SCENE = 1;
@@ -120,13 +120,16 @@ function loadLightbulbs() {
     });
     const sphere = new THREE.Mesh(geo, material);
 
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 100; i++) {
         const sphere = new THREE.Mesh(geo, material);
-        sphere.position.y = Math.random() * 0.3 + 1;
-        sphere.position.z = Math.random() * 0.3 + 1;
-        sphere.position.x = Math.random() * 0.3 - 0.15;
-        scene.add(sphere);
+        var angle = Math.random()*Math.PI*2;
+        sphere.position.y = Math.random() * 0.5 + 1; //Range + höhe
+        sphere.position.z = Math.cos(angle) * 1; 
+        sphere.position.x = Math.sin(angle) * 1;
+        glowworms.push(sphere);
     }
+
+    glowworms.forEach(sphere => scene.add(sphere));
 }
 
 
@@ -184,7 +187,7 @@ function loadCharacter() {
             }).forEach(function (a) {
                 animationsMap.set(a.name, mixer.clipAction(a));
             });
-            characterControls = new CharacterControls(model, mixer, animationsMap, orbitControls, camera, "lookaround");
+            characterControls = new CharacterControls(model, mixer, animationsMap, orbitControls, camera, "lookaround", glowworms);
             if (debug) {
                 const skeletonhelper = new THREE.SkeletonHelper(model);
                 scene.add(skeletonhelper);
@@ -505,7 +508,9 @@ function animate() {
         flash.power = 50 + Math.random() * 500;
     }
 
+    //Animate Spheres
 
+    glowworms.forEach(sphere => sphere.position);
 
     //END
 

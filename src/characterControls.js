@@ -14,7 +14,7 @@ export class CharacterControls {
     runVelocity = 4;
     walkVelocity = 2;
 
-    constructor(model, mixer, animationsMap, orbitControl, camera, currentAction) {
+    constructor(model, mixer, animationsMap, orbitControl, camera, currentAction, sphere) {
         this.model = model;
         this.mixer = mixer;
         this.animationsMap = animationsMap;
@@ -26,6 +26,7 @@ export class CharacterControls {
         });
         this.orbitControl = orbitControl;
         this.camera = camera;
+        this.sphere = sphere;
 
     }
 
@@ -99,6 +100,7 @@ export class CharacterControls {
             this.model.position.x += moveX;
             this.model.position.z += moveZ;
             this.updateCameraTarget(moveX, moveZ);
+            this.updateSpherePosition(moveX, moveZ);
         }
     }
 
@@ -112,6 +114,15 @@ export class CharacterControls {
         this.cameraTarget.z = this.model.position.z;
         this.orbitControl.target = this.cameraTarget;
     }
+
+    updateSpherePosition(moveX, moveZ){
+        this.sphere.forEach(sphere => {
+            sphere.position.x += moveX;
+            sphere.position.z += moveZ;
+        });
+    }
+
+    
 
     directionOffset(keysPressed) {
         var directionOffset = 0; // w
