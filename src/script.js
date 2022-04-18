@@ -1,17 +1,38 @@
 import {
     CharacterControls
 } from "./characterControls.js";
+import {
+    EffectComposer
+} from 'https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/postprocessing/EffectComposer.js';
+import {
+    RenderPass
+} from 'https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/postprocessing/RenderPass.js';
+import {
+    UnrealBloomPass
+} from 'https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/postprocessing/UnrealBloomPass.js';
+import {
+    ShaderPass
+} from 'https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/postprocessing/ShaderPass.js';
 
 let container = document.querySelector(".scene");
-let camera, renderer, scene, clock, mixer, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash, sound, tempsound = 0.1;
+let camera, renderer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash, sound, tempsound = 0.1;
 let debug = false;
+const ENTIRE_SCENE = 0,
+    BLOOM_SCENE = 1;
+const bloomLayer = new THREE.Layers();
+bloomLayer.set(BLOOM_SCENE);
+
+const darkMaterial = new THREE.MeshBasicMaterial({
+    color: 'black'
+});
+const materials = {};
 
 
 function init() {
-    loadControls();
     loadWorldDay();
+    loadControls();
     loadCharacter();
-    loadObjects();
+    //loadObjects();
     loadaudio();
     loadLightbulbs();
 }
@@ -97,6 +118,7 @@ function loadLightbulbs() {
     const material = new THREE.MeshBasicMaterial({
         color: color
     });
+    const sphere = new THREE.Mesh(geo, material);
 
     for (let i = 0; i < 50; i++) {
         const sphere = new THREE.Mesh(geo, material);
@@ -165,7 +187,7 @@ function loadCharacter() {
             characterControls = new CharacterControls(model, mixer, animationsMap, orbitControls, camera, "lookaround");
             if (debug) {
                 const skeletonhelper = new THREE.SkeletonHelper(model);
-                //scene.add(skeletonhelper);
+                scene.add(skeletonhelper);
             }
         },
         // onProgress callback
@@ -211,8 +233,6 @@ function loadWorldDay() {
 
     if (debug) {
         console.log("DEBUG MODE = TRUE")
-        // const camerahelper = new THREE.CameraHelper(camera);
-        // scene.add(camerahelper);
     };
 
     camera.position.set(0, 0, 3);
@@ -275,7 +295,7 @@ function loadWorldDay() {
     moon.target.position.set(0, 0, 0);
     moon.castShadow = false;
 
-    scene.add(moon.target);
+    //scene.add(moon.target);
 
     // //spotlight front
     // const spotLight = new THREE.SpotLight(0xff6ec7, 1, 25, 0.2, 0, 1);
@@ -329,19 +349,35 @@ function loadWorldDay() {
         antialias: true,
         alpha: true
     });
-
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(window.decivePixelRatio);
+    renderer.toneMapping = THREE.ReinhardToneMapping;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
+
+
+    const renderScene = new RenderPass(scene, camera);
+
+    const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+    bloomPass.threshold = 0;
+    bloomPass.strength = 1;
+    bloomPass.radius = 0;
+
+    composer = new EffectComposer(renderer);
+    composer.renderToScreen = false;
+    composer.addPass(renderScene);
+    composer.addPass(bloomPass);
+
+    
 
     //cubeCamera.update(renderer, scene)
-    container.appendChild(renderer.domElement);
+
 
     //fog + background
     let backColor = 0x000000;
     scene.background = new THREE.Color(backColor);
-    scene.fog = new THREE.Fog(backColor, 1, 25);
+    //scene.fog = new THREE.Fog(backColor, 1, 25);
     // scene.fog = new THREE.FogExp2(0x1c1c2a, 0.002);
     // renderer.setClearColor(scene.fog.color);
 
@@ -473,9 +509,10 @@ function animate() {
 
     //END
 
+
     orbitControls.update();
     renderer.render(scene, camera);
-
+    //composer.render();
 }
 
 
@@ -484,6 +521,7 @@ function onWindowResize() {
     camera.aspect = container.clientWidth / container.clientHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(container.clientWidth, container.clientHeight);
+    composer.setSize(container.clientWidth, container.clientHeight);
 }
 
 window.addEventListener("resize", onWindowResize);
