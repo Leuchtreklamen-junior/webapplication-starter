@@ -10,27 +10,25 @@
 </head>
 
 <body>
-    <div class="loadingBody active">
+    <div class="loadingBody">
         <div class="progress">
             <div class="progress-value"></div>
         </div>
     </div>
     <div class="scene"></div>
     <div class="controlls">
-        
-            <button class="key shift" id="shift">Shift</button>
-
-            <div class="movement">
-                <div class="toprow">
-                    <button class="key" id="W">W</button>
-                </div>
-                <div class="bottomrow"><button class="key" id="A">A</button>
-                    <button class="key" id="S">S</button>
-                    <button class="key" id="D">D</button></div>
+        <button class="key shift" id="shift">Shift</button>
+        <div class="movement">
+            <div class="toprow">
+                <button class="key" id="W">W</button>
             </div>
-
-            <button class="key space" id="space">Space</button>
-    
+            <div class="bottomrow">
+                <button class="key" id="A">A</button>
+                <button class="key" id="S">S</button>
+                <button class="key" id="D">D</button>
+            </div>
+        </div>
+        <button class="key space" id="space">Space</button>
     </div>
     <script src="/src/threejs/three.min.js"></script>
     <script src="/src/threejs/GLTFLoader.js"></script>
