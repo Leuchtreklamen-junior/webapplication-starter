@@ -15,7 +15,7 @@ import {
 } from 'https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/postprocessing/ShaderPass.js';
 
 let container = document.querySelector(".scene");
-let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash, sound, tempsound = 0.1, glowworms = [];
+let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash, sound, tempsound = 0.1, temporarysound, glowworms = [];
 let debug = false;
 const ENTIRE_SCENE = 0,
     BLOOM_SCENE = 1;
@@ -448,42 +448,44 @@ muteButton.addEventListener("click", muteAudio);
 volumeSlider.addEventListener("input", setVol);
 
 function muteAudio() {
-    console.log("clicked");
-    sound.setVolume(0);
+    //unmute
     if (muteButton.classList.contains("mute")){
         muteButton.classList.remove("mute");
-        tempsound = volumeSlider.value / 100;
-        console.log(tempsound);
         volumeSymbol.classList.remove("fa-volume-xmark");
         volumeSymbol.classList.add("fa-volume-high");
-        volumeSlider.value = 100;
-        setVol();
-
-        console.log(muteButton);
+        sound.setVolume(temporarysound);
+        volumeSlider.value = temporarysound*100;
+        console.log("unmuted");
     } else {
+        //mute
+        temporarysound = volumeSlider.value / 100;
         muteButton.classList.add("mute");
-        volumeSymbol.classList.remove("fa-volume-high");
         tempsound = volumeSlider.value / 100;
-        console.log(tempsound);
-        volumeSymbol.classList.add("fa-volume-xmark");
         volumeSlider.value = 0;
-        setVol();
-        console.log(muteButton);
+        sound.setVolume(0);
+        volumeSymbol.classList.remove("fa-volume-high");
+        volumeSymbol.classList.add("fa-volume-xmark");
+        console.log("muted");
     }
-
     
-  
 }
 
-
-
 function setVol() {
-    console.log(tempsound);
-    //sound.setVolume(1);
-    console.log(sound.getVolume());
+    if (volumeSlider.value < 1) {
+        //mute
+        volumeSymbol.classList.remove("fa-volume-high");
+        volumeSymbol.classList.add("fa-volume-xmark");
+        muteButton.classList.add("mute");
+        console.log("muted");
+    } else {
+        //unmute
+        volumeSymbol.classList.remove("fa-volume-xmark");
+        volumeSymbol.classList.add("fa-volume-high");
+        muteButton.classList.remove("mute");
+        console.log("unmuted");
+    }
     tempsound = volumeSlider.value / 100;
     sound.setVolume(tempsound);
-    
 }
 
 //Animation
