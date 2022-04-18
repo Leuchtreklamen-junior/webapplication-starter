@@ -3,7 +3,7 @@ import {
 } from "./characterControls.js";
 
 let container = document.querySelector(".scene");
-let camera, renderer, scene, clock, mixer, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash;
+let camera, renderer, scene, clock, mixer, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash, sound, tempsound = 0.1;
 let debug = false;
 
 
@@ -98,12 +98,12 @@ function loadLightbulbs() {
         color: color
     });
 
-    for ( let i = 0; i < 50; i ++ ) {
-    const sphere = new THREE.Mesh(geo, material);
-    sphere.position.y = Math.random() * 0.3 + 1;
-	sphere.position.z = Math.random() * 0.3 + 1;
-    sphere.position.x = Math.random() * 0.3 - 0.15;
-    scene.add(sphere);
+    for (let i = 0; i < 50; i++) {
+        const sphere = new THREE.Mesh(geo, material);
+        sphere.position.y = Math.random() * 0.3 + 1;
+        sphere.position.z = Math.random() * 0.3 + 1;
+        sphere.position.x = Math.random() * 0.3 - 0.15;
+        scene.add(sphere);
     }
 }
 
@@ -134,7 +134,7 @@ function loadObjects() {
         scene.add(shield);
     });
 
-  
+
 }
 
 
@@ -262,7 +262,7 @@ function loadWorldDay() {
 
     //Light in Front
 
-    const front = new THREE.PointLight(0xff0000, 10, 4,10);
+    const front = new THREE.PointLight(0xff0000, 10, 4, 10);
     front.position.set(0, 1.15, 1.15);
     scene.add(front);
     const frontlighthelper = new THREE.PointLightHelper(front, 0.1, 0xffffff);
@@ -356,35 +356,6 @@ function loadWorldDay() {
 
 }
 
-function loadaudio() {
-    // create an AudioListener and add it to the camera
-    const listener = new THREE.AudioListener();
-    camera.add(listener);
-
-    // create a global audio source
-    const sound = new THREE.Audio(listener);
-
-    // load a sound and set it as the Audio object's buffer
-    const audioLoader = new THREE.AudioLoader();
-    audioLoader.load('/src/audio/rain.wav', function (buffer) {
-        sound.setBuffer(buffer);
-        sound.setLoop(true);
-        sound.setVolume(0.5);
-        sound.autoplay = true;
-        sound.play();
-    });
-
-    audioLoader.load('/src/audio/thunder1.wav', function (buffer) {
-        sound.setBuffer(buffer);
-        sound.setLoop(true);
-        sound.setVolume(0.5);
-        sound.autoplay = true;
-        //sound.play();
-    });
-
-
-}
-
 //const pBar = document.querySelector(".progress");
 //updateProgressBar(pBar, 40);
 
@@ -397,6 +368,83 @@ function updateProgressBar(progressBar, value) {
         }, 2000);
     }
     //loadingbody = document.querySelector(".loadingBody")  
+}
+
+//load audio
+function loadaudio() {
+    // create an AudioListener and add it to the camera
+    const listener = new THREE.AudioListener();
+    camera.add(listener);
+
+    // create a global audio source
+    sound = new THREE.Audio(listener);
+
+    // load a sound and set it as the Audio object's buffer
+    const audioLoader = new THREE.AudioLoader();
+    audioLoader.load('/src/audio/rain.wav', function (buffer) {
+        sound.setBuffer(buffer);
+        sound.setLoop(true);
+        sound.setVolume(tempsound);
+        sound.autoplay = true;
+        sound.play();
+    });
+
+    audioLoader.load('/src/audio/thunder1.wav', function (buffer) {
+        sound.setBuffer(buffer);
+        sound.setLoop(true);
+        sound.setVolume(tempsound);
+        sound.autoplay = true;
+        //sound.play();
+    });
+
+
+}
+
+//audio slider
+var volumeSlider = document.getElementById("volumeSlider");
+var muteButton = document.getElementById("muteButton");
+var volumeSymbol = document.getElementById("volumeSymbol");
+
+muteButton.addEventListener("click", muteAudio);
+volumeSlider.addEventListener("input", setVol);
+
+function muteAudio() {
+    console.log("clicked");
+    sound.setVolume(0);
+    if (muteButton.classList.contains("mute")){
+        muteButton.classList.remove("mute");
+        tempsound = volumeSlider.value / 100;
+        console.log(tempsound);
+        volumeSymbol.classList.remove("fa-volume-xmark");
+        volumeSymbol.classList.add("fa-volume-high");
+        volumeSlider.value = 100;
+        setVol();
+
+        console.log(muteButton);
+    } else {
+        muteButton.classList.add("mute");
+        volumeSymbol.classList.remove("fa-volume-high");
+        tempsound = volumeSlider.value / 100;
+        console.log(tempsound);
+        volumeSymbol.classList.add("fa-volume-xmark");
+        volumeSlider.value = 0;
+        setVol();
+        console.log(muteButton);
+    }
+
+    
+  
+}
+
+
+
+function setVol() {
+    console.log(tempsound);
+    //sound.setVolume(1);
+    console.log(sound.getVolume());
+    tempsound = volumeSlider.value / 100;
+    sound.setVolume(tempsound);
+    
 }
 
 //Animation
