@@ -13,41 +13,56 @@ import {
 import {
     ShaderPass
 } from 'https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/postprocessing/ShaderPass.js';
+import { GridHelper } from "three";
 
 let container = document.querySelector(".scene");
-let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash, sound, tempsound = 0.1, temporarysound, glowworms = [];
-let debug = false;
-const ENTIRE_SCENE = 0,
-    BLOOM_SCENE = 1;
-const bloomLayer = new THREE.Layers();
-bloomLayer.set(BLOOM_SCENE);
-
-const darkMaterial = new THREE.MeshBasicMaterial({
-    color: 'black'
-});
-const materials = {};
-let globalUniforms = {
-    time: {
-        value: 0
-    },
-    globalBloom: {
-        value: 0
-    },
-    noise: {
-        value: null
-    }
-}
+let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash, 
+    sound, tempsound = 0.1,
+    temporarysound, glowworms = [],
+    rain, rain1, raindrops, raindrops1, raingeometry, raingeometry1;
 
 
+//CONTROLLS
+
+//world
+let worldwidth = 40,
+worldheight = 10,
+backColor = 0x060616,
+
+//light
+moonlightstrenght = 0.5, //0.5 - 3
+moonlightcolor = 0xbfcad8, 
+
+//lightbulbs
+
+numberlightbulbs = 100,
+
+//flash
+flashlightcolor = 0x062d89,
+flashlightintensity = 2000, //5-2000
+flashfrequency = 5,
+
+//rain and fog controlls
+raining = true,
+dropCount = 10000, //200 - 40000
+rainspeed = 0.2, 
+dropsizemin = 0.05, 
+dropsizemax = 0.2,
+fog = true, 
+
+//debug
+debug = false;
 
 function init() {
     loadWorldDay();
     loadControls();
     loadCharacter();
     //loadObjects();
+    if(raining){
     addRain();
     loadaudio();
-    loadLightbulbs();
+    }
+    //loadLightbulbs();
 }
 
 function loadControls() {
@@ -119,7 +134,6 @@ function loadControls() {
                 break;
             default:
                 console.log("irrelevant key");
-                //console.log(keysPressed);
                 break;
         }
     }, false);
@@ -131,15 +145,15 @@ function loadLightbulbs() {
     const geo = new THREE.IcosahedronGeometry(0.1, 5);
 
 
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < numberlightbulbs; i++) {
         const sphere = new THREE.PointLight(color1, 4, 3, 2);
         sphere.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
             color: color1
         })));
         //let angle = Math.random() * Math.PI * 2;
-        sphere.position.y = Math.random() * 0.1 + 0; //Range + höhe
-        sphere.position.z = Math.random() * 20 - 10; //Range + nach vorne
-        sphere.position.x = Math.random() * 20 - 10; //range + Zur Seite
+        sphere.position.y = Math.random() * 1 + 1; //Range + höhe
+        sphere.position.z = Math.random() * worldwidth - worldwidth/2; //Range + nach vorne
+        sphere.position.x = Math.random() * worldwidth - worldwidth/2; //range + Zur Seite
         glowworms.push(sphere);
     }
 
@@ -149,42 +163,13 @@ function loadLightbulbs() {
             color: color2
         })));
         //let angle = Math.random() * Math.PI * 2;
-        sphere.position.y = Math.random() * 0.1 + 0; //Range + höhe
-        sphere.position.z = Math.random() * 20 - 10; //Range + nach vorne
-        sphere.position.x = Math.random() * 20 - 10; //range + Zur Seite
+        sphere.position.y = Math.random() * 1 + 1; //Range + höhe
+        sphere.position.z = Math.random() * worldwidth - worldwidth/2; //Range + nach vorne
+        sphere.position.x = Math.random() * worldwidth - worldwidth/2; //range + Zur Seite
         glowworms.push(sphere);
     }
 
     glowworms.forEach(sphere => scene.add(sphere));
-    console.log(glowworms);
-
-
-    //test get mouseposition
-    // window.addEventListener("mousedown", e => {
-    //     var vec = new THREE.Vector3(); // create once and reuse
-    //     let pos = new THREE.Vector3(); // create once and reuse
-
-    //     vec.set(
-    //         (e.clientX / window.innerWidth) * 2 - 1,
-    //         (e.clientY / window.innerHeight) * 2 + 1,
-    //         0.5);
-
-    //     vec.unproject(camera);
-
-    //     vec.sub(camera.position).normalize();
-
-    //     var distance = -camera.position.z / vec.z;
-
-    //     pos.copy(camera.position).add(vec.multiplyScalar(distance));
-    //     console.log(pos);
-
-    //     glowworms.forEach(sphere => {
-
-
-    //     })
-
-    // });
-
 
 }
 
@@ -202,46 +187,43 @@ function loadObjects() {
         streetlight.rotateY(Math.PI / 4);
         scene.add(streetlight);
     });
-
-    loader.load("/src/3D/shieldwithoutlight.glb", function (gltf) {
-        const shield = gltf.scene;
-        shield.position.set(0, 0, 0);
-        shield.traverse(function (node) {
-            if (node.isMesh) {
-                node.castShadow = true;
-            }
-        });
-        shield.rotateY(Math.PI / 4);
-        scene.add(shield);
-    });
-
-
 }
 
 function addRain() {
-    let vertices = [];
-    let dropEnds = [];
-    let dropCount = 2000;
+    raindrops = [];
+    raindrops1 = [];
     for (let i = 0; i < dropCount; i++) {
-        let x = THREE.MathUtils.randFloatSpread(20); //Breite
-        let y = THREE.MathUtils.randFloat(-1, 5); //Höhe
-        let z = THREE.MathUtils.randFloatSpread(20); //Länge
-        let dropsize = THREE.MathUtils.randFloat(0.25, 0.5);
-        vertices.push(
-            x, y, z,
-            x, y-dropsize, z
+        let drop = new THREE.Vector3(
+        THREE.MathUtils.randFloatSpread(worldwidth), //Breite
+        THREE.MathUtils.randFloat(-1, worldheight), //Höhe
+        THREE.MathUtils.randFloatSpread(worldwidth) //Länge
         );
-        dropEnds.push(0, dropsize, 1 ,dropsize);
+        let dropsize = THREE.MathUtils.randFloat(dropsizemin,dropsizemax);
+        raindrops.push(
+            drop.x, drop.y, drop.z,
+            drop.x, drop.y - dropsize, drop.z
+        );
+        raindrops1.push(
+            drop.x, drop.y, drop.z,
+            drop.x, drop.y - dropsize, drop.z
+        );
     }
-    let raingeometry = new THREE.BufferGeometry();
-    raingeometry.setAttribute("position", new THREE.Float32BufferAttribute(vertices,3));
-    //raingeometry.setAttribute("dropEnds", new THREE.Float32BufferAttribute(dropEnds,2));
+    raingeometry = new THREE.BufferGeometry();
+    raingeometry1 = new THREE.BufferGeometry();
+    raingeometry.setAttribute("position", new THREE.Float32BufferAttribute(raindrops, 3));
+    raingeometry1.setAttribute("position", new THREE.Float32BufferAttribute(raindrops1, 3));    
+
     let rainmaterial = new THREE.LineBasicMaterial({
-        color: 0xFFFFFF,
-        vertexColors: true
+        color: 0xaaaaaa,
+        linewidth: 2,
+        transparent: true
     });
-    let mesh = new THREE.LineSegments(raingeometry, rainmaterial);
-    scene.add(mesh);
+    
+    rain = new THREE.LineSegments(raingeometry, rainmaterial);
+    rain1 = new THREE.LineSegments(raingeometry1, rainmaterial);
+    rain1.position.y = -worldheight;
+    scene.add(rain);
+    scene.add(rain1);
 }
 
 
@@ -263,7 +245,7 @@ function loadCharacter() {
 
             const gltfAnimations = gltf.animations;
             const mixer = new THREE.AnimationMixer(model);
-            console.log(gltfAnimations);
+            //console.log(gltfAnimations);
 
             var animationsMap = new Map();
             gltfAnimations.filter(function (a) {
@@ -326,15 +308,8 @@ function loadWorldDay() {
 
     //plane
 
-    // const cubeRenderTarget = new THREE.WebGLCubeRenderTarget( 128, { generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
-
-    // const cubeCamera = new THREE.CubeCamera( 1, 100000, cubeRenderTarget );
-    // scene.add( cubeCamera );
-
-
-    const gridHelper = new THREE.GridHelper(100, 30, 0xff0000, 0x000000);
-
-
+    const grid = new THREE.GridHelper(20,20);
+    scene.add(grid);
 
     const textureLoader = new THREE.TextureLoader();
     const tilesBaseColor = textureLoader.load("/src/textures/kachel/color.jpg");
@@ -344,7 +319,7 @@ function loadWorldDay() {
     const tilesAmbientOcclusionMap = textureLoader.load("/src/textures/kachel/ao.jpg");
     const tilesMetallic = textureLoader.load("/src/textures/kachel/metal.jpg");
 
-    const floor = new THREE.Mesh(new THREE.PlaneGeometry(20, 20, 512, 512), new THREE.MeshStandardMaterial({
+    const floortile = new THREE.Mesh(new THREE.PlaneGeometry(worldwidth, worldwidth, 512, 512), new THREE.MeshStandardMaterial({
         map: tilesBaseColor,
         normalMap: tilesNormalMap,
         displacementMap: tilesHightMap,
@@ -356,27 +331,25 @@ function loadWorldDay() {
         metalness: 1
     }));
 
-    floor.geometry.attributes.uv2 = floor.geometry.attributes.uv;
-    floor.castShadow = false;
-    floor.receiveShadow = true;
-    floor.rotation.x = -Math.PI / 2;
+    floortile.geometry.attributes.uv2 = floortile.geometry.attributes.uv;
+    floortile.castShadow = false;
+    floortile.receiveShadow = true;
+    floortile.rotation.x = -Math.PI / 2;
 
-
-    scene.add(floor);
+    scene.add(floortile);
 
 
     //LIGHTS
     //flash
-    flash = new THREE.PointLight(0x062d89, 10, 470, 2);
+    flash = new THREE.PointLight(flashlightcolor, flashlightintensity, 470, 2);
     flash.position.set(200, 300, 100);
     scene.add(flash);
 
     //AMBIENT
-
-    //if (debug) {
-        const ambient = new THREE.AmbientLight(0xf2edd5, 1);
-        scene.add(ambient);
-    //}
+    if (debug) {
+    const ambient = new THREE.AmbientLight(0xf2edd5, 1);
+    scene.add(ambient);
+    }
 
     const axesHelper = new THREE.AxesHelper(5);
     //scene.add(axesHelper);
@@ -384,62 +357,20 @@ function loadWorldDay() {
     //HEMISSPHERELIGHT
     const light = new THREE.HemisphereLight(0xbfcad8, 0xbfcad8, 0.1);
 
-    //Light in Front
-
-    // const front = new THREE.PointLight(0xff0000, 10, 4, 10);
-    // front.position.set(0, 1.15, 1.15);
-    //scene.add(front);
-    // const frontlighthelper = new THREE.PointLightHelper(front, 0.1, 0xffffff);
-    // scene.add(frontlighthelper);
-
-
     //moon
-    const moon = new THREE.DirectionalLight(0xbfcad8, 1);
+    const moon = new THREE.DirectionalLight(moonlightcolor, moonlightstrenght);
     moon.position.set(2, 10, 1);
     moon.target.position.set(0, 0, 0);
     moon.castShadow = true;
 
     scene.add(moon.target);
-
-    // //spotlight front
-    // const spotLight = new THREE.SpotLight(0xff6ec7, 1, 25, 0.2, 0, 1);
-    // spotLight.position.set(10, 5, 2);
-
-    // spotLight.castShadow = false;
-    // spotLight.shadow.mapSize.width = 512;
-    // spotLight.shadow.mapSize.height = 512;
-    // spotLight.shadow.camera.near = 0.5;
-    // spotLight.shadow.camera.far = 500;
-    // spotLight.shadow.focus = 1;
-
-
-    // //spotlight back
-    // const spotLight2 = new THREE.SpotLight(0x21f8f6, 1, 25, 0.2, 0, 1);
-    // spotLight2.position.set(-10, 3, -2);
-
-    // spotLight2.castShadow = false;
-    // spotLight2.shadow.mapSize.width = 512;
-    // spotLight2.shadow.mapSize.height = 512;
-    // spotLight2.shadow.camera.near = 0.5;
-    // spotLight2.shadow.camera.far = 500;
-    // spotLight2.shadow.focus = 1;
-
-    //scene.add(pointlightlantern1);
-    // scene.add(pointlightshield1);
     scene.add(moon);
     scene.add(light);
-
 
     //lighthelper
     const sphereSize = 10;
     const hemissphereLightHelper = new THREE.HemisphereLightHelper(light, sphereSize);
-    const helper = new THREE.DirectionalLightHelper(moon, 5)
-    const sphereSizePoint = 0.1;
-    // const pointlightlantern1helper = new THREE.PointLightHelper(pointlightlantern1, sphereSizePoint, 0xffffff);
-    // //scene.add(pointlightlantern1helper);
-    // const pointlightshield1helper = new THREE.PointLightHelper(pointlightshield1, sphereSizePoint, 0xffffff);
-    //scene.add(pointlightshield1helper);
-
+    const helper = new THREE.DirectionalLightHelper(moon, 5);
 
 
     if (debug) {
@@ -473,17 +404,12 @@ function loadWorldDay() {
     composer.addPass(renderScene);
     composer.addPass(bloomPass);
 
-
-
-    //cubeCamera.update(renderer, scene)
-
-
     //fog + background
-    let backColor = 0x000000;
+    
     scene.background = new THREE.Color(backColor);
-    //scene.fog = new THREE.Fog(backColor, 1, 25);
-    // scene.fog = new THREE.FogExp2(0x1c1c2a, 0.002);
-    // renderer.setClearColor(scene.fog.color);
+    if(fog){
+    scene.fog = new THREE.Fog(backColor, 1, 25);
+    }
 
     //orbitcontrols
     orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -505,7 +431,7 @@ function updateProgressBar(progressBar, value) {
     if (value == 100) {
         setTimeout(function () {
             document.querySelector(".loadingBody").classList.remove("active")
-        }, 2000);
+            }, 2000);
     }
     //loadingbody = document.querySelector(".loadingBody")  
 }
@@ -550,13 +476,12 @@ volumeSlider.addEventListener("input", setVol);
 
 function muteAudio() {
     //unmute
-    if (muteButton.classList.contains("mute")){
+    if (muteButton.classList.contains("mute")) {
         muteButton.classList.remove("mute");
         volumeSymbol.classList.remove("fa-volume-xmark");
         volumeSymbol.classList.add("fa-volume-high");
         sound.setVolume(temporarysound);
-        volumeSlider.value = temporarysound*100;
-        console.log("unmuted");
+        volumeSlider.value = temporarysound * 100;
     } else {
         //mute
         temporarysound = volumeSlider.value / 100;
@@ -566,9 +491,8 @@ function muteAudio() {
         sound.setVolume(0);
         volumeSymbol.classList.remove("fa-volume-high");
         volumeSymbol.classList.add("fa-volume-xmark");
-        console.log("muted");
     }
-    
+
 }
 
 function setVol() {
@@ -577,17 +501,17 @@ function setVol() {
         volumeSymbol.classList.remove("fa-volume-high");
         volumeSymbol.classList.add("fa-volume-xmark");
         muteButton.classList.add("mute");
-        console.log("muted");
     } else {
         //unmute
         volumeSymbol.classList.remove("fa-volume-xmark");
         volumeSymbol.classList.add("fa-volume-high");
         muteButton.classList.remove("mute");
-        console.log("unmuted");
     }
     tempsound = volumeSlider.value / 100;
     sound.setVolume(tempsound);
 }
+
+
 
 //Animation
 function animate() {
@@ -611,13 +535,24 @@ function animate() {
         flash.power = 50 + Math.random() * 500;
     }
 
+    //Rain
+    
+   if(raining){
+    rain.position.y -= rainspeed;
+    rain1.position.y -= rainspeed;
+    
+
+    if(rain1.position.y < -worldheight){
+        rain1.position.y = worldheight;
+    }
+    if(rain.position.y < -worldheight){
+        rain.position.y = worldheight;
+    }
+   }
+    
+
     //Animate Spheres
 
-    glowworms.forEach(sphere => {
-        // sphere.position.z += randomIntFromInterval(-0.005, 0.005); 
-        // sphere.position.x += randomIntFromInterval(-0.005, 0.005); 
-        // sphere.position.x += randomIntFromInterval(-0.005, 0.005); 
-    });
 
     //END
 
