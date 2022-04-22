@@ -11,7 +11,7 @@ export class CharacterControls {
 
     //constants 
     fadeDuration = 0.5;
-    runVelocity = 4;
+    runVelocity = 4.7;
     walkVelocity = 1.5;
 
     constructor(model, mixer, animationsMap, orbitControl, camera, currentAction) {
@@ -110,7 +110,7 @@ export class CharacterControls {
         this.camera.position.z += moveZ;
         // update camera target
         this.cameraTarget.x = this.model.position.x;
-        this.cameraTarget.y = this.model.position.y + 1;
+        this.cameraTarget.y = this.model.position.y + 1.7;
         this.cameraTarget.z = this.model.position.z;
         this.orbitControl.target = this.cameraTarget;
     }

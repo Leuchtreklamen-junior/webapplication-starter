@@ -13,25 +13,24 @@ import {
 import {
     ShaderPass
 } from 'https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/postprocessing/ShaderPass.js';
-import { GridHelper } from "three";
 
 let container = document.querySelector(".scene");
 let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash, 
-    sound, tempsound = 0.1,
+    sound, 
     temporarysound, glowworms = [],
     rain, rain1, raindrops, raindrops1, raingeometry, raingeometry1;
-
 
 //CONTROLLS
 
 //world
-let worldwidth = 40,
-worldheight = 10,
+let worldwidth = 50,
+worldheight = 20,
 backColor = 0x060616,
 
 //light
-moonlightstrenght = 0.5, //0.5 - 3
+moonlightstrenght = 2, //0.5 - 3
 moonlightcolor = 0xbfcad8, 
+hemisphereLightstrength = 1.3,
 
 //lightbulbs
 
@@ -44,11 +43,26 @@ flashfrequency = 5,
 
 //rain and fog controlls
 raining = true,
-dropCount = 10000, //200 - 40000
+dropCount = 40000, //200 - 40000
 rainspeed = 0.2, 
 dropsizemin = 0.05, 
 dropsizemax = 0.2,
 fog = true, 
+
+//starting volume sound
+tempsound = 0.1,
+
+//floor 
+floorrepeat = 18,
+displacement = 0,
+
+//camera
+camerafov = 90,
+cameratargetheight = 1.7,
+camerafarlimit = 15,
+cameranearlimit = 1,
+camerafarlimitrender = 200,
+cameranearlimitrender = 0.1,
 
 //debug
 debug = false;
@@ -62,82 +76,10 @@ function init() {
     addRain();
     loadaudio();
     }
-    //loadLightbulbs();
+    loadLightbulbs();
 }
 
-function loadControls() {
-    keysPressed = {};
-    document.addEventListener("keydown", (e) => {
-        switch (e.key.toLocaleLowerCase()) {
-            case "w": //w
-                (keysPressed)[e.key.toLocaleLowerCase()] = true;
-                document.getElementById("W").classList.add("active");
-                break;
-            case "a": //a
-                (keysPressed)[e.key.toLocaleLowerCase()] = true;
-                document.getElementById("A").classList.add("active");
-                break;
-            case "s": //s
-                (keysPressed)[e.key.toLocaleLowerCase()] = true;
-                document.getElementById("S").classList.add("active");
-                break;
-            case "d": //d
-                (keysPressed)[e.key.toLocaleLowerCase()] = true;
-                document.getElementById("D").classList.add("active");
-                break;
-            case " ": // SPACE
-                (keysPressed)[e.key.toLocaleLowerCase()] = true;
-                document.getElementById("space").classList.add("active");
-                break;
-            case "shift": // SHIFT
-                if (characterControls) {
-                    //characterControls.switchRunToggle(); 
-                    (keysPressed)[e.key.toLocaleLowerCase()] = true;
-                    document.getElementById("shift").classList.add("active");
-                }
-                break;
-            default:
-                console.log("irrelevant key");
-                break;
-        }
 
-
-    }, false);
-    document.addEventListener("keyup", (e) => {
-        switch (e.key.toLocaleLowerCase()) {
-            case "w": //w
-                (keysPressed)[e.key.toLocaleLowerCase()] = false;
-                document.getElementById("W").classList.remove("active");
-                break;
-            case "a": //a
-                (keysPressed)[e.key.toLocaleLowerCase()] = false;
-                document.getElementById("A").classList.remove("active");
-                break;
-            case "s": //s
-                (keysPressed)[e.key.toLocaleLowerCase()] = false;
-                document.getElementById("S").classList.remove("active");
-                break;
-            case "d": //d
-                (keysPressed)[e.key.toLocaleLowerCase()] = false;
-                document.getElementById("D").classList.remove("active");
-                break;
-            case " ": // SPACE
-                (keysPressed)[e.key.toLocaleLowerCase()] = false;
-                document.getElementById("space").classList.remove("active");
-                break;
-            case "shift": // SHIFT
-                if (characterControls) {
-                    //characterControls.switchRunToggle();   
-                    (keysPressed)[e.key.toLocaleLowerCase()] = false;
-                    document.getElementById("shift").classList.remove("active");
-                }
-                break;
-            default:
-                console.log("irrelevant key");
-                break;
-        }
-    }, false);
-};
 
 function loadLightbulbs() {
     const color1 = new THREE.Color("#FF00FF");
@@ -293,10 +235,10 @@ function loadWorldDay() {
     clock = new THREE.Clock();
 
     //create camera
-    const fov = 50;
+    const fov = camerafov;
     const aspect = container.clientWidth / container.clientHeight;
-    const nearlimit = 0.1;
-    const farlimit = 1000;
+    const nearlimit = cameranearlimitrender;
+    const farlimit = camerafarlimitrender;
 
     camera = new THREE.PerspectiveCamera(fov, aspect, nearlimit, farlimit);
 
@@ -308,35 +250,70 @@ function loadWorldDay() {
 
     //plane
 
-    const grid = new THREE.GridHelper(20,20);
-    scene.add(grid);
-
     const textureLoader = new THREE.TextureLoader();
-    const tilesBaseColor = textureLoader.load("/src/textures/kachel/color.jpg");
-    const tilesNormalMap = textureLoader.load("/src/textures/kachel/normal.jpg");
-    const tilesHightMap = textureLoader.load("/src/textures/kachel/displace.jpg");
-    const tilesRoughnessMap = textureLoader.load("/src/textures/kachel/rough.jpg");
-    const tilesAmbientOcclusionMap = textureLoader.load("/src/textures/kachel/ao.jpg");
-    const tilesMetallic = textureLoader.load("/src/textures/kachel/metal.jpg");
+    const tilesBaseColor = textureLoader.load("/src/textures/kachel/color.jpg", function ( tilesBaseColor ) {
+        tilesBaseColor.wrapS = tilesBaseColor.wrapT = THREE.RepeatWrapping;
+        tilesBaseColor.offset.set( 0, 0 );
+        tilesBaseColor.repeat.set( floorrepeat, floorrepeat );
+    }) ;
+    const tilesNormalMap = textureLoader.load("/src/textures/kachel/normal.jpg", function ( tilesNormalMap ) {
+        tilesNormalMap.wrapS = tilesNormalMap.wrapT = THREE.RepeatWrapping;
+        tilesNormalMap.offset.set( 0, 0 );
+        tilesNormalMap.repeat.set( floorrepeat, floorrepeat );
+    });
+    const tilesHightMap = textureLoader.load("/src/textures/kachel/displace.jpg", function ( tilesHightMap ) {
+        tilesHightMap.wrapS = tilesHightMap.wrapT = THREE.RepeatWrapping;
+        tilesHightMap.offset.set( 0, 0 );
+        tilesHightMap.repeat.set( floorrepeat, floorrepeat );
+    });
+    const tilesRoughnessMap = textureLoader.load("/src/textures/kachel/rough.jpg", function ( tilesRoughnessMap ) {
+        tilesRoughnessMap.wrapS = tilesRoughnessMap.wrapT = THREE.RepeatWrapping;
+        tilesRoughnessMap.offset.set( 0, 0 );
+        tilesRoughnessMap.repeat.set( floorrepeat, floorrepeat );
+    });
+    const tilesAmbientOcclusionMap = textureLoader.load("/src/textures/kachel/ao.jpg", function ( tilesAmbientOcclusionMap ) {
+        tilesAmbientOcclusionMap.wrapS = tilesAmbientOcclusionMap.wrapT = THREE.RepeatWrapping;
+        tilesAmbientOcclusionMap.offset.set( 0, 0 );
+        tilesAmbientOcclusionMap.repeat.set( floorrepeat, floorrepeat );
+    });
+    const tilesMetallic = textureLoader.load("/src/textures/kachel/metal.jpg", function ( tilesMetallic ) {
+        tilesMetallic.wrapS = tilesMetallic.wrapT = THREE.RepeatWrapping;
+        tilesMetallic.offset.set( 0, 0 );
+        tilesMetallic.repeat.set( floorrepeat, floorrepeat );
+    });
 
-    const floortile = new THREE.Mesh(new THREE.PlaneGeometry(worldwidth, worldwidth, 512, 512), new THREE.MeshStandardMaterial({
+
+    let texture = new THREE.MeshStandardMaterial({
         map: tilesBaseColor,
         normalMap: tilesNormalMap,
         displacementMap: tilesHightMap,
-        displacementScale: 0.05,
+        displacementScale: displacement,
         roughnessMap: tilesRoughnessMap,
         roughness: 1,
         aoMap: tilesAmbientOcclusionMap,
         metalnessMap: tilesMetallic,
         metalness: 1
-    }));
+    });
+
+
+   
+
+    let geometry = new THREE.PlaneGeometry(worldwidth, worldwidth, 512, 512);
+
+    const floortile = new THREE.Mesh(geometry,texture);
+
+
 
     floortile.geometry.attributes.uv2 = floortile.geometry.attributes.uv;
     floortile.castShadow = false;
     floortile.receiveShadow = true;
     floortile.rotation.x = -Math.PI / 2;
 
+    console.log(floortile);
     scene.add(floortile);
+
+    
+
 
 
     //LIGHTS
@@ -355,7 +332,7 @@ function loadWorldDay() {
     //scene.add(axesHelper);
 
     //HEMISSPHERELIGHT
-    const light = new THREE.HemisphereLight(0xbfcad8, 0xbfcad8, 0.1);
+    const light = new THREE.HemisphereLight(moonlightcolor, moonlightcolor, hemisphereLightstrength);
 
     //moon
     const moon = new THREE.DirectionalLight(moonlightcolor, moonlightstrenght);
@@ -376,7 +353,6 @@ function loadWorldDay() {
     if (debug) {
         scene.add(hemissphereLightHelper);
         scene.add(helper);
-        scene.add(gridHelper);
     }
 
     //renderer
@@ -414,10 +390,10 @@ function loadWorldDay() {
     //orbitcontrols
     orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
     orbitControls.enableDamping = true;
-    orbitControls.minDistance = 2;
-    orbitControls.maxDistance = 100;
+    orbitControls.minDistance = cameranearlimit;
+    orbitControls.maxDistance = camerafarlimit;
     orbitControls.enablePan = false;
-    orbitControls.target.set(0, 1.3, 0);
+    orbitControls.target.set(0, cameratargetheight, 0);
     orbitControls.maxPolarAngle = Math.PI / 2 + 0.1;
 
 }
@@ -513,6 +489,7 @@ function setVol() {
 
 
 
+
 //Animation
 function animate() {
     requestAnimationFrame(animate);
@@ -576,6 +553,78 @@ function onWindowResize() {
 }
 
 window.addEventListener("resize", onWindowResize);
+
+function loadControls() {
+    keysPressed = {};
+    document.addEventListener("keydown", (e) => {
+        switch (e.key.toLocaleLowerCase()) {
+            case "w": //w
+                (keysPressed)[e.key.toLocaleLowerCase()] = true;
+                document.getElementById("W").classList.add("active");
+                break;
+            case "a": //a
+                (keysPressed)[e.key.toLocaleLowerCase()] = true;
+                document.getElementById("A").classList.add("active");
+                break;
+            case "s": //s
+                (keysPressed)[e.key.toLocaleLowerCase()] = true;
+                document.getElementById("S").classList.add("active");
+                break;
+            case "d": //d
+                (keysPressed)[e.key.toLocaleLowerCase()] = true;
+                document.getElementById("D").classList.add("active");
+                break;
+            case " ": // SPACE
+                (keysPressed)[e.key.toLocaleLowerCase()] = true;
+                document.getElementById("space").classList.add("active");
+                break;
+            case "shift": // SHIFT
+                if (characterControls) {
+                    //characterControls.switchRunToggle(); 
+                    (keysPressed)[e.key.toLocaleLowerCase()] = true;
+                    document.getElementById("shift").classList.add("active");
+                }
+                break;
+            default:
+                console.log("irrelevant key");
+                break;
+        }
+    }, false);
+    document.addEventListener("keyup", (e) => {
+        switch (e.key.toLocaleLowerCase()) {
+            case "w": //w
+                (keysPressed)[e.key.toLocaleLowerCase()] = false;
+                document.getElementById("W").classList.remove("active");
+                break;
+            case "a": //a
+                (keysPressed)[e.key.toLocaleLowerCase()] = false;
+                document.getElementById("A").classList.remove("active");
+                break;
+            case "s": //s
+                (keysPressed)[e.key.toLocaleLowerCase()] = false;
+                document.getElementById("S").classList.remove("active");
+                break;
+            case "d": //d
+                (keysPressed)[e.key.toLocaleLowerCase()] = false;
+                document.getElementById("D").classList.remove("active");
+                break;
+            case " ": // SPACE
+                (keysPressed)[e.key.toLocaleLowerCase()] = false;
+                document.getElementById("space").classList.remove("active");
+                break;
+            case "shift": // SHIFT
+                if (characterControls) {
+                    //characterControls.switchRunToggle();   
+                    (keysPressed)[e.key.toLocaleLowerCase()] = false;
+                    document.getElementById("shift").classList.remove("active");
+                }
+                break;
+            default:
+                console.log("irrelevant key");
+                break;
+        }
+    }, false);
+};
 
 init();
 animate();
