@@ -18,19 +18,19 @@ let container = document.querySelector(".scene");
 let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash, 
     sound, 
     temporarysound, glowworms = [],
-    rain, rain1, raindrops, raindrops1, raingeometry, raingeometry1;
+    rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1;
 
 //CONTROLLS
 
 //world
-let worldwidth = 50,
+let worldwidth = 100,
 worldheight = 20,
 backColor = 0x060616,
 
 //light
-moonlightstrenght = 2, //0.5 - 3
+moonlightstrenght = 1, //0.5 - 3
 moonlightcolor = 0xbfcad8, 
-hemisphereLightstrength = 1.3,
+hemisphereLightstrength = 1,
 
 //lightbulbs
 
@@ -39,7 +39,6 @@ numberlightbulbs = 100,
 //flash
 flashlightcolor = 0x062d89,
 flashlightintensity = 2000, //5-2000
-flashfrequency = 5,
 
 //rain and fog controlls
 raining = true,
@@ -53,19 +52,22 @@ fog = true,
 tempsound = 0.1,
 
 //floor 
-floorrepeat = 18,
-displacement = 0,
+floorrepeat = 10,
+displacement = 0.15,
+texturequality = 2000,
+floormetalness = 0,
+floorroughness = 5,
 
 //camera
 camerafov = 90,
 cameratargetheight = 1.7,
-camerafarlimit = 15,
+camerafarlimit = 25,
 cameranearlimit = 1,
 camerafarlimitrender = 200,
 cameranearlimitrender = 0.1,
 
 //debug
-debug = false;
+debug = true;
 
 function init() {
     loadWorldDay();
@@ -76,7 +78,7 @@ function init() {
     addRain();
     loadaudio();
     }
-    loadLightbulbs();
+    //loadLightbulbs();
 }
 
 
@@ -132,8 +134,8 @@ function loadObjects() {
 }
 
 function addRain() {
-    raindrops = [];
-    raindrops1 = [];
+    raindropsunder = [];
+    raindropsupper = [];
     for (let i = 0; i < dropCount; i++) {
         let drop = new THREE.Vector3(
         THREE.MathUtils.randFloatSpread(worldwidth), //Breite
@@ -141,19 +143,19 @@ function addRain() {
         THREE.MathUtils.randFloatSpread(worldwidth) //Länge
         );
         let dropsize = THREE.MathUtils.randFloat(dropsizemin,dropsizemax);
-        raindrops.push(
+        raindropsunder.push(
             drop.x, drop.y, drop.z,
             drop.x, drop.y - dropsize, drop.z
         );
-        raindrops1.push(
+        raindropsupper.push(
             drop.x, drop.y, drop.z,
             drop.x, drop.y - dropsize, drop.z
         );
     }
     raingeometry = new THREE.BufferGeometry();
     raingeometry1 = new THREE.BufferGeometry();
-    raingeometry.setAttribute("position", new THREE.Float32BufferAttribute(raindrops, 3));
-    raingeometry1.setAttribute("position", new THREE.Float32BufferAttribute(raindrops1, 3));    
+    raingeometry.setAttribute("position", new THREE.Float32BufferAttribute(raindropsunder, 3));
+    raingeometry1.setAttribute("position", new THREE.Float32BufferAttribute(raindropsupper, 3));    
 
     let rainmaterial = new THREE.LineBasicMaterial({
         color: 0xaaaaaa,
@@ -180,7 +182,7 @@ function loadCharacter() {
                 }
             });
             const model = gltf.scene;
-            model.position.set(0, 0, 0);
+            model.position.set(0, displacement, 0);
 
 
             scene.add(model);
@@ -251,32 +253,32 @@ function loadWorldDay() {
     //plane
 
     const textureLoader = new THREE.TextureLoader();
-    const tilesBaseColor = textureLoader.load("/src/textures/kachel/color.jpg", function ( tilesBaseColor ) {
+    const tilesBaseColor = textureLoader.load("/src/textures/asphalt2/color.jpg", function ( tilesBaseColor ) {
         tilesBaseColor.wrapS = tilesBaseColor.wrapT = THREE.RepeatWrapping;
-        tilesBaseColor.offset.set( 0, 0 );
+        tilesBaseColor.offset.set(0,0);
         tilesBaseColor.repeat.set( floorrepeat, floorrepeat );
     }) ;
-    const tilesNormalMap = textureLoader.load("/src/textures/kachel/normal.jpg", function ( tilesNormalMap ) {
+    const tilesNormalMap = textureLoader.load("/src/textures/asphalt2/normal.jpg", function ( tilesNormalMap ) {
         tilesNormalMap.wrapS = tilesNormalMap.wrapT = THREE.RepeatWrapping;
         tilesNormalMap.offset.set( 0, 0 );
         tilesNormalMap.repeat.set( floorrepeat, floorrepeat );
     });
-    const tilesHightMap = textureLoader.load("/src/textures/kachel/displace.jpg", function ( tilesHightMap ) {
+    const tilesHightMap = textureLoader.load("/src/textures/asphalt2/displace.jpg", function ( tilesHightMap ) {
         tilesHightMap.wrapS = tilesHightMap.wrapT = THREE.RepeatWrapping;
         tilesHightMap.offset.set( 0, 0 );
         tilesHightMap.repeat.set( floorrepeat, floorrepeat );
     });
-    const tilesRoughnessMap = textureLoader.load("/src/textures/kachel/rough.jpg", function ( tilesRoughnessMap ) {
+    const tilesRoughnessMap = textureLoader.load("/src/textures/asphalt2/rough.jpg", function ( tilesRoughnessMap ) {
         tilesRoughnessMap.wrapS = tilesRoughnessMap.wrapT = THREE.RepeatWrapping;
         tilesRoughnessMap.offset.set( 0, 0 );
         tilesRoughnessMap.repeat.set( floorrepeat, floorrepeat );
     });
-    const tilesAmbientOcclusionMap = textureLoader.load("/src/textures/kachel/ao.jpg", function ( tilesAmbientOcclusionMap ) {
+    const tilesAmbientOcclusionMap = textureLoader.load("/src/textures/asphalt2/ao.jpg", function ( tilesAmbientOcclusionMap ) {
         tilesAmbientOcclusionMap.wrapS = tilesAmbientOcclusionMap.wrapT = THREE.RepeatWrapping;
         tilesAmbientOcclusionMap.offset.set( 0, 0 );
         tilesAmbientOcclusionMap.repeat.set( floorrepeat, floorrepeat );
     });
-    const tilesMetallic = textureLoader.load("/src/textures/kachel/metal.jpg", function ( tilesMetallic ) {
+    const tilesMetallic = textureLoader.load("/src/textures/asphalt2/metal.jpg", function ( tilesMetallic ) {
         tilesMetallic.wrapS = tilesMetallic.wrapT = THREE.RepeatWrapping;
         tilesMetallic.offset.set( 0, 0 );
         tilesMetallic.repeat.set( floorrepeat, floorrepeat );
@@ -289,16 +291,16 @@ function loadWorldDay() {
         displacementMap: tilesHightMap,
         displacementScale: displacement,
         roughnessMap: tilesRoughnessMap,
-        roughness: 1,
+        roughness: floorroughness,
         aoMap: tilesAmbientOcclusionMap,
         metalnessMap: tilesMetallic,
-        metalness: 1
+        metalness: floormetalness
     });
 
 
    
 
-    let geometry = new THREE.PlaneGeometry(worldwidth, worldwidth, 512, 512);
+    let geometry = new THREE.PlaneGeometry(worldwidth, worldwidth, texturequality, texturequality);
 
     const floortile = new THREE.Mesh(geometry,texture);
 
