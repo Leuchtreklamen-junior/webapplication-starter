@@ -120,7 +120,7 @@ function loadLightbulbs() {
 
 function loadObjects() {
     let loader = new THREE.GLTFLoader(loadingManager);
-    loader.load("/src/3D/lantern.glb", function (gltf) {
+    loader.load("../src/3D/lantern.glb", function (gltf) {
         const streetlight = gltf.scene;
         streetlight.position.set(-4, -1, 0);
         streetlight.traverse(function (node) {
@@ -175,7 +175,7 @@ function loadCharacter() {
 
     //load Model 
     let loader = new THREE.GLTFLoader(loadingManager);
-    loader.load("/src/3D/anton.glb", function (gltf) {
+    loader.load("./src/3D/anton.glb", function (gltf) {
             gltf.scene.traverse(function (node) {
                 if (node.isMesh) {
                     node.castShadow = true;
@@ -253,32 +253,32 @@ function loadWorldDay() {
     //plane
 
     const textureLoader = new THREE.TextureLoader();
-    const tilesBaseColor = textureLoader.load("/src/textures/asphalt2/color.jpg", function ( tilesBaseColor ) {
+    const tilesBaseColor = textureLoader.load("./src/textures/asphalt2/color.jpg", function ( tilesBaseColor ) {
         tilesBaseColor.wrapS = tilesBaseColor.wrapT = THREE.RepeatWrapping;
         tilesBaseColor.offset.set(0,0);
         tilesBaseColor.repeat.set( floorrepeat, floorrepeat );
     }) ;
-    const tilesNormalMap = textureLoader.load("/src/textures/asphalt2/normal.jpg", function ( tilesNormalMap ) {
+    const tilesNormalMap = textureLoader.load("./src/textures/asphalt2/normal.jpg", function ( tilesNormalMap ) {
         tilesNormalMap.wrapS = tilesNormalMap.wrapT = THREE.RepeatWrapping;
         tilesNormalMap.offset.set( 0, 0 );
         tilesNormalMap.repeat.set( floorrepeat, floorrepeat );
     });
-    const tilesHightMap = textureLoader.load("/src/textures/asphalt2/displace.jpg", function ( tilesHightMap ) {
+    const tilesHightMap = textureLoader.load("./src/textures/asphalt2/displace.jpg", function ( tilesHightMap ) {
         tilesHightMap.wrapS = tilesHightMap.wrapT = THREE.RepeatWrapping;
         tilesHightMap.offset.set( 0, 0 );
         tilesHightMap.repeat.set( floorrepeat, floorrepeat );
     });
-    const tilesRoughnessMap = textureLoader.load("/src/textures/asphalt2/rough.jpg", function ( tilesRoughnessMap ) {
+    const tilesRoughnessMap = textureLoader.load("./src/textures/asphalt2/rough.jpg", function ( tilesRoughnessMap ) {
         tilesRoughnessMap.wrapS = tilesRoughnessMap.wrapT = THREE.RepeatWrapping;
         tilesRoughnessMap.offset.set( 0, 0 );
         tilesRoughnessMap.repeat.set( floorrepeat, floorrepeat );
     });
-    const tilesAmbientOcclusionMap = textureLoader.load("/src/textures/asphalt2/ao.jpg", function ( tilesAmbientOcclusionMap ) {
+    const tilesAmbientOcclusionMap = textureLoader.load("./src/textures/asphalt2/ao.jpg", function ( tilesAmbientOcclusionMap ) {
         tilesAmbientOcclusionMap.wrapS = tilesAmbientOcclusionMap.wrapT = THREE.RepeatWrapping;
         tilesAmbientOcclusionMap.offset.set( 0, 0 );
         tilesAmbientOcclusionMap.repeat.set( floorrepeat, floorrepeat );
     });
-    const tilesMetallic = textureLoader.load("/src/textures/asphalt2/metal.jpg", function ( tilesMetallic ) {
+    const tilesMetallic = textureLoader.load("./src/textures/asphalt2/metal.jpg", function ( tilesMetallic ) {
         tilesMetallic.wrapS = tilesMetallic.wrapT = THREE.RepeatWrapping;
         tilesMetallic.offset.set( 0, 0 );
         tilesMetallic.repeat.set( floorrepeat, floorrepeat );
@@ -425,7 +425,7 @@ function loadaudio() {
 
     // load a sound and set it as the Audio object's buffer
     const audioLoader = new THREE.AudioLoader();
-    audioLoader.load('/src/audio/rain.wav', function (buffer) {
+    audioLoader.load('./src/audio/rain.wav', function (buffer) {
         sound.setBuffer(buffer);
         sound.setLoop(true);
         sound.setVolume(tempsound);
@@ -433,7 +433,7 @@ function loadaudio() {
         sound.play();
     });
 
-    audioLoader.load('/src/audio/thunder1.wav', function (buffer) {
+    audioLoader.load('./src/audio/thunder1.wav', function (buffer) {
         sound.setBuffer(buffer);
         sound.setLoop(true);
         sound.setVolume(tempsound);
