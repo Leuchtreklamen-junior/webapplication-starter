@@ -15,8 +15,14 @@ import {
 } from 'https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/postprocessing/ShaderPass.js';
 
 let container = document.querySelector(".scene");
-let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash, sound, tempsound = 0.1, temporarysound, glowworms = [];
+let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash, sound, tempsound = 0.1,
+    temporarysound, glowworms = [], plane, mouseMesh, light, ambientLight, mouseLight;
 let debug = false;
+// Custom global variables
+var mouse = {
+    x: 0,
+    y: 0
+};
 const ENTIRE_SCENE = 0,
     BLOOM_SCENE = 1;
 const bloomLayer = new THREE.Layers();
@@ -46,7 +52,7 @@ function init() {
     loadCharacter();
     //loadObjects();
     addRain();
-    loadaudio();
+    //loadaudio();
     loadLightbulbs();
 }
 
@@ -186,8 +192,40 @@ function loadLightbulbs() {
     // });
 
 
+    //mouselight
+
+// mouseLights
+
+	// Point light
+	mouseLight = new THREE.PointLight(0xAAAAAA, 10);
+    const mouselighthelper = new THREE.PointLightHelper(mouseLight, 0.1, 0xffffff);
+	//mouseLight.position.set(0, 0, 0);
+	mouseLight.castShadow = true;
+	mouseLight.shadow.bias = 0.0001;
+	mouseLight.mapSizeWidth = 2048; // Shadow Quality
+	mouseLight.mapSizeHeight = 2048; // Shadow Quality
+	scene.add(mouseLight);
+    scene.add(mouselighthelper);
+    //camera.add(mouseLight);
+
+	// Listeners
+	//document.addEventListener('mousemove', onMouseMove, false);
 }
 
+// On mouse move
+function onMouseMove(event) {
+	event.preventDefault();
+	mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+	mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+	let vector = new THREE.Vector3(mouse.x, mouse.y, 0.1);
+	vector.unproject(camera);
+	let dir = vector.sub(camera.position).normalize();
+	let distance = -camera.position.z / dir.z;
+    console.log(camera.position.z);
+	let pos = camera.position.clone().add(dir.multiplyScalar(distance));
+	mouseLight.position.copy(pos);
+};
 
 function loadObjects() {
     let loader = new THREE.GLTFLoader(loadingManager);
@@ -229,12 +267,12 @@ function addRain() {
         let dropsize = THREE.MathUtils.randFloat(0.25, 0.5);
         vertices.push(
             x, y, z,
-            x, y-dropsize, z
+            x, y - dropsize, z
         );
-        dropEnds.push(0, dropsize, 1 ,dropsize);
+        dropEnds.push(0, dropsize, 1, dropsize);
     }
     let raingeometry = new THREE.BufferGeometry();
-    raingeometry.setAttribute("position", new THREE.Float32BufferAttribute(vertices,3));
+    raingeometry.setAttribute("position", new THREE.Float32BufferAttribute(vertices, 3));
     //raingeometry.setAttribute("dropEnds", new THREE.Float32BufferAttribute(dropEnds,2));
     let rainmaterial = new THREE.LineBasicMaterial({
         color: 0xFFFFFF,
@@ -271,7 +309,7 @@ function loadCharacter() {
             }).forEach(function (a) {
                 animationsMap.set(a.name, mixer.clipAction(a));
             });
-            characterControls = new CharacterControls(model, mixer, animationsMap, orbitControls, camera, "lookaround", glowworms);
+            characterControls = new CharacterControls(model, mixer, animationsMap, orbitControls, camera, "lookaround", mouseLight);
             if (debug) {
                 const skeletonhelper = new THREE.SkeletonHelper(model);
                 scene.add(skeletonhelper);
@@ -324,17 +362,13 @@ function loadWorldDay() {
 
     camera.position.set(0, 0, 3);
 
+    
     //plane
-
     // const cubeRenderTarget = new THREE.WebGLCubeRenderTarget( 128, { generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
-
     // const cubeCamera = new THREE.CubeCamera( 1, 100000, cubeRenderTarget );
     // scene.add( cubeCamera );
 
-
     const gridHelper = new THREE.GridHelper(100, 30, 0xff0000, 0x000000);
-
-
 
     const textureLoader = new THREE.TextureLoader();
     const tilesBaseColor = textureLoader.load("/src/textures/kachel/color.jpg");
@@ -366,6 +400,7 @@ function loadWorldDay() {
 
 
     //LIGHTS
+    
     //flash
     flash = new THREE.PointLight(0x062d89, 10, 470, 2);
     flash.position.set(200, 300, 100);
@@ -374,8 +409,8 @@ function loadWorldDay() {
     //AMBIENT
 
     //if (debug) {
-        const ambient = new THREE.AmbientLight(0xf2edd5, 1);
-        scene.add(ambient);
+    const ambient = new THREE.AmbientLight(0xf2edd5, 1);
+    scene.add(ambient);
     //}
 
     const axesHelper = new THREE.AxesHelper(5);
@@ -493,6 +528,8 @@ function loadWorldDay() {
     orbitControls.enablePan = false;
     orbitControls.target.set(0, 1.3, 0);
     orbitControls.maxPolarAngle = Math.PI / 2 + 0.1;
+    //mouseLight.position.y += camera.position.y;
+    //mouseLight.position.z += camera.position.z;
 
 }
 
@@ -550,12 +587,12 @@ volumeSlider.addEventListener("input", setVol);
 
 function muteAudio() {
     //unmute
-    if (muteButton.classList.contains("mute")){
+    if (muteButton.classList.contains("mute")) {
         muteButton.classList.remove("mute");
         volumeSymbol.classList.remove("fa-volume-xmark");
         volumeSymbol.classList.add("fa-volume-high");
         sound.setVolume(temporarysound);
-        volumeSlider.value = temporarysound*100;
+        volumeSlider.value = temporarysound * 100;
         console.log("unmuted");
     } else {
         //mute
@@ -568,7 +605,7 @@ function muteAudio() {
         volumeSymbol.classList.add("fa-volume-xmark");
         console.log("muted");
     }
-    
+
 }
 
 function setVol() {
@@ -588,6 +625,7 @@ function setVol() {
     tempsound = volumeSlider.value / 100;
     sound.setVolume(tempsound);
 }
+
 
 //Animation
 function animate() {
@@ -644,3 +682,4 @@ window.addEventListener("resize", onWindowResize);
 
 init();
 animate();
+//orbitControls.addEventListener( 'change', console.log("frei") );
