@@ -10,13 +10,10 @@ import {
 import {
     UnrealBloomPass
 } from 'https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/postprocessing/UnrealBloomPass.js';
-import {
-    ShaderPass
-} from 'https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/postprocessing/ShaderPass.js';
 
 let container = document.querySelector(".scene");
-let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash, 
-    sound, 
+let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash,
+    sound,
     temporarysound, glowworms = [],
     rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1;
 
@@ -24,113 +21,170 @@ let camera, renderer, composer, scene, clock, orbitControls, characterControls, 
 
 //world
 let worldwidth = 100,
-worldheight = 20,
-backColor = 0x060616,
+    worldheight = 20,
+    backColor = 0x060616,
 
-//light
-moonlightstrenght = 1, //0.5 - 3
-moonlightcolor = 0xbfcad8, 
-hemisphereLightstrength = 1,
+    //light
+    moonlightstrenght = 1, //0.5 - 3
+    moonlightcolor = 0xbfcad8,
+    hemisphereLightstrength = 0.2,
 
-//lightbulbs
+    //lightbulbs
 
-numberlightbulbs = 100,
+    numberlightbulbs = 100,
 
-//flash
-flashlightcolor = 0x062d89,
-flashlightintensity = 2000, //5-2000
+    //flash
+    flashlightcolor = 0x062d89,
+    flashlightintensity = 2000, //5-2000
 
-//rain and fog controlls
-raining = true,
-dropCount = 40000, //200 - 40000
-rainspeed = 0.2, 
-dropsizemin = 0.05, 
-dropsizemax = 0.2,
-fog = true, 
+    //rain and fog controlls
+    raining = true,
+    dropCount = 40000, //200 - 40000
+    rainspeed = 0.2,
+    dropsizemin = 0.05,
+    dropsizemax = 0.2,
+    fog = true,
 
-//starting volume sound
-tempsound = 0.1,
+    //starting volume sound
+    tempsound = 0.1,
 
-//floor 
-floorrepeat = 10,
-displacement = 0.15,
-texturequality = 2000,
-floormetalness = 0,
-floorroughness = 5,
+    //floor 
+    floorrepeat = 10,
+    displacement = 0.15,
+    displacestation = 1.1,
+    texturequality = 2000,
+    floormetalness = 0,
+    floorroughness = 5,
 
-//camera
-camerafov = 90,
-cameratargetheight = 1.7,
-camerafarlimit = 25,
-cameranearlimit = 1,
-camerafarlimitrender = 200,
-cameranearlimitrender = 0.1,
+    //camera
+    camerafov = 90,
+    cameratargetheight = 1.7,
+    camerafarlimit = 25,
+    cameranearlimit = 1,
+    camerafarlimitrender = 200,
+    cameranearlimitrender = 0.1,
 
-//debug
-debug = true;
+    //debug
+    debug = false;
 
 function init() {
     loadWorldDay();
     loadControls();
     loadCharacter();
-    //loadObjects();
-    if(raining){
-    addRain();
-    loadaudio();
+    loadObjects();
+    if (raining) {
+        addRain();
+        loadaudio();
     }
-    //loadLightbulbs();
+   
 }
 
+// function loadLightbulbs() {
+//     const color1 = new THREE.Color("#FF00FF");
+//     const color2 = new THREE.Color("#00FFFF");
+//     const geo = new THREE.IcosahedronGeometry(0.1, 5);
 
 
-function loadLightbulbs() {
-    const color1 = new THREE.Color("#FF00FF");
-    const color2 = new THREE.Color("#00FFFF");
-    const geo = new THREE.IcosahedronGeometry(0.1, 5);
+//     for (let i = 0; i < numberlightbulbs; i++) {
+//         const sphere = new THREE.PointLight(color1, 4, 3, 2);
+//         sphere.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+//             color: color1
+//         })));
+//         //let angle = Math.random() * Math.PI * 2;
+//         sphere.position.y = Math.random() * 1 + 1; //Range + höhe
+//         sphere.position.z = Math.random() * worldwidth - worldwidth / 2; //Range + nach vorne
+//         sphere.position.x = Math.random() * worldwidth - worldwidth / 2; //range + Zur Seite
+//         glowworms.push(sphere);
+//     }
 
+//     for (let i = 0; i < 20; i++) {
+//         const sphere = new THREE.PointLight(color2, 4, 3, 2);
+//         sphere.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+//             color: color2
+//         })));
+//         //let angle = Math.random() * Math.PI * 2;
+//         sphere.position.y = Math.random() * 1 + 1; //Range + höhe
+//         sphere.position.z = Math.random() * worldwidth - worldwidth / 2; //Range + nach vorne
+//         sphere.position.x = Math.random() * worldwidth - worldwidth / 2; //range + Zur Seite
+//         glowworms.push(sphere);
+//     }
 
-    for (let i = 0; i < numberlightbulbs; i++) {
-        const sphere = new THREE.PointLight(color1, 4, 3, 2);
-        sphere.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
-            color: color1
-        })));
-        //let angle = Math.random() * Math.PI * 2;
-        sphere.position.y = Math.random() * 1 + 1; //Range + höhe
-        sphere.position.z = Math.random() * worldwidth - worldwidth/2; //Range + nach vorne
-        sphere.position.x = Math.random() * worldwidth - worldwidth/2; //range + Zur Seite
-        glowworms.push(sphere);
-    }
+//     glowworms.forEach(sphere => scene.add(sphere));
 
-    for (let i = 0; i < 20; i++) {
-        const sphere = new THREE.PointLight(color2, 4, 3, 2);
-        sphere.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
-            color: color2
-        })));
-        //let angle = Math.random() * Math.PI * 2;
-        sphere.position.y = Math.random() * 1 + 1; //Range + höhe
-        sphere.position.z = Math.random() * worldwidth - worldwidth/2; //Range + nach vorne
-        sphere.position.x = Math.random() * worldwidth - worldwidth/2; //range + Zur Seite
-        glowworms.push(sphere);
-    }
-
-    glowworms.forEach(sphere => scene.add(sphere));
-
-}
+// }
 
 
 function loadObjects() {
     let loader = new THREE.GLTFLoader(loadingManager);
-    loader.load("../src/3D/lantern.glb", function (gltf) {
-        const streetlight = gltf.scene;
-        streetlight.position.set(-4, -1, 0);
-        streetlight.traverse(function (node) {
+    loader.load("../src/3D/train.glb", function (gltf) {
+        let wagon = gltf.scene;
+        let wagon1 = wagon.clone();
+        let wagon2 = wagon.clone();
+        wagon.traverse(function (node) {
             if (node.isMesh) {
                 node.castShadow = true;
             }
         });
-        streetlight.rotateY(Math.PI / 4);
-        scene.add(streetlight);
+        wagon1.traverse(function (node) {
+            if (node.isMesh) {
+                node.castShadow = true;
+            }
+        });
+        wagon2.traverse(function (node) {
+            if (node.isMesh) {
+                node.castShadow = true;
+            }
+        });
+        wagon.position.set(5, displacement, 5);
+        wagon1.position.set(5, displacement, 20.9);
+        wagon2.position.set(5, displacement, 36.8);
+
+        //const texture = new THREE.TextureLoader().load( '../src/3D/textures/Emission.jpg' );
+        console.log(wagon.animations);
+        //const material = new THREE.MeshBasicMaterial( { emissive: texture } );
+
+        scene.add(wagon);
+        scene.add(wagon1);
+        scene.add(wagon2);
     });
+
+    loader.load("../src/3D/trainstation.glb", function (gltf) {
+        let station = gltf.scene;
+        let station2 = station.clone();
+        let station3 = station.clone();
+        console.log(station);
+        station.position.set(-3, displacement, 5);
+        station2.position.set(-3, displacement, 22.71);
+        station3.position.set(-3, displacement, 40.2);
+
+
+
+        scene.add(station);
+        scene.add(station2);
+        scene.add(station3);
+    });
+
+    //metrolights
+    const width = 2.0;
+    const height = 45;
+
+    let metrolight = new THREE.RectAreaLight(0xff00ff, 3, width, height);
+    metrolight.position.set(5, 3.5, 20);
+    metrolight.lookAt(5, 0, 20);
+    scene.add(metrolight);
+
+    //Trainstationlight
+
+    const trainlightwidth = 10;
+    const trainlightheight = 45;
+
+    let stationlight = new THREE.RectAreaLight(0x99ffff, 5, width, height);
+    stationlight.position.set(-3, 5, 20);
+    stationlight.lookAt(-3, 0, 20);
+
+    
+    scene.add(stationlight);
+    
 }
 
 function addRain() {
@@ -138,11 +192,11 @@ function addRain() {
     raindropsupper = [];
     for (let i = 0; i < dropCount; i++) {
         let drop = new THREE.Vector3(
-        THREE.MathUtils.randFloatSpread(worldwidth), //Breite
-        THREE.MathUtils.randFloat(-1, worldheight), //Höhe
-        THREE.MathUtils.randFloatSpread(worldwidth) //Länge
+            THREE.MathUtils.randFloatSpread(worldwidth), //Breite
+            THREE.MathUtils.randFloat(-1, worldheight), //Höhe
+            THREE.MathUtils.randFloatSpread(worldwidth) //Länge
         );
-        let dropsize = THREE.MathUtils.randFloat(dropsizemin,dropsizemax);
+        let dropsize = THREE.MathUtils.randFloat(dropsizemin, dropsizemax);
         raindropsunder.push(
             drop.x, drop.y, drop.z,
             drop.x, drop.y - dropsize, drop.z
@@ -155,14 +209,14 @@ function addRain() {
     raingeometry = new THREE.BufferGeometry();
     raingeometry1 = new THREE.BufferGeometry();
     raingeometry.setAttribute("position", new THREE.Float32BufferAttribute(raindropsunder, 3));
-    raingeometry1.setAttribute("position", new THREE.Float32BufferAttribute(raindropsupper, 3));    
+    raingeometry1.setAttribute("position", new THREE.Float32BufferAttribute(raindropsupper, 3));
 
     let rainmaterial = new THREE.LineBasicMaterial({
         color: 0xaaaaaa,
         linewidth: 2,
         transparent: true
     });
-    
+
     rain = new THREE.LineSegments(raingeometry, rainmaterial);
     rain1 = new THREE.LineSegments(raingeometry1, rainmaterial);
     rain1.position.y = -worldheight;
@@ -182,7 +236,7 @@ function loadCharacter() {
                 }
             });
             const model = gltf.scene;
-            model.position.set(0, displacement, 0);
+            model.position.set(0, displacement + displacestation, 0);
 
 
             scene.add(model);
@@ -253,37 +307,36 @@ function loadWorldDay() {
     //plane
 
     const textureLoader = new THREE.TextureLoader();
-    const tilesBaseColor = textureLoader.load("./src/textures/asphalt2/color.jpg", function ( tilesBaseColor ) {
+    const tilesBaseColor = textureLoader.load("./src/textures/asphalt2/color.jpg", function (tilesBaseColor) {
         tilesBaseColor.wrapS = tilesBaseColor.wrapT = THREE.RepeatWrapping;
-        tilesBaseColor.offset.set(0,0);
-        tilesBaseColor.repeat.set( floorrepeat, floorrepeat );
-    }) ;
-    const tilesNormalMap = textureLoader.load("./src/textures/asphalt2/normal.jpg", function ( tilesNormalMap ) {
+        tilesBaseColor.offset.set(0, 0);
+        tilesBaseColor.repeat.set(floorrepeat, floorrepeat);
+    });
+    const tilesNormalMap = textureLoader.load("./src/textures/asphalt2/normal.jpg", function (tilesNormalMap) {
         tilesNormalMap.wrapS = tilesNormalMap.wrapT = THREE.RepeatWrapping;
-        tilesNormalMap.offset.set( 0, 0 );
-        tilesNormalMap.repeat.set( floorrepeat, floorrepeat );
+        tilesNormalMap.offset.set(0, 0);
+        tilesNormalMap.repeat.set(floorrepeat, floorrepeat);
     });
-    const tilesHightMap = textureLoader.load("./src/textures/asphalt2/displace.jpg", function ( tilesHightMap ) {
+    const tilesHightMap = textureLoader.load("./src/textures/asphalt2/displace.jpg", function (tilesHightMap) {
         tilesHightMap.wrapS = tilesHightMap.wrapT = THREE.RepeatWrapping;
-        tilesHightMap.offset.set( 0, 0 );
-        tilesHightMap.repeat.set( floorrepeat, floorrepeat );
+        tilesHightMap.offset.set(0, 0);
+        tilesHightMap.repeat.set(floorrepeat, floorrepeat);
     });
-    const tilesRoughnessMap = textureLoader.load("./src/textures/asphalt2/rough.jpg", function ( tilesRoughnessMap ) {
+    const tilesRoughnessMap = textureLoader.load("./src/textures/asphalt2/rough.jpg", function (tilesRoughnessMap) {
         tilesRoughnessMap.wrapS = tilesRoughnessMap.wrapT = THREE.RepeatWrapping;
-        tilesRoughnessMap.offset.set( 0, 0 );
-        tilesRoughnessMap.repeat.set( floorrepeat, floorrepeat );
+        tilesRoughnessMap.offset.set(0, 0);
+        tilesRoughnessMap.repeat.set(floorrepeat, floorrepeat);
     });
-    const tilesAmbientOcclusionMap = textureLoader.load("./src/textures/asphalt2/ao.jpg", function ( tilesAmbientOcclusionMap ) {
+    const tilesAmbientOcclusionMap = textureLoader.load("./src/textures/asphalt2/ao.jpg", function (tilesAmbientOcclusionMap) {
         tilesAmbientOcclusionMap.wrapS = tilesAmbientOcclusionMap.wrapT = THREE.RepeatWrapping;
-        tilesAmbientOcclusionMap.offset.set( 0, 0 );
-        tilesAmbientOcclusionMap.repeat.set( floorrepeat, floorrepeat );
+        tilesAmbientOcclusionMap.offset.set(0, 0);
+        tilesAmbientOcclusionMap.repeat.set(floorrepeat, floorrepeat);
     });
-    const tilesMetallic = textureLoader.load("./src/textures/asphalt2/metal.jpg", function ( tilesMetallic ) {
+    const tilesMetallic = textureLoader.load("./src/textures/asphalt2/metal.jpg", function (tilesMetallic) {
         tilesMetallic.wrapS = tilesMetallic.wrapT = THREE.RepeatWrapping;
-        tilesMetallic.offset.set( 0, 0 );
-        tilesMetallic.repeat.set( floorrepeat, floorrepeat );
+        tilesMetallic.offset.set(0, 0);
+        tilesMetallic.repeat.set(floorrepeat, floorrepeat);
     });
-
 
     let texture = new THREE.MeshStandardMaterial({
         map: tilesBaseColor,
@@ -298,11 +351,11 @@ function loadWorldDay() {
     });
 
 
-   
+
 
     let geometry = new THREE.PlaneGeometry(worldwidth, worldwidth, texturequality, texturequality);
 
-    const floortile = new THREE.Mesh(geometry,texture);
+    const floortile = new THREE.Mesh(geometry, texture);
 
 
 
@@ -314,7 +367,7 @@ function loadWorldDay() {
     console.log(floortile);
     scene.add(floortile);
 
-    
+
 
 
 
@@ -326,8 +379,8 @@ function loadWorldDay() {
 
     //AMBIENT
     if (debug) {
-    const ambient = new THREE.AmbientLight(0xf2edd5, 1);
-    scene.add(ambient);
+        const ambient = new THREE.AmbientLight(0xf2edd5, 1);
+        scene.add(ambient);
     }
 
     const axesHelper = new THREE.AxesHelper(5);
@@ -383,10 +436,10 @@ function loadWorldDay() {
     composer.addPass(bloomPass);
 
     //fog + background
-    
+
     scene.background = new THREE.Color(backColor);
-    if(fog){
-    scene.fog = new THREE.Fog(backColor, 1, 25);
+    if (fog) {
+        scene.fog = new THREE.Fog(backColor, 1, 25);
     }
 
     //orbitcontrols
@@ -409,7 +462,7 @@ function updateProgressBar(progressBar, value) {
     if (value == 100) {
         setTimeout(function () {
             document.querySelector(".loadingBody").classList.remove("active")
-            }, 2000);
+        }, 2000);
     }
     //loadingbody = document.querySelector(".loadingBody")  
 }
@@ -515,20 +568,20 @@ function animate() {
     }
 
     //Rain
-    
-   if(raining){
-    rain.position.y -= rainspeed;
-    rain1.position.y -= rainspeed;
-    
 
-    if(rain1.position.y < -worldheight){
-        rain1.position.y = worldheight;
+    if (raining) {
+        rain.position.y -= rainspeed;
+        rain1.position.y -= rainspeed;
+
+
+        if (rain1.position.y < -worldheight) {
+            rain1.position.y = worldheight;
+        }
+        if (rain.position.y < -worldheight) {
+            rain.position.y = worldheight;
+        }
     }
-    if(rain.position.y < -worldheight){
-        rain.position.y = worldheight;
-    }
-   }
-    
+
 
     //Animate Spheres
 
