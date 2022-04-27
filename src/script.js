@@ -199,14 +199,14 @@ function loadLightbulbs() {
 	// Point light
 	mouseLight = new THREE.PointLight(0xAAAAAA, 10);
     const mouselighthelper = new THREE.PointLightHelper(mouseLight, 0.1, 0xffffff);
-	//mouseLight.position.set(0, 0, 0);
+	mouseLight.position.set(3, 3, 3);
 	mouseLight.castShadow = true;
 	mouseLight.shadow.bias = 0.0001;
 	mouseLight.mapSizeWidth = 2048; // Shadow Quality
 	mouseLight.mapSizeHeight = 2048; // Shadow Quality
 	scene.add(mouseLight);
     scene.add(mouselighthelper);
-    //camera.add(mouseLight);
+    //camera.add(mouseLight.position.set(3, 3, 3));
 
 	// Listeners
 	//document.addEventListener('mousemove', onMouseMove, false);
