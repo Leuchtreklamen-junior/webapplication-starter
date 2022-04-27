@@ -14,7 +14,7 @@ export class CharacterControls {
     runVelocity = 4.7;
     walkVelocity = 1.5;
 
-    constructor(model, mixer, animationsMap, orbitControl, camera, currentAction) {
+    constructor(model, mixer, animationsMap, orbitControl, camera, currentAction, mouseLight ) {
         this.model = model;
         this.mixer = mixer;
         this.animationsMap = animationsMap;
@@ -26,7 +26,7 @@ export class CharacterControls {
         });
         this.orbitControl = orbitControl;
         this.camera = camera;
-        //this.sphere = sphere;
+        this.mouseLight = mouseLight;
 
     }
 
@@ -81,11 +81,11 @@ export class CharacterControls {
             // diagonal movement angle offset
             var directionOffset = this.directionOffset(keysPressed);
             // rotate model
-            this.rotateQuarternion.setFromAxisAngle(this.rotateAngle, angleYCameraDirection + directionOffset +  Math.PI);
+            this.rotateQuarternion.setFromAxisAngle(this.rotateAngle, angleYCameraDirection + directionOffset + Math.PI);
             this.model.quaternion.rotateTowards(this.rotateQuarternion, 0.1);
             // calculate direction
             this.camera.getWorldDirection(this.walkDirection);
-            
+
             this.walkDirection.y = 0;
             this.walkDirection.normalize();
             this.walkDirection.applyAxisAngle(this.rotateAngle, directionOffset);
@@ -93,14 +93,14 @@ export class CharacterControls {
             // run/walk velocity
             var velocity = this.currentAction == 'run' ? this.runVelocity : this.walkVelocity;
             // move model & camera
-            
+
 
             var moveX = this.walkDirection.x * velocity * delta;
             var moveZ = this.walkDirection.z * velocity * delta;
             this.model.position.x += moveX;
             this.model.position.z += moveZ;
             this.updateCameraTarget(moveX, moveZ);
-            //this.updateSpherePosition(moveX, moveZ);
+            //this.updateMouseLightPosition(moveX, moveZ);
         }
     }
 
@@ -113,16 +113,17 @@ export class CharacterControls {
         this.cameraTarget.y = this.model.position.y + 1.7;
         this.cameraTarget.z = this.model.position.z;
         this.orbitControl.target = this.cameraTarget;
+        console.log(this.cameraTarget)
     }
 
-    // updateSpherePosition(moveX, moveZ){
-    //     this.sphere.forEach(sphere => {
-    //         sphere.position.x += moveX;
-    //         sphere.position.z += moveZ;
-    //     });
-    // }
+    //updateMouseLightPosition(moveX, moveZ) {
+      //  this.mouseLight.position.x += moveX;
+        //this.mouseLight.position.z += moveZ;
+        //this.mouseLight.position.y = 0.5;
 
-    
+    //}
+
+
 
     directionOffset(keysPressed) {
         var directionOffset = 0; // w
