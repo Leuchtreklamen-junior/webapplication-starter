@@ -80,58 +80,6 @@ function init() {
    
 }
 
-<<<<<<< Updated upstream
-// function loadLightbulbs() {
-//     const color1 = new THREE.Color("#FF00FF");
-//     const color2 = new THREE.Color("#00FFFF");
-//     const geo = new THREE.IcosahedronGeometry(0.1, 5);
-
-
-//     for (let i = 0; i < numberlightbulbs; i++) {
-//         const sphere = new THREE.PointLight(color1, 4, 3, 2);
-//         sphere.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
-//             color: color1
-//         })));
-//         //let angle = Math.random() * Math.PI * 2;
-//         sphere.position.y = Math.random() * 1 + 1; //Range + höhe
-//         sphere.position.z = Math.random() * worldwidth - worldwidth / 2; //Range + nach vorne
-//         sphere.position.x = Math.random() * worldwidth - worldwidth / 2; //range + Zur Seite
-//         glowworms.push(sphere);
-//     }
-
-//     for (let i = 0; i < 20; i++) {
-//         const sphere = new THREE.PointLight(color2, 4, 3, 2);
-//         sphere.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
-//             color: color2
-//         })));
-//         //let angle = Math.random() * Math.PI * 2;
-//         sphere.position.y = Math.random() * 1 + 1; //Range + höhe
-//         sphere.position.z = Math.random() * worldwidth - worldwidth / 2; //Range + nach vorne
-//         sphere.position.x = Math.random() * worldwidth - worldwidth / 2; //range + Zur Seite
-//         glowworms.push(sphere);
-//     }
-
-//     glowworms.forEach(sphere => scene.add(sphere));
-
-// }
-
-// On mouse move
-function onMouseMove(event) {
-	event.preventDefault();
-	mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-	mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-	let vector = new THREE.Vector3(mouse.x, mouse.y, 0.1);
-	vector.unproject(camera);
-	let dir = vector.sub(camera.position).normalize();
-	let distance = -camera.position.z / dir.z;
-    console.log(camera.position.z);
-	let pos = camera.position.clone().add(dir.multiplyScalar(distance));
-	mouseLight.position.copy(pos);
-};
-
-=======
->>>>>>> Stashed changes
 function loadObjects() {
     let loader = new THREE.GLTFLoader(loadingManager);
     loader.load("../src/3D/billboardPeter.glb", function (gltf) {
@@ -148,7 +96,7 @@ function loadObjects() {
     
        
         scene.add(billboard);
-        //action.play();
+        action.play();
     });
 
     loader.load("../src/3D/train.glb", function (gltf) {
@@ -271,7 +219,7 @@ function loadCharacter() {
             }).forEach(function (a) {
                 animationsMap.set(a.name, mixer.clipAction(a));
             });
-            characterControls = new CharacterControls(model, mixer, animationsMap, orbitControls, camera, "lookaround", mouseLight);
+            characterControls = new CharacterControls(model, mixer, animationsMap, orbitControls, camera, "lookaround");
             if (debug) {
                 const skeletonhelper = new THREE.SkeletonHelper(model);
                 scene.add(skeletonhelper);
@@ -584,8 +532,7 @@ function animate() {
     var delta = clock.getDelta();
     if (characterControls) characterControls.update(delta, keysPressed);
    
-    wagonmixer.update(delta);
-    billboardmixer.update(delta);
+   
     
     //Flashlights
     if (Math.random() > 0.93 || flash.power > 100) {
@@ -617,6 +564,9 @@ function animate() {
     
     //render
     renderer.render(scene, camera);
+
+    wagonmixer.update(delta);
+    billboardmixer.update(delta);
 
 }
 

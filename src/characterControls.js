@@ -14,7 +14,7 @@ export class CharacterControls {
     runVelocity = 4;
     walkVelocity = 1.5;
 
-    constructor(model, mixer, animationsMap, orbitControl, camera, currentAction, mouseLight ) {
+    constructor(model, mixer, animationsMap, orbitControl, camera, currentAction) {
         this.model = model;
         this.mixer = mixer;
         this.animationsMap = animationsMap;
@@ -26,8 +26,6 @@ export class CharacterControls {
         });
         this.orbitControl = orbitControl;
         this.camera = camera;
-        this.mouseLight = mouseLight;
-
     }
 
     switchRunToggle() {
@@ -105,14 +103,8 @@ export class CharacterControls {
             this.model.position.z += moveZ;
             
             this.updateCameraTarget(moveX, moveZ);
-<<<<<<< Updated upstream
-            //this.updateMouseLightPosition(moveX, moveZ);
-=======
             };
 
-            
-            //this.updateSpherePosition(moveX, moveZ);
->>>>>>> Stashed changes
         }
     }
 
@@ -125,7 +117,6 @@ export class CharacterControls {
         this.cameraTarget.y = this.model.position.y + 1.7;
         this.cameraTarget.z = this.model.position.z;
         this.orbitControl.target = this.cameraTarget;
-        console.log(this.cameraTarget)
     }
 
     //updateMouseLightPosition(moveX, moveZ) {
