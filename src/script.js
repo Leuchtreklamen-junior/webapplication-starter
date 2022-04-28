@@ -13,7 +13,7 @@ import {
 
 let container = document.querySelector(".scene");
 let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash,
-    sound,
+    sound, videoRap, videoRapTexture,
     temporarysound, glowworms = [],
     rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1;
 
@@ -43,7 +43,7 @@ let worldwidth = 100,
     rainspeed = 0.2,
     dropsizemin = 0.05,
     dropsizemax = 0.2,
-    fog = true,
+    fog = false,
 
     //starting volume sound
     tempsound = 0.1,
@@ -59,7 +59,7 @@ let worldwidth = 100,
     //camera
     camerafov = 90,
     cameratargetheight = 1.7,
-    camerafarlimit = 25,
+    camerafarlimit = 100,
     cameranearlimit = 1,
     camerafarlimitrender = 200,
     cameranearlimitrender = 0.1,
@@ -76,6 +76,7 @@ function init() {
         addRain();
         loadaudio();
     }
+    loadVideos();
    
 }
 
@@ -543,6 +544,7 @@ function setVol() {
     }
     tempsound = volumeSlider.value / 100;
     sound.setVolume(tempsound);
+
 }
 
 //Animation
@@ -592,6 +594,9 @@ function animate() {
     orbitControls.update();
     renderer.render(scene, camera);
     //composer.render();
+    videoRapTexture.needsUpdate = true;
+
+    videoRapSoundHandler();
 }
 
 function randomIntFromInterval(min, max) { // min and max included 
@@ -680,6 +685,39 @@ function loadControls() {
         }
     }, false);
 };
+
+
+function loadVideos(){
+    videoRap = document.getElementById("videoRap");
+    videoRap.volume = 0.01;
+    videoRapTexture = new THREE.VideoTexture(videoRap);
+    videoRapTexture.minFilter = THREE.LinearFilter;
+    videoRapTexture.magFilter = THREE.LinearFilter;
+
+    var movieMaterial = new THREE.MeshBasicMaterial({
+        map: videoRapTexture,
+        side: THREE.FrontSide,
+        toneMapped: false,
+    })
+
+    let movieGeometry = new THREE.PlaneGeometry(0.931, 1.3);
+    let movieCubeScreen = new THREE.Mesh(movieGeometry, movieMaterial);
+    movieCubeScreen.rotateY(Math.PI);
+
+    movieCubeScreen.position.set(-6.155, 2.565, 9.943);
+    scene.add(movieCubeScreen);
+}
+
+function videoRapSoundHandler(){
+    const characterPosition = characterControls.cameraTarget;
+    const screenPosition = new THREE.Vector3(-6.155, 2.565, 9.943);
+    const distance = characterPosition.distanceTo(screenPosition);
+    const newDistance = distance*-1+4;
+    if (newDistance > 0){
+        videoRap.volume = newDistance*0.1;
+    }
+
+}
 
 init();
 animate();

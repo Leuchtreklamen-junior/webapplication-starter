@@ -113,17 +113,13 @@ export class CharacterControls {
         this.cameraTarget.y = this.model.position.y + 1.7;
         this.cameraTarget.z = this.model.position.z;
         this.orbitControl.target = this.cameraTarget;
-        console.log(this.cameraTarget)
     }
 
-    //updateMouseLightPosition(moveX, moveZ) {
-      //  this.mouseLight.position.x += moveX;
-        //this.mouseLight.position.z += moveZ;
-        //this.mouseLight.position.y = 0.5;
+    getCharacterPosition(){
+        return this.cameraTarget;
+    }
 
-    //}
-
-
+    
 
     directionOffset(keysPressed) {
         var directionOffset = 0; // w
