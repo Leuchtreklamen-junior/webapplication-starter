@@ -14,7 +14,7 @@ export class CharacterControls {
     runVelocity = 4;
     walkVelocity = 1.5;
 
-    constructor(model, mixer, animationsMap, orbitControl, camera, currentAction, mouseLight ) {
+    constructor(model, mixer, animationsMap, orbitControl, camera, currentAction) {
         this.model = model;
         this.mixer = mixer;
         this.animationsMap = animationsMap;
@@ -26,8 +26,6 @@ export class CharacterControls {
         });
         this.orbitControl = orbitControl;
         this.camera = camera;
-        this.mouseLight = mouseLight;
-
     }
 
     switchRunToggle() {

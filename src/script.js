@@ -81,21 +81,6 @@ function init() {
 
 }
 
-// On mouse move
-function onMouseMove(event) {
-    event.preventDefault();
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    let vector = new THREE.Vector3(mouse.x, mouse.y, 0.1);
-    vector.unproject(camera);
-    let dir = vector.sub(camera.position).normalize();
-    let distance = -camera.position.z / dir.z;
-    console.log(camera.position.z);
-    let pos = camera.position.clone().add(dir.multiplyScalar(distance));
-    mouseLight.position.copy(pos);
-};
-
 function loadObjects() {
     let loader = new THREE.GLTFLoader(loadingManager);
     loader.load("../src/3D/billboardPeter.glb", function (gltf) {
@@ -112,7 +97,7 @@ function loadObjects() {
 
 
         scene.add(billboard);
-        //action.play();
+        action.play();
     });
 
     loader.load("../src/3D/train.glb", function (gltf) {
@@ -583,6 +568,9 @@ function animate() {
     videoRapTexture.needsUpdate = true;
 
     videoRapSoundHandler();
+    wagonmixer.update(delta);
+    billboardmixer.update(delta);
+
 }
 
 //Keep Camera Centered on window Resize
