@@ -13,7 +13,7 @@ import {
 
 let container = document.querySelector(".scene");
 let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash,
-    sound,
+    sound, billboardmixer, wagonmixer,
     temporarysound, glowworms = [],
     rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1;
 
@@ -23,15 +23,13 @@ let camera, renderer, composer, scene, clock, orbitControls, characterControls, 
 let worldwidth = 100,
     worldheight = 20,
     backColor = 0x060616,
+    worldcenterx = -3,
+    worldcenterz = 20, 
 
     //light
     moonlightstrenght = 1, //0.5 - 3
     moonlightcolor = 0xbfcad8,
     hemisphereLightstrength = 0.2,
-
-    //lightbulbs
-
-    numberlightbulbs = 100,
 
     //flash
     flashlightcolor = 0x062d89,
@@ -43,7 +41,7 @@ let worldwidth = 100,
     rainspeed = 0.2,
     dropsizemin = 0.05,
     dropsizemax = 0.2,
-    fog = true,
+    fog = false,
 
     //starting volume sound
     tempsound = 0.1,
@@ -56,10 +54,13 @@ let worldwidth = 100,
     floormetalness = 0,
     floorroughness = 5,
 
+    characterx = -3,
+    characterz = 17,
+
     //camera
     camerafov = 90,
     cameratargetheight = 1.7,
-    camerafarlimit = 25,
+    camerafarlimit = 100,
     cameranearlimit = 1,
     camerafarlimitrender = 200,
     cameranearlimitrender = 0.1,
@@ -69,16 +70,17 @@ let worldwidth = 100,
 
 function init() {
     loadWorldDay();
-    loadControls();
-    loadCharacter();
     loadObjects();
+    loadCharacter();
     if (raining) {
         addRain();
         loadaudio();
     }
+    loadControls();
    
 }
 
+<<<<<<< Updated upstream
 // function loadLightbulbs() {
 //     const color1 = new THREE.Color("#FF00FF");
 //     const color2 = new THREE.Color("#00FFFF");
@@ -128,40 +130,62 @@ function onMouseMove(event) {
 	mouseLight.position.copy(pos);
 };
 
+=======
+>>>>>>> Stashed changes
 function loadObjects() {
     let loader = new THREE.GLTFLoader(loadingManager);
+    loader.load("../src/3D/billboardPeter.glb", function (gltf) {
+        let billboard = gltf.scene;
+        billboardmixer = new THREE.AnimationMixer( billboard );
+        billboard.traverse(function (node) {
+            if (node.isMesh) {
+                node.castShadow = true;
+            }
+        });
+        billboard.position.set(-13, -2 ,3);
+        let anim = gltf.animations[0];
+        let action = billboardmixer.clipAction(anim);
+    
+       
+        scene.add(billboard);
+        //action.play();
+    });
+
     loader.load("../src/3D/train.glb", function (gltf) {
         let wagon = gltf.scene;
-        let wagon1 = wagon.clone();
-        let wagon2 = wagon.clone();
+        wagonmixer = new THREE.AnimationMixer( wagon );
         wagon.traverse(function (node) {
             if (node.isMesh) {
                 node.castShadow = true;
             }
         });
-        wagon1.traverse(function (node) {
-            if (node.isMesh) {
-                node.castShadow = true;
-            }
-        });
-        wagon2.traverse(function (node) {
-            if (node.isMesh) {
-                node.castShadow = true;
-            }
-        });
-        wagon.position.set(5, displacement, 5);
-        wagon1.position.set(5, displacement, 20.9);
-        wagon2.position.set(5, displacement, 36.8);
-
-        //const texture = new THREE.TextureLoader().load( '../src/3D/textures/Emission.jpg' );
-        console.log(wagon.animations);
-        //const material = new THREE.MeshBasicMaterial( { emissive: texture } );
-
-        scene.add(wagon);
-        scene.add(wagon1);
-        scene.add(wagon2);
+        wagon.position.set(5, displacement, 20.9);
+        scene.add(wagon);  
+        let anim = gltf.animations[0];
+        let action = wagonmixer.clipAction(anim);
+        action.play();      
+        console.log(wagon);
     });
-
+    loader.load("../src/3D/trainfront.glb", function (gltf) {
+        let frontwagon = gltf.scene;
+        frontwagon.traverse(function (node) {
+            if (node.isMesh) {
+                node.castShadow = true;
+            }
+        });
+        frontwagon.position.set(5, displacement, 36.8);
+        scene.add(frontwagon);
+    });
+    loader.load("../src/3D/trainback.glb", function (gltf) {
+        let backwagon = gltf.scene;
+        backwagon.traverse(function (node) {
+            if (node.isMesh) {
+                node.castShadow = true;
+            }
+        });
+        backwagon.position.set(5, displacement,6.15);
+        scene.add(backwagon);
+    });
     loader.load("../src/3D/trainstation.glb", function (gltf) {
         let station = gltf.scene;
         let station2 = station.clone();
@@ -170,34 +194,16 @@ function loadObjects() {
         station.position.set(-3, displacement, 5);
         station2.position.set(-3, displacement, 22.71);
         station3.position.set(-3, displacement, 40.2);
-
-
-
         scene.add(station);
         scene.add(station2);
         scene.add(station3);
     });
-
-    //metrolights
-    const width = 2.0;
-    const height = 45;
-
-    let metrolight = new THREE.RectAreaLight(0xff00ff, 3, width, height);
-    metrolight.position.set(5, 3.5, 20);
-    metrolight.lookAt(5, 0, 20);
-    scene.add(metrolight);
-
-    //Trainstationlight
-
-    const trainlightwidth = 10;
-    const trainlightheight = 45;
-
-    let stationlight = new THREE.RectAreaLight(0x99ffff, 5, width, height);
-    stationlight.position.set(-3, 5, 20);
-    stationlight.lookAt(-3, 0, 20);
-
-    
-    scene.add(stationlight);
+    loader.load("../src/3D/cocacola.glb", function (gltf) {
+        let cocacola = gltf.scene;
+        console.log(cocacola);
+        cocacola.position.set(-3, displacement+displacestation, 15);
+        scene.add(cocacola);
+    });
     
 }
 
@@ -250,7 +256,7 @@ function loadCharacter() {
                 }
             });
             const model = gltf.scene;
-            model.position.set(0, displacement + displacestation, 0);
+            model.position.set(characterx, displacement+displacestation, characterz);
 
 
             scene.add(model);
@@ -291,6 +297,8 @@ function loadWorldDay() {
     loadingManager = new THREE.LoadingManager();
     pBar = document.querySelector(".progress");
 
+    
+
     loadingManager.onProgress = function (item, loaded, total) {
         //console.log(item, loaded, total);
         let currentItem = loaded * (100 / total)
@@ -316,7 +324,7 @@ function loadWorldDay() {
         console.log("DEBUG MODE = TRUE")
     };
 
-    camera.position.set(0, 0, 3);
+    camera.position.set(characterx, displacement+displacestation +cameratargetheight, characterz+2);
 
     
     //plane
@@ -365,26 +373,14 @@ function loadWorldDay() {
         metalness: floormetalness
     });
 
-
-
-
     let geometry = new THREE.PlaneGeometry(worldwidth, worldwidth, texturequality, texturequality);
-
     const floortile = new THREE.Mesh(geometry, texture);
-
-
-
     floortile.geometry.attributes.uv2 = floortile.geometry.attributes.uv;
     floortile.castShadow = false;
     floortile.receiveShadow = true;
     floortile.rotation.x = -Math.PI / 2;
-
     console.log(floortile);
     scene.add(floortile);
-
-
-
-
 
     //LIGHTS
     
@@ -414,6 +410,27 @@ function loadWorldDay() {
     scene.add(moon.target);
     scene.add(moon);
     scene.add(light);
+
+    
+    //metrolights
+    const width = 2.0;
+    const height = 45;
+
+    let metrolight = new THREE.RectAreaLight(0xE674FF, 2, width, height);
+    metrolight.position.set(5, 3.7, 20);
+    metrolight.lookAt(5, 0, 20);
+    scene.add(metrolight);
+
+    //Trainstationlight
+
+    const trainlightwidth = 10;
+    const trainlightheight = 45;
+
+    let stationlight = new THREE.RectAreaLight(0x99ffff, 5, width, height);
+    stationlight.position.set(-3, 5, 20);
+    stationlight.lookAt(-3, 0, 20);
+
+    scene.add(stationlight);
 
     //lighthelper
     const sphereSize = 10;
@@ -464,7 +481,7 @@ function loadWorldDay() {
     orbitControls.minDistance = cameranearlimit;
     orbitControls.maxDistance = camerafarlimit;
     orbitControls.enablePan = false;
-    orbitControls.target.set(0, cameratargetheight, 0);
+    orbitControls.target.set(characterx, displacement+displacestation+cameratargetheight, characterz);
     orbitControls.maxPolarAngle = Math.PI / 2 + 0.1;
     //mouseLight.position.y += camera.position.y;
     //mouseLight.position.z += camera.position.z;
@@ -511,8 +528,6 @@ function loadaudio() {
         sound.autoplay = true;
         //sound.play();
     });
-
-
 }
 
 //audio slider
@@ -566,15 +581,13 @@ function setVol() {
 //Animation
 function animate() {
     requestAnimationFrame(animate);
-
     var delta = clock.getDelta();
-
     if (characterControls) characterControls.update(delta, keysPressed);
-
-
-    //Moonlight and Rain
-
-
+   
+    wagonmixer.update(delta);
+    billboardmixer.update(delta);
+    
+    //Flashlights
     if (Math.random() > 0.93 || flash.power > 100) {
         if (flash.power < 100)
             flash.position.set(
@@ -584,9 +597,7 @@ function animate() {
             );
         flash.power = 50 + Math.random() * 500;
     }
-
     //Rain
-
     if (raining) {
         rain.position.y -= rainspeed;
         rain1.position.y -= rainspeed;
@@ -600,22 +611,14 @@ function animate() {
         }
     }
 
-
-    //Animate Spheres
-
-
-    //END
-
-
+    
+    //camera
     orbitControls.update();
+    
+    //render
     renderer.render(scene, camera);
-    //composer.render();
-}
 
-function randomIntFromInterval(min, max) { // min and max included 
-    return Math.floor(Math.random() * (max - min + 1) + min)
 }
-
 
 //Keep Camera Centered on window Resize
 function onWindowResize() {

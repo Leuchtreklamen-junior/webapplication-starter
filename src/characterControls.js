@@ -11,7 +11,7 @@ export class CharacterControls {
 
     //constants 
     fadeDuration = 0.5;
-    runVelocity = 4.7;
+    runVelocity = 4;
     walkVelocity = 1.5;
 
     constructor(model, mixer, animationsMap, orbitControl, camera, currentAction, mouseLight ) {
@@ -97,10 +97,22 @@ export class CharacterControls {
 
             var moveX = this.walkDirection.x * velocity * delta;
             var moveZ = this.walkDirection.z * velocity * delta;
+
+
+            if(this.model.position.z < 48 && this.model.position.z > -3.5 && this.model.position.x < 5.7 && this.model.position.x > -9){
+
             this.model.position.x += moveX;
             this.model.position.z += moveZ;
+            
             this.updateCameraTarget(moveX, moveZ);
+<<<<<<< Updated upstream
             //this.updateMouseLightPosition(moveX, moveZ);
+=======
+            };
+
+            
+            //this.updateSpherePosition(moveX, moveZ);
+>>>>>>> Stashed changes
         }
     }
 
