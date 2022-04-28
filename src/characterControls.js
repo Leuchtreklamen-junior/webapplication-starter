@@ -105,14 +105,7 @@ export class CharacterControls {
             this.model.position.z += moveZ;
             
             this.updateCameraTarget(moveX, moveZ);
-<<<<<<< Updated upstream
-            //this.updateMouseLightPosition(moveX, moveZ);
-=======
             };
-
-            
-            //this.updateSpherePosition(moveX, moveZ);
->>>>>>> Stashed changes
         }
     }
 
