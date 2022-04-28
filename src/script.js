@@ -12,25 +12,10 @@ import {
 } from 'https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/postprocessing/UnrealBloomPass.js';
 
 let container = document.querySelector(".scene");
-<<<<<<< HEAD
 let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash,
     sound,
     temporarysound, glowworms = [],
     rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1;
-=======
-let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash, sound, tempsound = 0.1,
-    temporarysound, glowworms = [], plane, mouseMesh, light, ambientLight, mouseLight;
-let debug = false;
-// Custom global variables
-var mouse = {
-    x: 0,
-    y: 0
-};
-const ENTIRE_SCENE = 0,
-    BLOOM_SCENE = 1;
-const bloomLayer = new THREE.Layers();
-bloomLayer.set(BLOOM_SCENE);
->>>>>>> Peter
 
 //CONTROLLS
 
@@ -86,19 +71,12 @@ function init() {
     loadWorldDay();
     loadControls();
     loadCharacter();
-<<<<<<< HEAD
     loadObjects();
     if (raining) {
         addRain();
         loadaudio();
     }
    
-=======
-    //loadObjects();
-    addRain();
-    //loadaudio();
-    loadLightbulbs();
->>>>>>> Peter
 }
 
 // function loadLightbulbs() {
@@ -133,84 +111,7 @@ function init() {
 
 //     glowworms.forEach(sphere => scene.add(sphere));
 
-<<<<<<< HEAD
 // }
-=======
-    for (let i = 0; i < 20; i++) {
-        const sphere = new THREE.PointLight(color1, 4, 3, 2);
-        sphere.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
-            color: color1
-        })));
-        //let angle = Math.random() * Math.PI * 2;
-        sphere.position.y = Math.random() * 0.1 + 0; //Range + höhe
-        sphere.position.z = Math.random() * 20 - 10; //Range + nach vorne
-        sphere.position.x = Math.random() * 20 - 10; //range + Zur Seite
-        glowworms.push(sphere);
-    }
-
-    for (let i = 0; i < 20; i++) {
-        const sphere = new THREE.PointLight(color2, 4, 3, 2);
-        sphere.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
-            color: color2
-        })));
-        //let angle = Math.random() * Math.PI * 2;
-        sphere.position.y = Math.random() * 0.1 + 0; //Range + höhe
-        sphere.position.z = Math.random() * 20 - 10; //Range + nach vorne
-        sphere.position.x = Math.random() * 20 - 10; //range + Zur Seite
-        glowworms.push(sphere);
-    }
-
-    glowworms.forEach(sphere => scene.add(sphere));
-    console.log(glowworms);
-
-
-    //test get mouseposition
-    // window.addEventListener("mousedown", e => {
-    //     var vec = new THREE.Vector3(); // create once and reuse
-    //     let pos = new THREE.Vector3(); // create once and reuse
-
-    //     vec.set(
-    //         (e.clientX / window.innerWidth) * 2 - 1,
-    //         (e.clientY / window.innerHeight) * 2 + 1,
-    //         0.5);
-
-    //     vec.unproject(camera);
-
-    //     vec.sub(camera.position).normalize();
-
-    //     var distance = -camera.position.z / vec.z;
-
-    //     pos.copy(camera.position).add(vec.multiplyScalar(distance));
-    //     console.log(pos);
-
-    //     glowworms.forEach(sphere => {
-
-
-    //     })
-
-    // });
-
-
-    //mouselight
-
-// mouseLights
-
-	// Point light
-	mouseLight = new THREE.PointLight(0xAAAAAA, 10);
-    const mouselighthelper = new THREE.PointLightHelper(mouseLight, 0.1, 0xffffff);
-	mouseLight.position.set(3, 3, 3);
-	mouseLight.castShadow = true;
-	mouseLight.shadow.bias = 0.0001;
-	mouseLight.mapSizeWidth = 2048; // Shadow Quality
-	mouseLight.mapSizeHeight = 2048; // Shadow Quality
-	scene.add(mouseLight);
-    scene.add(mouselighthelper);
-    //camera.add(mouseLight.position.set(3, 3, 3));
-
-	// Listeners
-	//document.addEventListener('mousemove', onMouseMove, false);
-}
->>>>>>> Peter
 
 // On mouse move
 function onMouseMove(event) {
@@ -304,7 +205,6 @@ function addRain() {
     raindropsunder = [];
     raindropsupper = [];
     for (let i = 0; i < dropCount; i++) {
-<<<<<<< HEAD
         let drop = new THREE.Vector3(
             THREE.MathUtils.randFloatSpread(worldwidth), //Breite
             THREE.MathUtils.randFloat(-1, worldheight), //Höhe
@@ -325,21 +225,6 @@ function addRain() {
     raingeometry.setAttribute("position", new THREE.Float32BufferAttribute(raindropsunder, 3));
     raingeometry1.setAttribute("position", new THREE.Float32BufferAttribute(raindropsupper, 3));
 
-=======
-        let x = THREE.MathUtils.randFloatSpread(20); //Breite
-        let y = THREE.MathUtils.randFloat(-1, 5); //Höhe
-        let z = THREE.MathUtils.randFloatSpread(20); //Länge
-        let dropsize = THREE.MathUtils.randFloat(0.25, 0.5);
-        vertices.push(
-            x, y, z,
-            x, y - dropsize, z
-        );
-        dropEnds.push(0, dropsize, 1, dropsize);
-    }
-    let raingeometry = new THREE.BufferGeometry();
-    raingeometry.setAttribute("position", new THREE.Float32BufferAttribute(vertices, 3));
-    //raingeometry.setAttribute("dropEnds", new THREE.Float32BufferAttribute(dropEnds,2));
->>>>>>> Peter
     let rainmaterial = new THREE.LineBasicMaterial({
         color: 0xaaaaaa,
         linewidth: 2,
@@ -435,14 +320,6 @@ function loadWorldDay() {
 
     
     //plane
-<<<<<<< HEAD
-=======
-    // const cubeRenderTarget = new THREE.WebGLCubeRenderTarget( 128, { generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
-    // const cubeCamera = new THREE.CubeCamera( 1, 100000, cubeRenderTarget );
-    // scene.add( cubeCamera );
-
-    const gridHelper = new THREE.GridHelper(100, 30, 0xff0000, 0x000000);
->>>>>>> Peter
 
     const textureLoader = new THREE.TextureLoader();
     const tilesBaseColor = textureLoader.load("./src/textures/asphalt2/color.jpg", function (tilesBaseColor) {
@@ -517,18 +394,10 @@ function loadWorldDay() {
     scene.add(flash);
 
     //AMBIENT
-<<<<<<< HEAD
     if (debug) {
         const ambient = new THREE.AmbientLight(0xf2edd5, 1);
         scene.add(ambient);
     }
-=======
-
-    //if (debug) {
-    const ambient = new THREE.AmbientLight(0xf2edd5, 1);
-    scene.add(ambient);
-    //}
->>>>>>> Peter
 
     const axesHelper = new THREE.AxesHelper(5);
     //scene.add(axesHelper);
@@ -662,10 +531,6 @@ function muteAudio() {
         volumeSymbol.classList.add("fa-volume-high");
         sound.setVolume(temporarysound);
         volumeSlider.value = temporarysound * 100;
-<<<<<<< HEAD
-=======
-        console.log("unmuted");
->>>>>>> Peter
     } else {
         //mute
         temporarysound = volumeSlider.value / 100;
@@ -696,11 +561,8 @@ function setVol() {
 }
 
 
-<<<<<<< HEAD
 
 
-=======
->>>>>>> Peter
 //Animation
 function animate() {
     requestAnimationFrame(animate);
