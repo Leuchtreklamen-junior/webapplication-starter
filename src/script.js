@@ -13,7 +13,7 @@ import {
 
 let container = document.querySelector(".scene");
 let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash,
-    sound, billboardmixer, wagonmixer,
+    sound, billboardmixer, wagonmixer, videoRap, videoRapTexture,
     temporarysound, glowworms = [],
     rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1;
 
@@ -24,7 +24,7 @@ let worldwidth = 100,
     worldheight = 20,
     backColor = 0x060616,
     worldcenterx = -3,
-    worldcenterz = 20, 
+    worldcenterz = 20,
 
     //light
     moonlightstrenght = 1, //0.5 - 3
@@ -70,100 +70,64 @@ let worldwidth = 100,
 
 function init() {
     loadWorldDay();
+    loadControls();
     loadObjects();
     loadCharacter();
     if (raining) {
         addRain();
         loadaudio();
     }
-    loadControls();
-   
+    loadVideos();
+
 }
-
-<<<<<<< Updated upstream
-// function loadLightbulbs() {
-//     const color1 = new THREE.Color("#FF00FF");
-//     const color2 = new THREE.Color("#00FFFF");
-//     const geo = new THREE.IcosahedronGeometry(0.1, 5);
-
-
-//     for (let i = 0; i < numberlightbulbs; i++) {
-//         const sphere = new THREE.PointLight(color1, 4, 3, 2);
-//         sphere.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
-//             color: color1
-//         })));
-//         //let angle = Math.random() * Math.PI * 2;
-//         sphere.position.y = Math.random() * 1 + 1; //Range + höhe
-//         sphere.position.z = Math.random() * worldwidth - worldwidth / 2; //Range + nach vorne
-//         sphere.position.x = Math.random() * worldwidth - worldwidth / 2; //range + Zur Seite
-//         glowworms.push(sphere);
-//     }
-
-//     for (let i = 0; i < 20; i++) {
-//         const sphere = new THREE.PointLight(color2, 4, 3, 2);
-//         sphere.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
-//             color: color2
-//         })));
-//         //let angle = Math.random() * Math.PI * 2;
-//         sphere.position.y = Math.random() * 1 + 1; //Range + höhe
-//         sphere.position.z = Math.random() * worldwidth - worldwidth / 2; //Range + nach vorne
-//         sphere.position.x = Math.random() * worldwidth - worldwidth / 2; //range + Zur Seite
-//         glowworms.push(sphere);
-//     }
-
-//     glowworms.forEach(sphere => scene.add(sphere));
-
-// }
 
 // On mouse move
 function onMouseMove(event) {
-	event.preventDefault();
-	mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-	mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    event.preventDefault();
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-	let vector = new THREE.Vector3(mouse.x, mouse.y, 0.1);
-	vector.unproject(camera);
-	let dir = vector.sub(camera.position).normalize();
-	let distance = -camera.position.z / dir.z;
+    let vector = new THREE.Vector3(mouse.x, mouse.y, 0.1);
+    vector.unproject(camera);
+    let dir = vector.sub(camera.position).normalize();
+    let distance = -camera.position.z / dir.z;
     console.log(camera.position.z);
-	let pos = camera.position.clone().add(dir.multiplyScalar(distance));
-	mouseLight.position.copy(pos);
+    let pos = camera.position.clone().add(dir.multiplyScalar(distance));
+    mouseLight.position.copy(pos);
 };
 
-=======
->>>>>>> Stashed changes
 function loadObjects() {
     let loader = new THREE.GLTFLoader(loadingManager);
     loader.load("../src/3D/billboardPeter.glb", function (gltf) {
         let billboard = gltf.scene;
-        billboardmixer = new THREE.AnimationMixer( billboard );
+        billboardmixer = new THREE.AnimationMixer(billboard);
         billboard.traverse(function (node) {
             if (node.isMesh) {
                 node.castShadow = true;
             }
         });
-        billboard.position.set(-13, -2 ,3);
+        billboard.position.set(-13, -2, 3);
         let anim = gltf.animations[0];
         let action = billboardmixer.clipAction(anim);
-    
-       
+
+
         scene.add(billboard);
         //action.play();
     });
 
     loader.load("../src/3D/train.glb", function (gltf) {
         let wagon = gltf.scene;
-        wagonmixer = new THREE.AnimationMixer( wagon );
+        wagonmixer = new THREE.AnimationMixer(wagon);
         wagon.traverse(function (node) {
             if (node.isMesh) {
                 node.castShadow = true;
             }
         });
         wagon.position.set(5, displacement, 20.9);
-        scene.add(wagon);  
+        scene.add(wagon);
         let anim = gltf.animations[0];
         let action = wagonmixer.clipAction(anim);
-        action.play();      
+        action.play();
         console.log(wagon);
     });
     loader.load("../src/3D/trainfront.glb", function (gltf) {
@@ -183,7 +147,7 @@ function loadObjects() {
                 node.castShadow = true;
             }
         });
-        backwagon.position.set(5, displacement,6.15);
+        backwagon.position.set(5, displacement, 6.15);
         scene.add(backwagon);
     });
     loader.load("../src/3D/trainstation.glb", function (gltf) {
@@ -201,10 +165,10 @@ function loadObjects() {
     loader.load("../src/3D/cocacola.glb", function (gltf) {
         let cocacola = gltf.scene;
         console.log(cocacola);
-        cocacola.position.set(-3, displacement+displacestation, 15);
+        cocacola.position.set(-3, displacement + displacestation, 15);
         scene.add(cocacola);
     });
-    
+
 }
 
 function addRain() {
@@ -256,7 +220,7 @@ function loadCharacter() {
                 }
             });
             const model = gltf.scene;
-            model.position.set(characterx, displacement+displacestation, characterz);
+            model.position.set(characterx, displacement + displacestation, characterz);
 
 
             scene.add(model);
@@ -271,7 +235,7 @@ function loadCharacter() {
             }).forEach(function (a) {
                 animationsMap.set(a.name, mixer.clipAction(a));
             });
-            characterControls = new CharacterControls(model, mixer, animationsMap, orbitControls, camera, "lookaround", mouseLight);
+            characterControls = new CharacterControls(model, mixer, animationsMap, orbitControls, camera, "lookaround");
             if (debug) {
                 const skeletonhelper = new THREE.SkeletonHelper(model);
                 scene.add(skeletonhelper);
@@ -297,7 +261,7 @@ function loadWorldDay() {
     loadingManager = new THREE.LoadingManager();
     pBar = document.querySelector(".progress");
 
-    
+
 
     loadingManager.onProgress = function (item, loaded, total) {
         //console.log(item, loaded, total);
@@ -324,9 +288,9 @@ function loadWorldDay() {
         console.log("DEBUG MODE = TRUE")
     };
 
-    camera.position.set(characterx, displacement+displacestation +cameratargetheight, characterz+2);
+    camera.position.set(characterx, displacement + displacestation + cameratargetheight, characterz + 2);
 
-    
+
     //plane
 
     const textureLoader = new THREE.TextureLoader();
@@ -383,7 +347,7 @@ function loadWorldDay() {
     scene.add(floortile);
 
     //LIGHTS
-    
+
     //flash
     flash = new THREE.PointLight(flashlightcolor, flashlightintensity, 470, 2);
     flash.position.set(200, 300, 100);
@@ -411,7 +375,7 @@ function loadWorldDay() {
     scene.add(moon);
     scene.add(light);
 
-    
+
     //metrolights
     const width = 2.0;
     const height = 45;
@@ -481,7 +445,7 @@ function loadWorldDay() {
     orbitControls.minDistance = cameranearlimit;
     orbitControls.maxDistance = camerafarlimit;
     orbitControls.enablePan = false;
-    orbitControls.target.set(characterx, displacement+displacestation+cameratargetheight, characterz);
+    orbitControls.target.set(characterx, displacement + displacestation + cameratargetheight, characterz);
     orbitControls.maxPolarAngle = Math.PI / 2 + 0.1;
     //mouseLight.position.y += camera.position.y;
     //mouseLight.position.z += camera.position.z;
@@ -573,20 +537,18 @@ function setVol() {
     }
     tempsound = volumeSlider.value / 100;
     sound.setVolume(tempsound);
+
 }
-
-
-
 
 //Animation
 function animate() {
     requestAnimationFrame(animate);
     var delta = clock.getDelta();
     if (characterControls) characterControls.update(delta, keysPressed);
-   
+
     wagonmixer.update(delta);
     billboardmixer.update(delta);
-    
+
     //Flashlights
     if (Math.random() > 0.93 || flash.power > 100) {
         if (flash.power < 100)
@@ -611,13 +573,16 @@ function animate() {
         }
     }
 
-    
+
     //camera
     orbitControls.update();
-    
+
     //render
     renderer.render(scene, camera);
+    //composer.render();
+    videoRapTexture.needsUpdate = true;
 
+    videoRapSoundHandler();
 }
 
 //Keep Camera Centered on window Resize
@@ -701,6 +666,38 @@ function loadControls() {
         }
     }, false);
 };
+
+
+function loadVideos() {
+    videoRap = document.getElementById("videoRap");
+    videoRap.volume = 0.01;
+    videoRapTexture = new THREE.VideoTexture(videoRap);
+    videoRapTexture.minFilter = THREE.LinearFilter;
+    videoRapTexture.magFilter = THREE.LinearFilter;
+
+    var movieMaterial = new THREE.MeshBasicMaterial({
+        map: videoRapTexture,
+        side: THREE.FrontSide,
+        toneMapped: false,
+    })
+
+    let movieGeometry = new THREE.PlaneGeometry(0.931, 1.3);
+    let movieCubeScreen = new THREE.Mesh(movieGeometry, movieMaterial);
+    movieCubeScreen.rotateY(Math.PI);
+
+    movieCubeScreen.position.set(-6.155, 2.565, 9.943);
+    scene.add(movieCubeScreen);
+}
+
+function videoRapSoundHandler() {
+    const characterPosition = characterControls.cameraTarget;
+    const screenPosition = new THREE.Vector3(-6.155, 2.565, 9.943);
+    const distance = characterPosition.distanceTo(screenPosition);
+    const newDistance = distance * -1 + 4;
+    if (newDistance > 0) {
+        videoRap.volume = newDistance * 0.1;
+    }
+}
 
 init();
 animate();
