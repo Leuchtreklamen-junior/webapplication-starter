@@ -13,7 +13,7 @@ import {
 
 let container = document.querySelector(".scene");
 let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash,
-    sound, billboardmixer, wagonmixer, videoRap, videoRapTexture,
+    sound, billboardmixer, wagonmixer, videoRap, videoSki, videoEnv, videoRapTexture, videoSkiTexture, videoEnvTexture, 
     temporarysound, glowworms = [],
     rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1;
 
@@ -36,7 +36,7 @@ let worldwidth = 100,
     flashlightintensity = 2000, //5-2000
 
     //rain and fog controlls
-    raining = true,
+    raining = false,
     dropCount = 40000, //200 - 40000
     rainspeed = 0.2,
     dropsizemin = 0.05,
@@ -568,6 +568,7 @@ function animate() {
     videoRapTexture.needsUpdate = true;
 
     videoRapSoundHandler();
+    videoEnvSoundHandler();
     wagonmixer.update(delta);
     billboardmixer.update(delta);
 
@@ -657,25 +658,67 @@ function loadControls() {
 
 
 function loadVideos() {
+    //Rap Video
     videoRap = document.getElementById("videoRap");
-    videoRap.volume = 0.01;
+    videoRap.volume = 0.0001;
+    //videoRap.muted = true;
     videoRapTexture = new THREE.VideoTexture(videoRap);
     videoRapTexture.minFilter = THREE.LinearFilter;
     videoRapTexture.magFilter = THREE.LinearFilter;
 
-    var movieMaterial = new THREE.MeshBasicMaterial({
+    var movieRapMaterial = new THREE.MeshBasicMaterial({
         map: videoRapTexture,
         side: THREE.FrontSide,
         toneMapped: false,
     })
 
-    let movieGeometry = new THREE.PlaneGeometry(0.931, 1.3);
-    let movieCubeScreen = new THREE.Mesh(movieGeometry, movieMaterial);
-    movieCubeScreen.rotateY(Math.PI);
+    let movieRapGeometry = new THREE.PlaneGeometry(0.95, 1.31);
+    let movieRapCubeScreen = new THREE.Mesh(movieRapGeometry, movieRapMaterial);
+    movieRapCubeScreen.rotateY(Math.PI);
 
-    movieCubeScreen.position.set(-6.155, 2.565, 9.943);
-    scene.add(movieCubeScreen);
+    movieRapCubeScreen.position.set(-6.155, 2.565, 9.943);
+    scene.add(movieRapCubeScreen);
+
+    //Ski Video
+    videoSki = document.getElementById("videoSki");
+    videoSkiTexture = new THREE.VideoTexture(videoSki);
+    videoSkiTexture.minFilter = THREE.LinearFilter;
+    videoSkiTexture.magFilter = THREE.LinearFilter;
+
+    var movieSkiMaterial = new THREE.MeshBasicMaterial({
+        map: videoSkiTexture,
+        side: THREE.FrontSide,
+        toneMapped: false,
+    })
+
+    let movieSkiGeometry = new THREE.PlaneGeometry(0.95, 1.31);
+    let movieSkiCubeScreen = new THREE.Mesh(movieSkiGeometry, movieSkiMaterial);
+    movieSkiCubeScreen.rotateY(Math.PI);
+
+    movieSkiCubeScreen.position.set(-6.155, 2.565, 27.655);
+    scene.add(movieSkiCubeScreen);
+
+    //Umwelt Video
+    videoEnv = document.getElementById("videoEnv");
+    videoEnv.volume = 0.0001;
+    videoEnvTexture = new THREE.VideoTexture(videoEnv);
+    videoEnvTexture.minFilter = THREE.LinearFilter;
+    videoEnvTexture.magFilter = THREE.LinearFilter;
+
+    var movieEnvMaterial = new THREE.MeshBasicMaterial({
+        map: videoEnvTexture,
+        side: THREE.FrontSide,
+        toneMapped: false,
+    })
+
+    let movieEnvGeometry = new THREE.PlaneGeometry(0.94, 1.31);
+    let movieEnvCubeScreen = new THREE.Mesh(movieEnvGeometry, movieEnvMaterial);
+    movieEnvCubeScreen.rotateY(Math.PI);
+
+    movieEnvCubeScreen.position.set(-6.155, 2.565, 45.14);
+    scene.add(movieEnvCubeScreen);
 }
+
 
 function videoRapSoundHandler() {
     const characterPosition = characterControls.cameraTarget;
@@ -684,6 +727,16 @@ function videoRapSoundHandler() {
     const newDistance = distance * -1 + 4;
     if (newDistance > 0) {
         videoRap.volume = newDistance * 0.1;
+    }
+}
+
+function videoEnvSoundHandler() {
+    const characterPosition = characterControls.cameraTarget;
+    const screenPosition = new THREE.Vector3(-6.155, 2.565, 45.14);
+    const distance = characterPosition.distanceTo(screenPosition);
+    const newDistance = distance * -1 + 4;
+    if (newDistance > 0) {
+        videoEnv.volume = newDistance * 0.1;
     }
 }
 
