@@ -747,11 +747,11 @@ function loadPictures() {
 
     // Load an image file into a custom material
     var materialElle = new THREE.MeshLambertMaterial({
-        map: loader.load('../pictures/bahnanzeigeElle.jpg')
+        map: loader.load('./pictures/bahnanzeigeElle.jpg')
     });
 
     var materialRgb = new THREE.MeshLambertMaterial({
-        map: loader.load('../pictures/bahnanzeigeRgb.jpg')
+        map: loader.load('./pictures/bahnanzeigeRgb.jpg')
     });
 
     // create a plane geometry for the image with a width of 10
