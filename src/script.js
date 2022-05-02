@@ -731,7 +731,6 @@ function loadVideos() {
     scene.add(movieEnvCubeScreen);
 }
 
-
 function videoRapSoundHandler() {
     const characterPosition = characterControls.cameraTarget;
     const screenPosition = new THREE.Vector3(-6.155, 2.565, 9.943);
@@ -753,10 +752,6 @@ function videoEnvSoundHandler() {
 }
 
 function loadPictures() {
-    /**
-     * Image
-     **/
-
     // Create a texture loader so we can load our image file
     var loader = new THREE.TextureLoader();
 
@@ -788,7 +783,6 @@ function loadPictures() {
     var pictureRgbMesh3 = pictureRgbMesh1.clone();
     var pictureRgbMesh33 = pictureRgbMesh1.clone();
 
-
     // set the position of the image mesh in the x,y,z dimensions
     pictureElleMesh1.position.set(2.15, 5.06, 10.1);
     pictureElleMesh11.position.set(2.15, 5.06, 10.33);
@@ -802,7 +796,6 @@ function loadPictures() {
     pictureRgbMesh22.position.set(-8.15, 5.06, 28.04);
     pictureRgbMesh3.position.set(-8.15, 5.06, 45.3);
     pictureRgbMesh33.position.set(-8.15, 5.06, 45.53);
-
 
     pictureElleMesh1.rotateY(Math.PI);
     pictureElleMesh2.rotateY(Math.PI);
