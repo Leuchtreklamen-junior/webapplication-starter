@@ -13,7 +13,7 @@ import {
 
 let container = document.querySelector(".scene");
 let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash,
-    rainsound, soundarray = [], billboardmixer, billboardmixer2, billboardmixer3, wagonmixer, videoRap, videoSki, videoEnv, videoRapTexture, videoSkiTexture, videoEnvTexture,
+    rainsound, thundersound, trainsound, soundarray = [], billboardmixer, billboardmixer2, billboardmixer3, wagonmixer, videoRap, videoSki, videoEnv, videoRapTexture, videoSkiTexture, videoEnvTexture,
     temporarysound, rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1;
 
 //CONTROLLS
@@ -83,7 +83,7 @@ function init() {
 
 function loadObjects() {
     let loader = new THREE.GLTFLoader(loadingManager);
-    loader.load("../src/3D/billboardPeter.glb", function (gltf) {
+    loader.load("./src/3D/billboardPeter.glb", function (gltf) {
         let billboard = gltf.scene;
         let billboard2 = billboard.clone();
         let billboard3 = billboard.clone();
@@ -105,7 +105,7 @@ function loadObjects() {
         action3.play();
     });
 
-    loader.load("../src/3D/train.glb", function (gltf) {
+    loader.load("./src/3D/train.glb", function (gltf) {
         let wagon = gltf.scene;
         wagonmixer = new THREE.AnimationMixer(wagon);
         wagon.traverse(function (node) {
@@ -119,7 +119,7 @@ function loadObjects() {
         let action = wagonmixer.clipAction(anim);
         //action.play();
     });
-    loader.load("../src/3D/trainfront.glb", function (gltf) {
+    loader.load("./src/3D/trainfront.glb", function (gltf) {
         let frontwagon = gltf.scene;
         frontwagon.traverse(function (node) {
             if (node.isMesh) {
@@ -129,7 +129,7 @@ function loadObjects() {
         frontwagon.position.set(5, displacement, 36.8);
         scene.add(frontwagon);
     });
-    loader.load("../src/3D/trainback.glb", function (gltf) {
+    loader.load("./src/3D/trainback.glb", function (gltf) {
         let backwagon = gltf.scene;
         backwagon.traverse(function (node) {
             if (node.isMesh) {
@@ -139,7 +139,7 @@ function loadObjects() {
         backwagon.position.set(5, displacement, 6.15);
         scene.add(backwagon);
     });
-    loader.load("../src/3D/trainstation.glb", function (gltf) {
+    loader.load("./src/3D/trainstation.glb", function (gltf) {
         let station = gltf.scene;
         let station2 = station.clone();
         let station3 = station.clone();
@@ -150,7 +150,7 @@ function loadObjects() {
         scene.add(station2);
         scene.add(station3);
     });
-    loader.load("../src/3D/cocacola.glb", function (gltf) {
+    loader.load("./src/3D/cocacola.glb", function (gltf) {
         let cocacola = gltf.scene;
         cocacola.position.set(-3, displacement + displacestation, 15);
         scene.add(cocacola);
@@ -416,9 +416,16 @@ function startSequence() {
     document.querySelector(".audioContainer").classList.add("active");
     rainsound.play();
     setInterval(function(){
+        thundersound.play();
+    }, 20000);
+    rainsound.play();
+    setInterval(function(){
+        trainsound.play();
+    }, 50000);
+    setInterval(function(){
         const randomElement = soundarray[Math.floor(Math.random() * soundarray.length)];
-        randomElement.play()
-    }, 60000);
+        randomElement.play();
+    }, 90000);
     animate();
 }
 
@@ -430,10 +437,11 @@ function loadaudio() {
 
     // create a global audio source
     rainsound = new THREE.Audio(listener);
-    let thundersound = new THREE.Audio(listener);
+    thundersound = new THREE.Audio(listener);
     let announcment1 = new THREE.Audio(listener);
     let announcment2 = new THREE.Audio(listener);
     let announcment3 = new THREE.Audio(listener);
+    trainsound = new THREE.Audio(listener);
 
     // load a sound and set it as the Audio object's buffer
     const audioLoader = new THREE.AudioLoader();
@@ -452,6 +460,12 @@ function loadaudio() {
         thundersound.setVolume(0.5);
     });
 
+    audioLoader.load('./src/audio/trainsound.mp3', function (buffer) {
+        trainsound.setBuffer(buffer);
+        trainsound.setLoop(false);
+        trainsound.setVolume(0.2);
+    });
+
     audioLoader.load('./src/audio/announcment1.mp3', function (buffer) {
         announcment1.setBuffer(buffer);
         announcment1.setLoop(false);
@@ -468,7 +482,7 @@ function loadaudio() {
         announcment3.setVolume(0.5);
     });
 
-    soundarray.push(thundersound, announcment1, announcment2, announcment3);
+    soundarray.push(announcment1, announcment2, announcment3);
     console.log(soundarray);
 }
 
