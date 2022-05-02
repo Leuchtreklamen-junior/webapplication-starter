@@ -445,8 +445,11 @@ function updateProgressBar(progressBar, value) {
     progressBar.querySelector(".progress-value").style.width = `${value}%`;
     if (value == 100) {
         setTimeout(function () {
-            document.querySelector(".loadingBody").classList.remove("active")
-        }, 2000);
+            document.querySelector(".loadingBody").classList.remove("active");
+            document.querySelector(".controlls").classList.add("active");
+            document.querySelector(".audioContainer").classList.add("active");
+            animate();
+        }, 3000);
     }
     //loadingbody = document.querySelector(".loadingBody")  
 }
@@ -741,5 +744,4 @@ function videoEnvSoundHandler() {
 }
 
 init();
-animate();
 //orbitControls.addEventListener( 'change', console.log("frei") );
