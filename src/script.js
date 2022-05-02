@@ -76,7 +76,7 @@ function init() {
         addRain();
         loadaudio();
     }
-    loadVideos();
+    //loadVideos();
     loadPictures();
 
 }
@@ -117,7 +117,7 @@ function loadObjects() {
         scene.add(wagon);
         let anim = gltf.animations[0];
         let action = wagonmixer.clipAction(anim);
-        action.play();
+        //action.play();
     });
     loader.load("../src/3D/trainfront.glb", function (gltf) {
         let frontwagon = gltf.scene;
@@ -277,20 +277,7 @@ function loadWorldDay() {
     camera.position.set(characterx, displacement + displacestation + cameratargetheight, characterz + 2);
 
 
-    //plane
-
-    // 
-
     let texture = new THREE.MeshStandardMaterial({
-        // map: tilesBaseColor,
-        // normalMap: tilesNormalMap,
-        // displacementMap: tilesHightMap,
-        // displacementScale: displacement,
-        // roughnessMap: tilesRoughnessMap,
-        // roughness: floorroughness,
-        // aoMap: tilesAmbientOcclusionMap,
-        // metalnessMap: tilesMetallic,
-        // metalness: floormetalness,
         color: 0x000000
     });
 
@@ -428,11 +415,10 @@ function startSequence() {
     document.querySelector(".controlls").classList.add("active");
     document.querySelector(".audioContainer").classList.add("active");
     rainsound.play();
-    playrandomsound();
     setInterval(function(){
         const randomElement = soundarray[Math.floor(Math.random() * soundarray.length)];
         randomElement.play()
-    }, 30000);
+    }, 60000);
     animate();
 }
 
@@ -484,10 +470,6 @@ function loadaudio() {
 
     soundarray.push(thundersound, announcment1, announcment2, announcment3);
     console.log(soundarray);
-}
-
-function playrandomsound(){
-    
 }
 
 //audio slider
@@ -570,11 +552,11 @@ function animate() {
     //camera
     orbitControls.update();
 
-    //
-    videoRapTexture.needsUpdate = true;
+    
+    //videoRapTexture.needsUpdate = true;
 
-    videoRapSoundHandler();
-    videoEnvSoundHandler();
+    // videoRapSoundHandler();
+    // videoEnvSoundHandler();
 
     //Object Animations
     wagonmixer.update(delta);
@@ -753,10 +735,6 @@ function videoEnvSoundHandler() {
 }
 
 function loadPictures() {
-    /**
-     * Image
-     **/
-
     // Create a texture loader so we can load our image file
     var loader = new THREE.TextureLoader();
 
