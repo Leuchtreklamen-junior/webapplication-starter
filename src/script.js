@@ -13,14 +13,8 @@ import {
 
 let container = document.querySelector(".scene");
 let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash,
-<<<<<<< Updated upstream
-    sound, billboardmixer, wagonmixer, videoRap, videoSki, videoEnv, videoRapTexture, videoSkiTexture, videoEnvTexture,
-    temporarysound, glowworms = [],
-    rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1;
-=======
-    sound, billboardmixer, billboardmixer2, billboardmixer3, wagonmixer, videoRap, videoSki, videoEnv, videoRapTexture, videoSkiTexture, videoEnvTexture, 
+    rainsound, soundarray = [], billboardmixer, billboardmixer2, billboardmixer3, wagonmixer, videoRap, videoSki, videoEnv, videoRapTexture, videoSkiTexture, videoEnvTexture,
     temporarysound, rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1;
->>>>>>> Stashed changes
 
 //CONTROLLS
 
@@ -285,48 +279,19 @@ function loadWorldDay() {
 
     //plane
 
-    const textureLoader = new THREE.TextureLoader();
-    const tilesBaseColor = textureLoader.load("./src/textures/asphalt2/color.jpg", function (tilesBaseColor) {
-        tilesBaseColor.wrapS = tilesBaseColor.wrapT = THREE.RepeatWrapping;
-        tilesBaseColor.offset.set(0, 0);
-        tilesBaseColor.repeat.set(floorrepeat, floorrepeat);
-    });
-    const tilesNormalMap = textureLoader.load("./src/textures/asphalt2/normal.jpg", function (tilesNormalMap) {
-        tilesNormalMap.wrapS = tilesNormalMap.wrapT = THREE.RepeatWrapping;
-        tilesNormalMap.offset.set(0, 0);
-        tilesNormalMap.repeat.set(floorrepeat, floorrepeat);
-    });
-    const tilesHightMap = textureLoader.load("./src/textures/asphalt2/displace.jpg", function (tilesHightMap) {
-        tilesHightMap.wrapS = tilesHightMap.wrapT = THREE.RepeatWrapping;
-        tilesHightMap.offset.set(0, 0);
-        tilesHightMap.repeat.set(floorrepeat, floorrepeat);
-    });
-    const tilesRoughnessMap = textureLoader.load("./src/textures/asphalt2/rough.jpg", function (tilesRoughnessMap) {
-        tilesRoughnessMap.wrapS = tilesRoughnessMap.wrapT = THREE.RepeatWrapping;
-        tilesRoughnessMap.offset.set(0, 0);
-        tilesRoughnessMap.repeat.set(floorrepeat, floorrepeat);
-    });
-    const tilesAmbientOcclusionMap = textureLoader.load("./src/textures/asphalt2/ao.jpg", function (tilesAmbientOcclusionMap) {
-        tilesAmbientOcclusionMap.wrapS = tilesAmbientOcclusionMap.wrapT = THREE.RepeatWrapping;
-        tilesAmbientOcclusionMap.offset.set(0, 0);
-        tilesAmbientOcclusionMap.repeat.set(floorrepeat, floorrepeat);
-    });
-    const tilesMetallic = textureLoader.load("./src/textures/asphalt2/metal.jpg", function (tilesMetallic) {
-        tilesMetallic.wrapS = tilesMetallic.wrapT = THREE.RepeatWrapping;
-        tilesMetallic.offset.set(0, 0);
-        tilesMetallic.repeat.set(floorrepeat, floorrepeat);
-    });
+    // 
 
     let texture = new THREE.MeshStandardMaterial({
-        map: tilesBaseColor,
-        normalMap: tilesNormalMap,
-        displacementMap: tilesHightMap,
-        displacementScale: displacement,
-        roughnessMap: tilesRoughnessMap,
-        roughness: floorroughness,
-        aoMap: tilesAmbientOcclusionMap,
-        metalnessMap: tilesMetallic,
-        metalness: floormetalness
+        // map: tilesBaseColor,
+        // normalMap: tilesNormalMap,
+        // displacementMap: tilesHightMap,
+        // displacementScale: displacement,
+        // roughnessMap: tilesRoughnessMap,
+        // roughness: floorroughness,
+        // aoMap: tilesAmbientOcclusionMap,
+        // metalnessMap: tilesMetallic,
+        // metalness: floormetalness,
+        color: 0x000000
     });
 
     let geometry = new THREE.PlaneGeometry(worldwidth, worldwidth, texturequality, texturequality);
@@ -335,6 +300,7 @@ function loadWorldDay() {
     floortile.castShadow = false;
     floortile.receiveShadow = true;
     floortile.rotation.x = -Math.PI / 2;
+    floortile.position.set(-3.5, 0, 20);
     scene.add(floortile);
 
     //LIGHTS
@@ -378,12 +344,12 @@ function loadWorldDay() {
 
     //Trainstationlight
 
-    const trainlightwidth = 10;
+    const trainlightwidth = 3;
     const trainlightheight = 45;
 
-    let stationlight = new THREE.RectAreaLight(0x99ffff, 5, width, height);
-    stationlight.position.set(-3, 5, 20);
-    stationlight.lookAt(-3, 0, 20);
+    let stationlight = new THREE.RectAreaLight(0x99ffff, 5, trainlightwidth, trainlightheight);
+    stationlight.position.set(-3.5, 5, 20);
+    stationlight.lookAt(-3.5, 0, 20);
 
     scene.add(stationlight);
 
@@ -451,14 +417,23 @@ function updateProgressBar(progressBar, value) {
     progressBar.querySelector(".progress-value").style.width = `${value}%`;
     if (value == 100) {
         setTimeout(function () {
-            document.querySelector(".loadingBody").classList.remove("active");
-            document.querySelector(".controlls").classList.add("active");
-            document.querySelector(".audioContainer").classList.add("active");
-            sound.play();
-            animate();
+            startSequence();
         }, 3000);
     }
     //loadingbody = document.querySelector(".loadingBody")  
+}
+
+function startSequence() {
+    document.querySelector(".loadingBody").classList.remove("active");
+    document.querySelector(".controlls").classList.add("active");
+    document.querySelector(".audioContainer").classList.add("active");
+    rainsound.play();
+    playrandomsound();
+    setInterval(function(){
+        const randomElement = soundarray[Math.floor(Math.random() * soundarray.length)];
+        randomElement.play()
+    }, 30000);
+    animate();
 }
 
 //load audio
@@ -468,23 +443,51 @@ function loadaudio() {
     camera.add(listener);
 
     // create a global audio source
-    sound = new THREE.Audio(listener);
+    rainsound = new THREE.Audio(listener);
+    let thundersound = new THREE.Audio(listener);
+    let announcment1 = new THREE.Audio(listener);
+    let announcment2 = new THREE.Audio(listener);
+    let announcment3 = new THREE.Audio(listener);
 
     // load a sound and set it as the Audio object's buffer
     const audioLoader = new THREE.AudioLoader();
+
     audioLoader.load('./src/audio/rain.wav', function (buffer) {
-        sound.setBuffer(buffer);
-        sound.setLoop(true);
-        sound.setVolume(tempsound);
-        
+        rainsound.setBuffer(buffer);
+        rainsound.setLoop(true);
+        rainsound.setVolume(tempsound);
+        rainsound.position.set(-3, 10, 20);
+
     });
 
     audioLoader.load('./src/audio/thunder1.wav', function (buffer) {
-        sound.setBuffer(buffer);
-        sound.setLoop(true);
-        sound.setVolume(tempsound);
-        sound.autoplay = true;
+        thundersound.setBuffer(buffer);
+        thundersound.setLoop(false);
+        thundersound.setVolume(0.5);
     });
+
+    audioLoader.load('./src/audio/announcment1.mp3', function (buffer) {
+        announcment1.setBuffer(buffer);
+        announcment1.setLoop(false);
+        announcment1.setVolume(0.5);
+    });
+    audioLoader.load('./src/audio/announcment2.mp3', function (buffer) {
+        announcment2.setBuffer(buffer);
+        announcment2.setLoop(false);
+        announcment2.setVolume(0.5);
+    });
+    audioLoader.load('./src/audio/announcment3.mp3', function (buffer) {
+        announcment3.setBuffer(buffer);
+        announcment3.setLoop(false);
+        announcment3.setVolume(0.5);
+    });
+
+    soundarray.push(thundersound, announcment1, announcment2, announcment3);
+    console.log(soundarray);
+}
+
+function playrandomsound(){
+    
 }
 
 //audio slider
@@ -501,7 +504,7 @@ function muteAudio() {
         muteButton.classList.remove("mute");
         volumeSymbol.classList.remove("fa-volume-xmark");
         volumeSymbol.classList.add("fa-volume-high");
-        sound.setVolume(temporarysound);
+        rainsound.setVolume(temporarysound);
         volumeSlider.value = temporarysound * 100;
     } else {
         //mute
@@ -509,7 +512,7 @@ function muteAudio() {
         muteButton.classList.add("mute");
         tempsound = volumeSlider.value / 100;
         volumeSlider.value = 0;
-        sound.setVolume(0);
+        rainsound.setVolume(0);
         volumeSymbol.classList.remove("fa-volume-high");
         volumeSymbol.classList.add("fa-volume-xmark");
     }
@@ -529,7 +532,7 @@ function setVol() {
         muteButton.classList.remove("mute");
     }
     tempsound = volumeSlider.value / 100;
-    sound.setVolume(tempsound);
+    rainsound.setVolume(tempsound);
 
 }
 
@@ -566,9 +569,6 @@ function animate() {
 
     //camera
     orbitControls.update();
-
-    
-    
 
     //
     videoRapTexture.needsUpdate = true;
@@ -674,7 +674,6 @@ function loadVideos() {
     //Rap Video
     videoRap = document.getElementById("videoRap");
     videoRap.volume = 0.0001;
-    //videoRap.muted = true;
     videoRapTexture = new THREE.VideoTexture(videoRap);
     videoRapTexture.minFilter = THREE.LinearFilter;
     videoRapTexture.magFilter = THREE.LinearFilter;
@@ -753,7 +752,6 @@ function videoEnvSoundHandler() {
     }
 }
 
-<<<<<<< Updated upstream
 function loadPictures() {
     /**
      * Image
@@ -828,8 +826,6 @@ function loadPictures() {
     scene.add(pictureRgbMesh33);
 }
 
+
 init();
 //orbitControls.addEventListener( 'change', console.log("frei") );
-=======
-init();
->>>>>>> Stashed changes
