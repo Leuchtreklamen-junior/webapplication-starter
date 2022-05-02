@@ -13,9 +13,14 @@ import {
 
 let container = document.querySelector(".scene");
 let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash,
+<<<<<<< Updated upstream
     sound, billboardmixer, wagonmixer, videoRap, videoSki, videoEnv, videoRapTexture, videoSkiTexture, videoEnvTexture,
     temporarysound, glowworms = [],
     rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1;
+=======
+    sound, billboardmixer, billboardmixer2, billboardmixer3, wagonmixer, videoRap, videoSki, videoEnv, videoRapTexture, videoSkiTexture, videoEnvTexture, 
+    temporarysound, rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1;
+>>>>>>> Stashed changes
 
 //CONTROLLS
 
@@ -36,12 +41,12 @@ let worldwidth = 100,
     flashlightintensity = 2000, //5-2000
 
     //rain and fog controlls
-    raining = false,
+    raining = true,
     dropCount = 40000, //200 - 40000
     rainspeed = 0.2,
     dropsizemin = 0.05,
     dropsizemax = 0.2,
-    fog = false,
+    fog = true,
 
     //starting volume sound
     tempsound = 0.1,
@@ -86,19 +91,24 @@ function loadObjects() {
     let loader = new THREE.GLTFLoader(loadingManager);
     loader.load("../src/3D/billboardPeter.glb", function (gltf) {
         let billboard = gltf.scene;
+        let billboard2 = billboard.clone();
+        let billboard3 = billboard.clone();
         billboardmixer = new THREE.AnimationMixer(billboard);
-        billboard.traverse(function (node) {
-            if (node.isMesh) {
-                node.castShadow = true;
-            }
-        });
+        billboardmixer2 = new THREE.AnimationMixer(billboard2);
+        billboardmixer3 = new THREE.AnimationMixer(billboard3);
         billboard.position.set(-13, -2, 3);
+        billboard2.position.set(-13, -2, 23);
+        billboard3.position.set(-13, -2, 43);
         let anim = gltf.animations[0];
         let action = billboardmixer.clipAction(anim);
-
-
+        let action2 = billboardmixer2.clipAction(anim);
+        let action3 = billboardmixer3.clipAction(anim);
         scene.add(billboard);
+        scene.add(billboard2);
+        scene.add(billboard3);
         action.play();
+        action2.play();
+        action3.play();
     });
 
     loader.load("../src/3D/train.glb", function (gltf) {
@@ -114,7 +124,6 @@ function loadObjects() {
         let anim = gltf.animations[0];
         let action = wagonmixer.clipAction(anim);
         action.play();
-        console.log(wagon);
     });
     loader.load("../src/3D/trainfront.glb", function (gltf) {
         let frontwagon = gltf.scene;
@@ -140,7 +149,6 @@ function loadObjects() {
         let station = gltf.scene;
         let station2 = station.clone();
         let station3 = station.clone();
-        console.log(station);
         station.position.set(-3, displacement, 5);
         station2.position.set(-3, displacement, 22.71);
         station3.position.set(-3, displacement, 40.2);
@@ -150,7 +158,6 @@ function loadObjects() {
     });
     loader.load("../src/3D/cocacola.glb", function (gltf) {
         let cocacola = gltf.scene;
-        console.log(cocacola);
         cocacola.position.set(-3, displacement + displacestation, 15);
         scene.add(cocacola);
     });
@@ -328,7 +335,6 @@ function loadWorldDay() {
     floortile.castShadow = false;
     floortile.receiveShadow = true;
     floortile.rotation.x = -Math.PI / 2;
-    console.log(floortile);
     scene.add(floortile);
 
     //LIGHTS
@@ -448,6 +454,7 @@ function updateProgressBar(progressBar, value) {
             document.querySelector(".loadingBody").classList.remove("active");
             document.querySelector(".controlls").classList.add("active");
             document.querySelector(".audioContainer").classList.add("active");
+            sound.play();
             animate();
         }, 3000);
     }
@@ -469,8 +476,7 @@ function loadaudio() {
         sound.setBuffer(buffer);
         sound.setLoop(true);
         sound.setVolume(tempsound);
-        sound.autoplay = true;
-        sound.play();
+        
     });
 
     audioLoader.load('./src/audio/thunder1.wav', function (buffer) {
@@ -478,7 +484,6 @@ function loadaudio() {
         sound.setLoop(true);
         sound.setVolume(tempsound);
         sound.autoplay = true;
-        //sound.play();
     });
 }
 
@@ -534,9 +539,6 @@ function animate() {
     var delta = clock.getDelta();
     if (characterControls) characterControls.update(delta, keysPressed);
 
-    wagonmixer.update(delta);
-    billboardmixer.update(delta);
-
     //Flashlights
     if (Math.random() > 0.93 || flash.power > 100) {
         if (flash.power < 100)
@@ -565,15 +567,23 @@ function animate() {
     //camera
     orbitControls.update();
 
-    //render
-    renderer.render(scene, camera);
-    //composer.render();
+    
+    
+
+    //
     videoRapTexture.needsUpdate = true;
 
     videoRapSoundHandler();
     videoEnvSoundHandler();
+
+    //Object Animations
     wagonmixer.update(delta);
     billboardmixer.update(delta);
+    billboardmixer2.update(delta);
+    billboardmixer3.update(delta);
+
+    //render
+    renderer.render(scene, camera);
 
 }
 
@@ -743,6 +753,7 @@ function videoEnvSoundHandler() {
     }
 }
 
+<<<<<<< Updated upstream
 function loadPictures() {
     /**
      * Image
@@ -819,3 +830,6 @@ function loadPictures() {
 
 init();
 //orbitControls.addEventListener( 'change', console.log("frei") );
+=======
+init();
+>>>>>>> Stashed changes
