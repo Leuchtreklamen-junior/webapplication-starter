@@ -552,12 +552,6 @@ function animate() {
     //camera
     orbitControls.update();
 
-    
-    //videoRapTexture.needsUpdate = true;
-
-    // videoRapSoundHandler();
-    // videoEnvSoundHandler();
-
     //Object Animations
     wagonmixer.update(delta);
     billboardmixer.update(delta);
@@ -652,87 +646,86 @@ function loadControls() {
 };
 
 
-function loadVideos() {
-    //Rap Video
-    videoRap = document.getElementById("videoRap");
-    videoRap.volume = 0.0001;
-    videoRapTexture = new THREE.VideoTexture(videoRap);
-    videoRapTexture.minFilter = THREE.LinearFilter;
-    videoRapTexture.magFilter = THREE.LinearFilter;
+// function loadVideos() {
+//     //Rap Video
+//     videoRap = document.getElementById("videoRap");
+//     videoRap.volume = 0.0001;
+//     videoRapTexture = new THREE.VideoTexture(videoRap);
+//     videoRapTexture.minFilter = THREE.LinearFilter;
+//     videoRapTexture.magFilter = THREE.LinearFilter;
 
-    var movieRapMaterial = new THREE.MeshBasicMaterial({
-        map: videoRapTexture,
-        side: THREE.FrontSide,
-        toneMapped: false,
-    })
+//     var movieRapMaterial = new THREE.MeshBasicMaterial({
+//         map: videoRapTexture,
+//         side: THREE.FrontSide,
+//         toneMapped: false,
+//     })
 
-    let movieRapGeometry = new THREE.PlaneGeometry(0.95, 1.31);
-    let movieRapCubeScreen = new THREE.Mesh(movieRapGeometry, movieRapMaterial);
-    movieRapCubeScreen.rotateY(Math.PI);
+//     let movieRapGeometry = new THREE.PlaneGeometry(0.95, 1.31);
+//     let movieRapCubeScreen = new THREE.Mesh(movieRapGeometry, movieRapMaterial);
+//     movieRapCubeScreen.rotateY(Math.PI);
 
-    movieRapCubeScreen.position.set(-6.155, 2.565, 9.943);
-    scene.add(movieRapCubeScreen);
+//     movieRapCubeScreen.position.set(-6.155, 2.565, 9.943);
+//     scene.add(movieRapCubeScreen);
 
-    //Ski Video
-    videoSki = document.getElementById("videoSki");
-    videoSkiTexture = new THREE.VideoTexture(videoSki);
-    videoSkiTexture.minFilter = THREE.LinearFilter;
-    videoSkiTexture.magFilter = THREE.LinearFilter;
+//     //Ski Video
+//     videoSki = document.getElementById("videoSki");
+//     videoSkiTexture = new THREE.VideoTexture(videoSki);
+//     videoSkiTexture.minFilter = THREE.LinearFilter;
+//     videoSkiTexture.magFilter = THREE.LinearFilter;
 
-    var movieSkiMaterial = new THREE.MeshBasicMaterial({
-        map: videoSkiTexture,
-        side: THREE.FrontSide,
-        toneMapped: false,
-    })
+//     var movieSkiMaterial = new THREE.MeshBasicMaterial({
+//         map: videoSkiTexture,
+//         side: THREE.FrontSide,
+//         toneMapped: false,
+//     })
 
-    let movieSkiGeometry = new THREE.PlaneGeometry(0.95, 1.31);
-    let movieSkiCubeScreen = new THREE.Mesh(movieSkiGeometry, movieSkiMaterial);
-    movieSkiCubeScreen.rotateY(Math.PI);
+//     let movieSkiGeometry = new THREE.PlaneGeometry(0.95, 1.31);
+//     let movieSkiCubeScreen = new THREE.Mesh(movieSkiGeometry, movieSkiMaterial);
+//     movieSkiCubeScreen.rotateY(Math.PI);
 
-    movieSkiCubeScreen.position.set(-6.155, 2.565, 27.655);
-    scene.add(movieSkiCubeScreen);
+//     movieSkiCubeScreen.position.set(-6.155, 2.565, 27.655);
+//     scene.add(movieSkiCubeScreen);
 
-    //Umwelt Video
-    videoEnv = document.getElementById("videoEnv");
-    videoEnv.volume = 0.0001;
-    videoEnvTexture = new THREE.VideoTexture(videoEnv);
-    videoEnvTexture.minFilter = THREE.LinearFilter;
-    videoEnvTexture.magFilter = THREE.LinearFilter;
+//     //Umwelt Video
+//     videoEnv = document.getElementById("videoEnv");
+//     videoEnv.volume = 0.0001;
+//     videoEnvTexture = new THREE.VideoTexture(videoEnv);
+//     videoEnvTexture.minFilter = THREE.LinearFilter;
+//     videoEnvTexture.magFilter = THREE.LinearFilter;
 
-    var movieEnvMaterial = new THREE.MeshBasicMaterial({
-        map: videoEnvTexture,
-        side: THREE.FrontSide,
-        toneMapped: false,
-    })
+//     var movieEnvMaterial = new THREE.MeshBasicMaterial({
+//         map: videoEnvTexture,
+//         side: THREE.FrontSide,
+//         toneMapped: false,
+//     })
 
-    let movieEnvGeometry = new THREE.PlaneGeometry(0.94, 1.31);
-    let movieEnvCubeScreen = new THREE.Mesh(movieEnvGeometry, movieEnvMaterial);
-    movieEnvCubeScreen.rotateY(Math.PI);
+//     let movieEnvGeometry = new THREE.PlaneGeometry(0.94, 1.31);
+//     let movieEnvCubeScreen = new THREE.Mesh(movieEnvGeometry, movieEnvMaterial);
+//     movieEnvCubeScreen.rotateY(Math.PI);
 
-    movieEnvCubeScreen.position.set(-6.155, 2.565, 45.14);
-    scene.add(movieEnvCubeScreen);
-}
+//     movieEnvCubeScreen.position.set(-6.155, 2.565, 45.14);
+//     scene.add(movieEnvCubeScreen);
+// }
 
+// function videoRapSoundHandler() {
+//     const characterPosition = characterControls.cameraTarget;
+//     const screenPosition = new THREE.Vector3(-6.155, 2.565, 9.943);
+//     const distance = characterPosition.distanceTo(screenPosition);
+//     const newDistance = distance * -1 + 4;
+//     if (newDistance > 0) {
+//         videoRap.volume = newDistance * 0.1;
+//     }
+// }
 
-function videoRapSoundHandler() {
-    const characterPosition = characterControls.cameraTarget;
-    const screenPosition = new THREE.Vector3(-6.155, 2.565, 9.943);
-    const distance = characterPosition.distanceTo(screenPosition);
-    const newDistance = distance * -1 + 4;
-    if (newDistance > 0) {
-        videoRap.volume = newDistance * 0.1;
-    }
-}
-
-function videoEnvSoundHandler() {
-    const characterPosition = characterControls.cameraTarget;
-    const screenPosition = new THREE.Vector3(-6.155, 2.565, 45.14);
-    const distance = characterPosition.distanceTo(screenPosition);
-    const newDistance = distance * -1 + 4;
-    if (newDistance > 0) {
-        videoEnv.volume = newDistance * 0.1;
-    }
-}
+// function videoEnvSoundHandler() {
+//     const characterPosition = characterControls.cameraTarget;
+//     const screenPosition = new THREE.Vector3(-6.155, 2.565, 45.14);
+//     const distance = characterPosition.distanceTo(screenPosition);
+//     const newDistance = distance * -1 + 4;
+//     if (newDistance > 0) {
+//         videoEnv.volume = newDistance * 0.1;
+//     }
+// }
 
 function loadPictures() {
     // Create a texture loader so we can load our image file
