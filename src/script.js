@@ -13,7 +13,7 @@ import {
 
 let container = document.querySelector(".scene");
 let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash,
-    sound, billboardmixer, wagonmixer, videoRap, videoSki, videoEnv, videoRapTexture, videoSkiTexture, videoEnvTexture, 
+    sound, billboardmixer, wagonmixer, videoRap, videoSki, videoEnv, videoRapTexture, videoSkiTexture, videoEnvTexture,
     temporarysound, glowworms = [],
     rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1;
 
@@ -78,6 +78,7 @@ function init() {
         loadaudio();
     }
     loadVideos();
+    loadPictures();
 
 }
 
@@ -153,7 +154,6 @@ function loadObjects() {
         cocacola.position.set(-3, displacement + displacestation, 15);
         scene.add(cocacola);
     });
-
 }
 
 function addRain() {
@@ -738,6 +738,80 @@ function videoEnvSoundHandler() {
     if (newDistance > 0) {
         videoEnv.volume = newDistance * 0.1;
     }
+}
+
+function loadPictures() {
+    /**
+     * Image
+     **/
+
+    // Create a texture loader so we can load our image file
+    var loader = new THREE.TextureLoader();
+
+    // Load an image file into a custom material
+    var materialElle = new THREE.MeshLambertMaterial({
+        map: loader.load('../pictures/bahnanzeigeElle.jpg')
+    });
+
+    var materialRgb = new THREE.MeshLambertMaterial({
+        map: loader.load('../pictures/bahnanzeigeRgb.jpg')
+    });
+
+    // create a plane geometry for the image with a width of 10
+    // and a height that preserves the image's aspect ratio
+    var geometry = new THREE.PlaneGeometry(1.93, 0.9);
+
+    // picture Ellhofen
+    var pictureElleMesh1 = new THREE.Mesh(geometry, materialElle);
+    var pictureElleMesh11 = pictureElleMesh1.clone();
+    var pictureElleMesh2 = pictureElleMesh1.clone();
+    var pictureElleMesh22 = pictureElleMesh1.clone();
+    var pictureElleMesh3 = pictureElleMesh1.clone();
+    var pictureElleMesh33 = pictureElleMesh1.clone();
+    // picture München
+    var pictureRgbMesh1 = new THREE.Mesh(geometry, materialRgb);
+    var pictureRgbMesh11 = pictureRgbMesh1.clone();
+    var pictureRgbMesh2 = pictureRgbMesh1.clone();
+    var pictureRgbMesh22 = pictureRgbMesh1.clone();
+    var pictureRgbMesh3 = pictureRgbMesh1.clone();
+    var pictureRgbMesh33 = pictureRgbMesh1.clone();
+
+
+    // set the position of the image mesh in the x,y,z dimensions
+    pictureElleMesh1.position.set(2.15, 5.06, 10.1);
+    pictureElleMesh11.position.set(2.15, 5.06, 10.33);
+    pictureElleMesh2.position.set(2.15, 5.06, 27.81);
+    pictureElleMesh22.position.set(2.15, 5.06, 28.04);
+    pictureElleMesh3.position.set(2.15, 5.06, 45.3);
+    pictureElleMesh33.position.set(2.15, 5.06, 45.53);
+    pictureRgbMesh1.position.set(-8.15, 5.06, 10.1);
+    pictureRgbMesh11.position.set(-8.15, 5.06, 10.33);
+    pictureRgbMesh2.position.set(-8.15, 5.06, 27.81);
+    pictureRgbMesh22.position.set(-8.15, 5.06, 28.04);
+    pictureRgbMesh3.position.set(-8.15, 5.06, 45.3);
+    pictureRgbMesh33.position.set(-8.15, 5.06, 45.53);
+
+
+    pictureElleMesh1.rotateY(Math.PI);
+    pictureElleMesh2.rotateY(Math.PI);
+    pictureElleMesh3.rotateY(Math.PI);
+    pictureRgbMesh1.rotateY(Math.PI);
+    pictureRgbMesh2.rotateY(Math.PI);
+    pictureRgbMesh3.rotateY(Math.PI);
+
+    // add the image to the scene
+    scene.add(pictureElleMesh1);
+    scene.add(pictureElleMesh11);
+    scene.add(pictureElleMesh2);
+    scene.add(pictureElleMesh22);
+    scene.add(pictureElleMesh3);
+    scene.add(pictureElleMesh33);
+    scene.add(pictureRgbMesh1);
+    scene.add(pictureRgbMesh11);
+    scene.add(pictureRgbMesh2);
+    scene.add(pictureRgbMesh22);
+    scene.add(pictureRgbMesh3);
+    scene.add(pictureRgbMesh33);
 }
 
 init();
