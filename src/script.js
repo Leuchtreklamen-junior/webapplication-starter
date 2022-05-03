@@ -15,9 +15,7 @@ import {
 
 let container = document.querySelector(".scene");
 let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash,
-    movieRapCubeScreen, movieEnvCubeScreen,
-    rainsound, thundersound, trainsound, soundarray = [],
-    billboardmixer, billboardmixer2, billboardmixer3, wagonmixer, videoRap, videoSki, videoEnv, videoRapTexture, videoSkiTexture, videoEnvTexture,
+    rainsound, thundersound, trainsound, announcment1, announcment2, announcment3, announcment4, soundarray = [], billboardmixer, billboardmixer2, billboardmixer3, wagonmixer, videoRap, videoSki, videoEnv, videoRapTexture, videoSkiTexture, videoEnvTexture,
     temporarysound, rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1;
 
 //CONTROLLS
@@ -292,7 +290,7 @@ function loadWorldDay() {
     floortile.castShadow = false;
     floortile.receiveShadow = true;
     floortile.rotation.x = -Math.PI / 2;
-    floortile.position.set(-3.5, 0, 20);
+    floortile.position.set(worldcenterx, 0, wo);
     scene.add(floortile);
 
     //LIGHTS
@@ -422,12 +420,12 @@ function startSequence() {
     rainsound.play();
     setInterval(function () {
         thundersound.play();
-    }, 20000);
+    }, 80000);
     rainsound.play();
     setInterval(function () {
         trainsound.play();
-    }, 50000);
-    setInterval(function () {
+    }, 60000);
+    setInterval(function(){
         const randomElement = soundarray[Math.floor(Math.random() * soundarray.length)];
         randomElement.play();
     }, 90000);
@@ -443,14 +441,14 @@ function loadaudio() {
     // create a global audio source
     rainsound = new THREE.Audio(listener);
     thundersound = new THREE.Audio(listener);
-    let announcment1 = new THREE.Audio(listener);
-    let announcment2 = new THREE.Audio(listener);
-    let announcment3 = new THREE.Audio(listener);
+    announcment1 = new THREE.Audio(listener);
+    announcment2 = new THREE.Audio(listener);
+    announcment3 = new THREE.Audio(listener);
+    announcment4 = new THREE.Audio(listener);
     trainsound = new THREE.Audio(listener);
 
     // load a sound and set it as the Audio object's buffer
     const audioLoader = new THREE.AudioLoader();
-
     audioLoader.load('./src/audio/rain.wav', function (buffer) {
         rainsound.setBuffer(buffer);
         rainsound.setLoop(true);
@@ -458,37 +456,37 @@ function loadaudio() {
         rainsound.position.set(-3, 10, 20);
 
     });
-
     audioLoader.load('./src/audio/thunder1.wav', function (buffer) {
         thundersound.setBuffer(buffer);
         thundersound.setLoop(false);
-        thundersound.setVolume(0.2);
+        thundersound.setVolume(tempsound);
     });
-
     audioLoader.load('./src/audio/trainsound.mp3', function (buffer) {
         trainsound.setBuffer(buffer);
         trainsound.setLoop(false);
-        trainsound.setVolume(0.2);
+        trainsound.setVolume(0.1);
     });
-
     audioLoader.load('./src/audio/announcment1.mp3', function (buffer) {
         announcment1.setBuffer(buffer);
         announcment1.setLoop(false);
-        announcment1.setVolume(0.1);
+        announcment1.setVolume(tempsound);
     });
     audioLoader.load('./src/audio/announcment2.mp3', function (buffer) {
         announcment2.setBuffer(buffer);
         announcment2.setLoop(false);
-        announcment2.setVolume(0.1);
+        announcment2.setVolume(tempsound);
     });
     audioLoader.load('./src/audio/announcment3.mp3', function (buffer) {
         announcment3.setBuffer(buffer);
         announcment3.setLoop(false);
-        announcment3.setVolume(0.1);
+        announcment3.setVolume(tempsound);
     });
-
-    soundarray.push(announcment1, announcment2, announcment3);
-    console.log(soundarray);
+    audioLoader.load('./src/audio/announcment4.mp3', function (buffer) {
+        announcment4.setBuffer(buffer);
+        announcment4.setLoop(false);
+        announcment4.setVolume(tempsound);
+    });
+    soundarray.push(announcment1, announcment2, announcment3, announcment4);
 }
 
 //audio slider
@@ -506,6 +504,12 @@ function muteAudio() {
         volumeSymbol.classList.remove("fa-volume-xmark");
         volumeSymbol.classList.add("fa-volume-high");
         rainsound.setVolume(temporarysound);
+        announcment1.setVolume(temporarysound);
+        announcment2.setVolume(temporarysound);
+        announcment3.setVolume(temporarysound);
+        announcment4.setVolume(temporarysound);
+        thundersound.setVolume(temporarysound);
+        trainsound.setVolume(temporarysound*0.5);
         volumeSlider.value = temporarysound * 100;
     } else {
         //mute
@@ -514,6 +518,12 @@ function muteAudio() {
         tempsound = volumeSlider.value / 100;
         volumeSlider.value = 0;
         rainsound.setVolume(0);
+        announcment1.setVolume(0);
+        announcment2.setVolume(0);
+        announcment3.setVolume(0);
+        announcment4.setVolume(0);
+        thundersound.setVolume(0);
+        trainsound.setVolume(0);
         volumeSymbol.classList.remove("fa-volume-high");
         volumeSymbol.classList.add("fa-volume-xmark");
     }
@@ -534,6 +544,12 @@ function setVol() {
     }
     tempsound = volumeSlider.value / 100;
     rainsound.setVolume(tempsound);
+    announcment1.setVolume(tempsound);
+    announcment2.setVolume(tempsound);
+    announcment3.setVolume(tempsound);
+    announcment4.setVolume(tempsound);
+    thundersound.setVolume(tempsound);
+    trainsound.setVolume(tempsound*0.5);
 
 }
 
