@@ -10,17 +10,21 @@ import {
 import {
     UnrealBloomPass
 } from 'https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/postprocessing/UnrealBloomPass.js';
+//import * as FontLoader from 'https://cdn.jsdelivr.net/npm/three@0.140.0/examples/jsm/loaders/FontLoader.js';
+//import { FontLoader } from './threejs/FontLoader.js';
+//import * as TextGeometry from 'https://cdn.jsdelivr.net/npm/three@0.140.0/examples/jsm/geometries/TextGeometry.js';
+//import { TextGeometry } from './threejs/TextGeometry.js';
 
 let container = document.querySelector(".scene");
 let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash,
-    rainsound, soundarray = [], billboardmixer, billboardmixer2, billboardmixer3, wagonmixer, videoRap, videoSki, videoEnv, videoRapTexture, videoSkiTexture, videoEnvTexture,
+    rainsound, soundarray = [], billboardmixer, billboardmixer2, billboardmixer3, wagonmixer, videoRap, videoSki, videoEnv, videoRapTexture, videoSkiTexture, videoEnvTexture, movieRapCubeScreen, movieEnvCubeScreen,
     temporarysound, rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1;
 
 //CONTROLLS
 
 //world
 let worldwidth = 100,
-    worldheight = 20,
+    worldheight = 20,                                                   
     backColor = 0x060616,
     worldcenterx = -3,
     worldcenterz = 20,
@@ -78,6 +82,7 @@ function init() {
     }
     loadVideos();
     loadPictures();
+    loadText();
 
 }
 
@@ -418,7 +423,7 @@ function updateProgressBar(progressBar, value) {
     if (value == 100) {
         setTimeout(function () {
             startSequence();
-        }, 3000);
+        }, 2000);
     }
     //loadingbody = document.querySelector(".loadingBody")  
 }
@@ -432,7 +437,7 @@ function startSequence() {
     setInterval(function(){
         const randomElement = soundarray[Math.floor(Math.random() * soundarray.length)];
         randomElement.play()
-    }, 30000);
+    }, 100000);
     animate();
 }
 
@@ -463,23 +468,23 @@ function loadaudio() {
     audioLoader.load('./src/audio/thunder1.wav', function (buffer) {
         thundersound.setBuffer(buffer);
         thundersound.setLoop(false);
-        thundersound.setVolume(0.5);
+        thundersound.setVolume(0.2);
     });
 
     audioLoader.load('./src/audio/announcment1.mp3', function (buffer) {
         announcment1.setBuffer(buffer);
         announcment1.setLoop(false);
-        announcment1.setVolume(0.5);
+        announcment1.setVolume(0.1);
     });
     audioLoader.load('./src/audio/announcment2.mp3', function (buffer) {
         announcment2.setBuffer(buffer);
         announcment2.setLoop(false);
-        announcment2.setVolume(0.5);
+        announcment2.setVolume(0.1);
     });
     audioLoader.load('./src/audio/announcment3.mp3', function (buffer) {
         announcment3.setBuffer(buffer);
         announcment3.setLoop(false);
-        announcment3.setVolume(0.5);
+        announcment3.setVolume(0.1);
     });
 
     soundarray.push(thundersound, announcment1, announcment2, announcment3);
@@ -565,16 +570,15 @@ function animate() {
             rain.position.y = worldheight;
         }
     }
-
-
     //camera
     orbitControls.update();
 
-    //
     videoRapTexture.needsUpdate = true;
+    videoEnvTexture.needsUpdate = true;
 
-    videoRapSoundHandler();
-    videoEnvSoundHandler();
+    //changes volume of videos by distance
+    videoSoundHandler(movieRapCubeScreen, videoRap);
+    videoSoundHandler(movieEnvCubeScreen, videoEnv);
 
     //Object Animations
     wagonmixer.update(delta);
@@ -584,7 +588,6 @@ function animate() {
 
     //render
     renderer.render(scene, camera);
-
 }
 
 //Keep Camera Centered on window Resize
@@ -685,7 +688,7 @@ function loadVideos() {
     })
 
     let movieRapGeometry = new THREE.PlaneGeometry(0.95, 1.31);
-    let movieRapCubeScreen = new THREE.Mesh(movieRapGeometry, movieRapMaterial);
+    movieRapCubeScreen = new THREE.Mesh(movieRapGeometry, movieRapMaterial);
     movieRapCubeScreen.rotateY(Math.PI);
 
     movieRapCubeScreen.position.set(-6.155, 2.565, 9.943);
@@ -724,30 +727,21 @@ function loadVideos() {
     })
 
     let movieEnvGeometry = new THREE.PlaneGeometry(0.94, 1.31);
-    let movieEnvCubeScreen = new THREE.Mesh(movieEnvGeometry, movieEnvMaterial);
+    movieEnvCubeScreen = new THREE.Mesh(movieEnvGeometry, movieEnvMaterial);
     movieEnvCubeScreen.rotateY(Math.PI);
 
     movieEnvCubeScreen.position.set(-6.155, 2.565, 45.14);
     scene.add(movieEnvCubeScreen);
 }
 
-function videoRapSoundHandler() {
+//changes volume of videos by distance
+function videoSoundHandler(screenPosition, video) {
     const characterPosition = characterControls.cameraTarget;
-    const screenPosition = new THREE.Vector3(-6.155, 2.565, 9.943);
-    const distance = characterPosition.distanceTo(screenPosition);
+    const screenPos = new THREE.Vector3(screenPosition.position.x, screenPosition.position.y, screenPosition.position.z);
+    const distance = characterPosition.distanceTo(screenPos);
     const newDistance = distance * -1 + 4;
     if (newDistance > 0) {
-        videoRap.volume = newDistance * 0.1;
-    }
-}
-
-function videoEnvSoundHandler() {
-    const characterPosition = characterControls.cameraTarget;
-    const screenPosition = new THREE.Vector3(-6.155, 2.565, 45.14);
-    const distance = characterPosition.distanceTo(screenPosition);
-    const newDistance = distance * -1 + 4;
-    if (newDistance > 0) {
-        videoEnv.volume = newDistance * 0.1;
+        video.volume = newDistance * 0.1;
     }
 }
 
@@ -819,6 +813,27 @@ function loadPictures() {
     scene.add(pictureRgbMesh33);
 }
 
+function loadText() {
+    let text = "Freiwild";
+
+    let loader = new THREE.FontLoader(loadingManager);
+    loader.load("./fonts/LouisGeorgeCaféLightRegular.json", function (font) {
+        const tGeometry = new THREE.TextGeometry(text, {
+            font: font,
+            size: 10,
+            height: 2,
+        })
+
+        const textMesh = new THREE.Mesh(tGeometry, [
+            new THREE.MeshPhongMaterial({color: ffffff})
+        ])
+        textMesh.castShadow = true;
+        textMesh.receiveShadow = true;
+        scene.add(textMesh);
+        textMesh.position.set(-6.155, 1.565, 8.943);
+        console.log("freiwild");
+});
+}
 
 init();
 //orbitControls.addEventListener( 'change', console.log("frei") );
