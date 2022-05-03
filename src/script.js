@@ -10,22 +10,21 @@ import {
 import {
     UnrealBloomPass
 } from 'https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/postprocessing/UnrealBloomPass.js';
-//import * as FontLoader from 'https://cdn.jsdelivr.net/npm/three@0.140.0/examples/jsm/loaders/FontLoader.js';
-//import { FontLoader } from './threejs/FontLoader.js';
-//import * as TextGeometry from 'https://cdn.jsdelivr.net/npm/three@0.140.0/examples/jsm/geometries/TextGeometry.js';
-//import { TextGeometry } from './threejs/TextGeometry.js';
+
+
 
 let container = document.querySelector(".scene");
 let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash,
     movieRapCubeScreen, movieEnvCubeScreen,
-    rainsound, thundersound, trainsound, soundarray = [], billboardmixer, billboardmixer2, billboardmixer3, wagonmixer, videoRap, videoSki, videoEnv, videoRapTexture, videoSkiTexture, videoEnvTexture,
+    rainsound, thundersound, trainsound, soundarray = [],
+    billboardmixer, billboardmixer2, billboardmixer3, wagonmixer, videoRap, videoSki, videoEnv, videoRapTexture, videoSkiTexture, videoEnvTexture,
     temporarysound, rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1;
 
 //CONTROLLS
 
 //world
 let worldwidth = 100,
-    worldheight = 20,                                                   
+    worldheight = 20,
     backColor = 0x060616,
     worldcenterx = -3,
     worldcenterz = 20,
@@ -83,7 +82,7 @@ function init() {
     }
     //loadVideos();
     loadPictures();
-    loadText();
+    //loadFont();
 
 }
 
@@ -421,14 +420,14 @@ function startSequence() {
     document.querySelector(".controlls").classList.add("active");
     document.querySelector(".audioContainer").classList.add("active");
     rainsound.play();
-    setInterval(function(){
+    setInterval(function () {
         thundersound.play();
     }, 20000);
     rainsound.play();
-    setInterval(function(){
+    setInterval(function () {
         trainsound.play();
     }, 50000);
-    setInterval(function(){
+    setInterval(function () {
         const randomElement = soundarray[Math.floor(Math.random() * soundarray.length)];
         randomElement.play();
     }, 90000);
@@ -570,12 +569,12 @@ function animate() {
     //camera
     orbitControls.update();
 
-    videoRapTexture.needsUpdate = true;
-    videoEnvTexture.needsUpdate = true;
+    //videoRapTexture.needsUpdate = true;
+    //videoEnvTexture.needsUpdate = true;
 
     //changes volume of videos by distance
-    videoSoundHandler(movieRapCubeScreen, videoRap);
-    videoSoundHandler(movieEnvCubeScreen, videoEnv);
+    //videoSoundHandler(movieRapCubeScreen, videoRap);
+    //videoSoundHandler(movieEnvCubeScreen, videoEnv);
 
     //Object Animations
     wagonmixer.update(delta);
@@ -819,27 +818,4 @@ function loadPictures() {
     scene.add(pictureRgbMesh33);
 }
 
-function loadText() {
-    let text = "Freiwild";
-
-    let loader = new THREE.FontLoader(loadingManager);
-    loader.load("./fonts/LouisGeorgeCaféLightRegular.json", function (font) {
-        const tGeometry = new THREE.TextGeometry(text, {
-            font: font,
-            size: 10,
-            height: 2,
-        })
-
-        const textMesh = new THREE.Mesh(tGeometry, [
-            new THREE.MeshPhongMaterial({color: ffffff})
-        ])
-        textMesh.castShadow = true;
-        textMesh.receiveShadow = true;
-        scene.add(textMesh);
-        textMesh.position.set(-6.155, 1.565, 8.943);
-        console.log("freiwild");
-});
-}
-
 init();
-//orbitControls.addEventListener( 'change', console.log("frei") );
