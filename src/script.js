@@ -17,7 +17,8 @@ import {
 
 let container = document.querySelector(".scene");
 let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash,
-    rainsound, soundarray = [], billboardmixer, billboardmixer2, billboardmixer3, wagonmixer, videoRap, videoSki, videoEnv, videoRapTexture, videoSkiTexture, videoEnvTexture, movieRapCubeScreen, movieEnvCubeScreen,
+    movieRapCubeScreen, movieEnvCubeScreen,
+    rainsound, thundersound, trainsound, soundarray = [], billboardmixer, billboardmixer2, billboardmixer3, wagonmixer, videoRap, videoSki, videoEnv, videoRapTexture, videoSkiTexture, videoEnvTexture,
     temporarysound, rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1;
 
 //CONTROLLS
@@ -80,7 +81,7 @@ function init() {
         addRain();
         loadaudio();
     }
-    loadVideos();
+    //loadVideos();
     loadPictures();
     loadText();
 
@@ -88,7 +89,7 @@ function init() {
 
 function loadObjects() {
     let loader = new THREE.GLTFLoader(loadingManager);
-    loader.load("../src/3D/billboardPeter.glb", function (gltf) {
+    loader.load("./src/3D/billboardPeter.glb", function (gltf) {
         let billboard = gltf.scene;
         let billboard2 = billboard.clone();
         let billboard3 = billboard.clone();
@@ -110,7 +111,7 @@ function loadObjects() {
         action3.play();
     });
 
-    loader.load("../src/3D/train.glb", function (gltf) {
+    loader.load("./src/3D/train.glb", function (gltf) {
         let wagon = gltf.scene;
         wagonmixer = new THREE.AnimationMixer(wagon);
         wagon.traverse(function (node) {
@@ -122,9 +123,9 @@ function loadObjects() {
         scene.add(wagon);
         let anim = gltf.animations[0];
         let action = wagonmixer.clipAction(anim);
-        action.play();
+        //action.play();
     });
-    loader.load("../src/3D/trainfront.glb", function (gltf) {
+    loader.load("./src/3D/trainfront.glb", function (gltf) {
         let frontwagon = gltf.scene;
         frontwagon.traverse(function (node) {
             if (node.isMesh) {
@@ -134,7 +135,7 @@ function loadObjects() {
         frontwagon.position.set(5, displacement, 36.8);
         scene.add(frontwagon);
     });
-    loader.load("../src/3D/trainback.glb", function (gltf) {
+    loader.load("./src/3D/trainback.glb", function (gltf) {
         let backwagon = gltf.scene;
         backwagon.traverse(function (node) {
             if (node.isMesh) {
@@ -144,7 +145,7 @@ function loadObjects() {
         backwagon.position.set(5, displacement, 6.15);
         scene.add(backwagon);
     });
-    loader.load("../src/3D/trainstation.glb", function (gltf) {
+    loader.load("./src/3D/trainstation.glb", function (gltf) {
         let station = gltf.scene;
         let station2 = station.clone();
         let station3 = station.clone();
@@ -155,7 +156,7 @@ function loadObjects() {
         scene.add(station2);
         scene.add(station3);
     });
-    loader.load("../src/3D/cocacola.glb", function (gltf) {
+    loader.load("./src/3D/cocacola.glb", function (gltf) {
         let cocacola = gltf.scene;
         cocacola.position.set(-3, displacement + displacestation, 15);
         scene.add(cocacola);
@@ -282,20 +283,7 @@ function loadWorldDay() {
     camera.position.set(characterx, displacement + displacestation + cameratargetheight, characterz + 2);
 
 
-    //plane
-
-    // 
-
     let texture = new THREE.MeshStandardMaterial({
-        // map: tilesBaseColor,
-        // normalMap: tilesNormalMap,
-        // displacementMap: tilesHightMap,
-        // displacementScale: displacement,
-        // roughnessMap: tilesRoughnessMap,
-        // roughness: floorroughness,
-        // aoMap: tilesAmbientOcclusionMap,
-        // metalnessMap: tilesMetallic,
-        // metalness: floormetalness,
         color: 0x000000
     });
 
@@ -433,11 +421,17 @@ function startSequence() {
     document.querySelector(".controlls").classList.add("active");
     document.querySelector(".audioContainer").classList.add("active");
     rainsound.play();
-    playrandomsound();
+    setInterval(function(){
+        thundersound.play();
+    }, 20000);
+    rainsound.play();
+    setInterval(function(){
+        trainsound.play();
+    }, 50000);
     setInterval(function(){
         const randomElement = soundarray[Math.floor(Math.random() * soundarray.length)];
-        randomElement.play()
-    }, 100000);
+        randomElement.play();
+    }, 90000);
     animate();
 }
 
@@ -449,10 +443,11 @@ function loadaudio() {
 
     // create a global audio source
     rainsound = new THREE.Audio(listener);
-    let thundersound = new THREE.Audio(listener);
+    thundersound = new THREE.Audio(listener);
     let announcment1 = new THREE.Audio(listener);
     let announcment2 = new THREE.Audio(listener);
     let announcment3 = new THREE.Audio(listener);
+    trainsound = new THREE.Audio(listener);
 
     // load a sound and set it as the Audio object's buffer
     const audioLoader = new THREE.AudioLoader();
@@ -471,6 +466,12 @@ function loadaudio() {
         thundersound.setVolume(0.2);
     });
 
+    audioLoader.load('./src/audio/trainsound.mp3', function (buffer) {
+        trainsound.setBuffer(buffer);
+        trainsound.setLoop(false);
+        trainsound.setVolume(0.2);
+    });
+
     audioLoader.load('./src/audio/announcment1.mp3', function (buffer) {
         announcment1.setBuffer(buffer);
         announcment1.setLoop(false);
@@ -487,12 +488,8 @@ function loadaudio() {
         announcment3.setVolume(0.1);
     });
 
-    soundarray.push(thundersound, announcment1, announcment2, announcment3);
+    soundarray.push(announcment1, announcment2, announcment3);
     console.log(soundarray);
-}
-
-function playrandomsound(){
-    
 }
 
 //audio slider
@@ -673,77 +670,86 @@ function loadControls() {
 };
 
 
-function loadVideos() {
-    //Rap Video
-    videoRap = document.getElementById("videoRap");
-    videoRap.volume = 0.0001;
-    videoRapTexture = new THREE.VideoTexture(videoRap);
-    videoRapTexture.minFilter = THREE.LinearFilter;
-    videoRapTexture.magFilter = THREE.LinearFilter;
+// function loadVideos() {
+//     //Rap Video
+//     videoRap = document.getElementById("videoRap");
+//     videoRap.volume = 0.0001;
+//     videoRapTexture = new THREE.VideoTexture(videoRap);
+//     videoRapTexture.minFilter = THREE.LinearFilter;
+//     videoRapTexture.magFilter = THREE.LinearFilter;
 
-    var movieRapMaterial = new THREE.MeshBasicMaterial({
-        map: videoRapTexture,
-        side: THREE.FrontSide,
-        toneMapped: false,
-    })
+//     var movieRapMaterial = new THREE.MeshBasicMaterial({
+//         map: videoRapTexture,
+//         side: THREE.FrontSide,
+//         toneMapped: false,
+//     })
 
-    let movieRapGeometry = new THREE.PlaneGeometry(0.95, 1.31);
-    movieRapCubeScreen = new THREE.Mesh(movieRapGeometry, movieRapMaterial);
-    movieRapCubeScreen.rotateY(Math.PI);
+//     let movieRapGeometry = new THREE.PlaneGeometry(0.95, 1.31);
+//     let movieRapCubeScreen = new THREE.Mesh(movieRapGeometry, movieRapMaterial);
+//     movieRapCubeScreen.rotateY(Math.PI);
 
-    movieRapCubeScreen.position.set(-6.155, 2.565, 9.943);
-    scene.add(movieRapCubeScreen);
+//     movieRapCubeScreen.position.set(-6.155, 2.565, 9.943);
+//     scene.add(movieRapCubeScreen);
 
-    //Ski Video
-    videoSki = document.getElementById("videoSki");
-    videoSkiTexture = new THREE.VideoTexture(videoSki);
-    videoSkiTexture.minFilter = THREE.LinearFilter;
-    videoSkiTexture.magFilter = THREE.LinearFilter;
+//     //Ski Video
+//     videoSki = document.getElementById("videoSki");
+//     videoSkiTexture = new THREE.VideoTexture(videoSki);
+//     videoSkiTexture.minFilter = THREE.LinearFilter;
+//     videoSkiTexture.magFilter = THREE.LinearFilter;
 
-    var movieSkiMaterial = new THREE.MeshBasicMaterial({
-        map: videoSkiTexture,
-        side: THREE.FrontSide,
-        toneMapped: false,
-    })
+//     var movieSkiMaterial = new THREE.MeshBasicMaterial({
+//         map: videoSkiTexture,
+//         side: THREE.FrontSide,
+//         toneMapped: false,
+//     })
 
-    let movieSkiGeometry = new THREE.PlaneGeometry(0.95, 1.31);
-    let movieSkiCubeScreen = new THREE.Mesh(movieSkiGeometry, movieSkiMaterial);
-    movieSkiCubeScreen.rotateY(Math.PI);
+//     let movieSkiGeometry = new THREE.PlaneGeometry(0.95, 1.31);
+//     let movieSkiCubeScreen = new THREE.Mesh(movieSkiGeometry, movieSkiMaterial);
+//     movieSkiCubeScreen.rotateY(Math.PI);
 
-    movieSkiCubeScreen.position.set(-6.155, 2.565, 27.655);
-    scene.add(movieSkiCubeScreen);
+//     movieSkiCubeScreen.position.set(-6.155, 2.565, 27.655);
+//     scene.add(movieSkiCubeScreen);
 
-    //Umwelt Video
-    videoEnv = document.getElementById("videoEnv");
-    videoEnv.volume = 0.0001;
-    videoEnvTexture = new THREE.VideoTexture(videoEnv);
-    videoEnvTexture.minFilter = THREE.LinearFilter;
-    videoEnvTexture.magFilter = THREE.LinearFilter;
+//     //Umwelt Video
+//     videoEnv = document.getElementById("videoEnv");
+//     videoEnv.volume = 0.0001;
+//     videoEnvTexture = new THREE.VideoTexture(videoEnv);
+//     videoEnvTexture.minFilter = THREE.LinearFilter;
+//     videoEnvTexture.magFilter = THREE.LinearFilter;
 
-    var movieEnvMaterial = new THREE.MeshBasicMaterial({
-        map: videoEnvTexture,
-        side: THREE.FrontSide,
-        toneMapped: false,
-    })
+//     var movieEnvMaterial = new THREE.MeshBasicMaterial({
+//         map: videoEnvTexture,
+//         side: THREE.FrontSide,
+//         toneMapped: false,
+//     })
 
-    let movieEnvGeometry = new THREE.PlaneGeometry(0.94, 1.31);
-    movieEnvCubeScreen = new THREE.Mesh(movieEnvGeometry, movieEnvMaterial);
-    movieEnvCubeScreen.rotateY(Math.PI);
+//     let movieEnvGeometry = new THREE.PlaneGeometry(0.94, 1.31);
+//     let movieEnvCubeScreen = new THREE.Mesh(movieEnvGeometry, movieEnvMaterial);
+//     movieEnvCubeScreen.rotateY(Math.PI);
 
-    movieEnvCubeScreen.position.set(-6.155, 2.565, 45.14);
-    scene.add(movieEnvCubeScreen);
-}
+//     movieEnvCubeScreen.position.set(-6.155, 2.565, 45.14);
+//     scene.add(movieEnvCubeScreen);
+// }
 
-//changes volume of videos by distance
-function videoSoundHandler(screenPosition, video) {
-    const characterPosition = characterControls.cameraTarget;
-    const screenPos = new THREE.Vector3(screenPosition.position.x, screenPosition.position.y, screenPosition.position.z);
-    const distance = characterPosition.distanceTo(screenPos);
-    const newDistance = distance * -1 + 4;
-    if (newDistance > 0) {
-        video.volume = newDistance * 0.1;
-    }
-}
+// function videoRapSoundHandler() {
+//     const characterPosition = characterControls.cameraTarget;
+//     const screenPosition = new THREE.Vector3(-6.155, 2.565, 9.943);
+//     const distance = characterPosition.distanceTo(screenPosition);
+//     const newDistance = distance * -1 + 4;
+//     if (newDistance > 0) {
+//         videoRap.volume = newDistance * 0.1;
+//     }
+// }
+
+// function videoEnvSoundHandler() {
+//     const characterPosition = characterControls.cameraTarget;
+//     const screenPosition = new THREE.Vector3(-6.155, 2.565, 45.14);
+//     const distance = characterPosition.distanceTo(screenPosition);
+//     const newDistance = distance * -1 + 4;
+//     if (newDistance > 0) {
+//         videoEnv.volume = newDistance * 0.1;
+//     }
+// }
 
 function loadPictures() {
     // Create a texture loader so we can load our image file
@@ -751,11 +757,11 @@ function loadPictures() {
 
     // Load an image file into a custom material
     var materialElle = new THREE.MeshLambertMaterial({
-        map: loader.load('../pictures/bahnanzeigeElle.jpg')
+        map: loader.load('./pictures/bahnanzeigeElle.jpg')
     });
 
     var materialRgb = new THREE.MeshLambertMaterial({
-        map: loader.load('../pictures/bahnanzeigeRgb.jpg')
+        map: loader.load('./pictures/bahnanzeigeRgb.jpg')
     });
 
     // create a plane geometry for the image with a width of 10
