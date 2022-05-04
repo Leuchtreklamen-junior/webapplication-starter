@@ -45,17 +45,10 @@ export class CharacterControls {
         } else {
             play = "idlebreath";
         }
-
-
-
+        
         if (this.currentAction != play) {
-
             const toPlay = this.animationsMap.get(play);
             const current = this.animationsMap.get(this.currentAction);
-
-            // current.fadeOut(this.fadeDuration);
-            // toPlay.reset().fadeIn(this.fadeDuration).play();
-
             if (current) {
                 toPlay.time = 0.0;
                 toPlay.enabled = true;
@@ -64,10 +57,7 @@ export class CharacterControls {
                 toPlay.crossFadeFrom(current, 0.5, true);
                 toPlay.play();
             }
-
-
             this.currentAction = play;
-
             // console.log(this.currentAction);
         }
 
@@ -90,12 +80,10 @@ export class CharacterControls {
 
             // run/walk velocity
             var velocity = this.currentAction == 'run' ? this.runVelocity : this.walkVelocity;
+            
             // move model & camera
-
-
             var moveX = this.walkDirection.x * velocity * delta;
             var moveZ = this.walkDirection.z * velocity * delta;
-
 
             if (this.model.position.z >= 48) {
                 this.model.position.z = 47.999;
@@ -103,24 +91,15 @@ export class CharacterControls {
             if (this.model.position.z <= -3.5) {
                 this.model.position.z = -3.499;
             } 
-
             if (this.model.position.x >= 3.2) {
                 this.model.position.x = 3.199;
             }
             if (this.model.position.x <= -9) {
                 this.model.position.x = -8.999;
             }
-
             this.model.position.z += moveZ;
             this.model.position.x += moveX;
-
-
-            
-            this.updateCameraTarget(moveX, moveZ);
-
-    
-           
-            
+            this.updateCameraTarget(moveX, moveZ);       
         }
     }
 
@@ -138,8 +117,6 @@ export class CharacterControls {
     getCharacterPosition(){
         return this.cameraTarget;
     }
-
-    
 
     directionOffset(keysPressed) {
         var directionOffset = 0; // w
