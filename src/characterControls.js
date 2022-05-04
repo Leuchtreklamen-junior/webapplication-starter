@@ -104,8 +104,8 @@ export class CharacterControls {
                 this.model.position.z = -3.499;
             } 
 
-            if (this.model.position.x >= 5.7) {
-                this.model.position.x = 5.699;
+            if (this.model.position.x >= 3.2) {
+                this.model.position.x = 3.199;
             }
             if (this.model.position.x <= -9) {
                 this.model.position.x = -8.999;

@@ -13,8 +13,8 @@ import {
 
 let container = document.querySelector(".scene");
 let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash,
-    rainsound, thundersound, trainsound, announcment1, announcment2, announcment3, announcment4, soundarray = [],
-    billboardmixer, billboardmixer2, billboardmixer3, wagonmixer, temporarysound, rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1;
+    rainsound, thundersound, trainsound, announcment1, announcment2, announcment3, announcment4, soundarray = [], passbytrain, 
+    billboardmixer, billboardmixer2, billboardmixer3, temporarysound, rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1;
 
 //CONTROLLS
 
@@ -35,7 +35,7 @@ let worldwidth = 70,
 
     //rain and fog controlls
     raining = true,
-    dropCount = 30000, //200 - 40000
+    dropCount = 10000, //200 - 20000
     rainspeed = 0.2,
     dropsizemin = 0.05,
     dropsizemax = 0.2,
@@ -105,40 +105,6 @@ function loadObjects() {
         action2.play();
         action3.play();
     });
-    loader.load("./src/3D/train.glb", function (gltf) {
-        let wagon = gltf.scene;
-        wagonmixer = new THREE.AnimationMixer(wagon);
-        wagon.traverse(function (node) {
-            if (node.isMesh) {
-                node.castShadow = true;
-            }
-        });
-        wagon.position.set(5, displacement, 20.9);
-        scene.add(wagon);
-        let anim = gltf.animations[0];
-        let action = wagonmixer.clipAction(anim);
-        //action.play();
-    });
-    loader.load("./src/3D/trainfront.glb", function (gltf) {
-        let frontwagon = gltf.scene;
-        frontwagon.traverse(function (node) {
-            if (node.isMesh) {
-                node.castShadow = true;
-            }
-        });
-        frontwagon.position.set(5, displacement, 36.8);
-        scene.add(frontwagon);
-    });
-    loader.load("./src/3D/trainback.glb", function (gltf) {
-        let backwagon = gltf.scene;
-        backwagon.traverse(function (node) {
-            if (node.isMesh) {
-                node.castShadow = true;
-            }
-        });
-        backwagon.position.set(5, displacement, 6.15);
-        scene.add(backwagon);
-    });
     loader.load("./src/3D/trainstation.glb", function (gltf) {
         let station = gltf.scene;
         station.traverse(function (node) {
@@ -161,6 +127,7 @@ function loadObjects() {
     loader.load("./src/3D/cocacola.glb", function (gltf) {
         let cocacola = gltf.scene;
         cocacola.position.set(-3, displacement + displacestation, 15);
+        cocacola.rotateY(Math.PI);
         scene.add(cocacola);
     });
     loader.load("./src/3D/barrier.glb", function (gltf) {
@@ -181,6 +148,18 @@ function loadObjects() {
         description.rotateY(Math.PI);
         scene.add(description);
     });
+    loader.load("./src/3D/deutscherBahnVerkehr.glb", function (gltf) {
+        passbytrain = gltf.scene;
+        passbytrain.position.set(-11.1,displacement,301);
+        passbytrain.rotateY(Math.PI/2);
+        scene.add(passbytrain);
+
+        let standingtrain = passbytrain.clone();
+        standingtrain.position.set(5,displacement,-3.5);
+        standingtrain.rotateY(Math.PI);
+        scene.add(standingtrain);
+
+    }); 
 }
 
 function addRain() {
@@ -188,7 +167,7 @@ function addRain() {
     raindropsupper = [];
     for (let i = 0; i < dropCount / 2; i++) {
         let drop = new THREE.Vector3(
-            THREE.MathUtils.randFloat(8, worldwidth / 2), //Breite
+            THREE.MathUtils.randFloat(8, 14), //Breite
             THREE.MathUtils.randFloat(0, worldheight), //Höhe
             THREE.MathUtils.randFloatSpread(worldwidth) //Länge
         );
@@ -204,7 +183,7 @@ function addRain() {
     }
     for (let i = 0; i < dropCount / 2; i++) {
         let drop1 = new THREE.Vector3(
-            THREE.MathUtils.randFloat(-worldwidth / 2, -8), //Breite
+            THREE.MathUtils.randFloat(-14, -8), //Breite
             THREE.MathUtils.randFloat(0, worldheight), //Höhe
             THREE.MathUtils.randFloatSpread(worldwidth) //Länge
         );
@@ -392,21 +371,12 @@ function loadLights() {
     //HEMISSPHERELIGHT
     const light = new THREE.HemisphereLight(lightcolor, lightcolor, hemisphereLightstrength);
 
-    //metrolights
-    const width = 2.0;
-    const height = 45;
-
-    let metrolight = new THREE.RectAreaLight(0xE674FF, 2, width, height);
-    metrolight.position.set(5, 3.7, 20);
-    metrolight.lookAt(5, 0, 20);
-    scene.add(metrolight);
-
     //Trainstationlight
 
-    const trainlightwidth = 3;
-    const trainlightheight = 55;
+    const lightwidth = 3;
+    const lightheight = 55;
 
-    let stationlight = new THREE.RectAreaLight(0x99ffff, 5, trainlightwidth, trainlightheight);
+    let stationlight = new THREE.RectAreaLight(0x99ffff, 5, lightwidth, lightheight);
     stationlight.position.set(-3.5, 5, 20);
     stationlight.lookAt(-3.5, 0, 20);
 
@@ -492,13 +462,20 @@ function startSequence() {
     }, 80000);
     rainsound.play();
     setInterval(function () {
-        trainsound.play();
+        animateTrain();
     }, 60000);
     setInterval(function () {
         const randomElement = soundarray[Math.floor(Math.random() * soundarray.length)];
         randomElement.play();
     }, 90000);
+    
+
     animate();
+}
+
+function animateTrain(){
+    trainsound.play();
+    passbytrain.position.set(-11.1, displacement, -100); 
 }
 
 //load audio
@@ -651,11 +628,14 @@ function animate() {
     orbitControls.update();
 
     //Object Animations
-    wagonmixer.update(delta);
     billboardmixer.update(delta);
     billboardmixer2.update(delta);
     billboardmixer3.update(delta);
 
+    //PassbyTrain 
+    if(passbytrain.position.z <= 300){
+        passbytrain.position.z += 0.6;
+    }
     //render
     renderer.render(scene, camera);
 }
