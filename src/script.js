@@ -46,12 +46,10 @@ let worldwidth = 70,
     tempsound = 0.1,
 
     //floor 
-    floorrepeat = 10,
+
     displacement = 0.15,
     displacestation = 1.1,
     texturequality = 2000,
-    floormetalness = 0,
-    floorroughness = 5,
 
     characterx = -3,
     characterz = 17,
@@ -63,6 +61,9 @@ let worldwidth = 70,
     cameranearlimit = 1,
     camerafarlimitrender = 200,
     cameranearlimitrender = 0.1,
+
+    //stationlength
+    stationlength = 17.71,
 
     //debug
     debug = false;
@@ -143,17 +144,31 @@ function loadObjects() {
         let station = gltf.scene;
         let station2 = station.clone();
         let station3 = station.clone();
+        let station4 = station.clone();
+        let station5 = station.clone();
         station.position.set(-3, displacement, 5);
-        station2.position.set(-3, displacement, 22.71);
-        station3.position.set(-3, displacement, 40.2);
+        station2.position.set(-3, displacement, 5+stationlength);
+        station3.position.set(-3, displacement, 5+(stationlength*2));
+        station4.position.set(-3, displacement, 5+(stationlength*3));
+        station5.position.set(-3, displacement, 5-stationlength);
         scene.add(station);
         scene.add(station2);
         scene.add(station3);
+        scene.add(station4);
+        scene.add(station5);
     });
     loader.load("./src/3D/cocacola.glb", function (gltf) {
         let cocacola = gltf.scene;
         cocacola.position.set(-3, displacement + displacestation, 15);
         scene.add(cocacola);
+    });
+    loader.load("./src/3D/barrier.glb", function (gltf) {
+        let barrier = gltf.scene;
+        let barrier2 = barrier.clone();
+        barrier.position.set(-3, displacement + displacestation, -4.4);
+        barrier2.position.set(-3, displacement + displacestation, -4.4+(stationlength*3));
+        scene.add(barrier);
+        scene.add(barrier2);
     });
 }
 
@@ -183,35 +198,6 @@ function addRain() {
             THREE.MathUtils.randFloatSpread(worldwidth) //Länge
         );
         let dropsize = THREE.MathUtils.randFloat(dropsizemin, dropsizemax);
-        raindropsunder.push(
-            drop1.x, drop1.y, drop1.z,
-            drop1.x, drop1.y - dropsize, drop1.z
-        );
-        raindropsupper.push(
-            drop1.x, drop1.y, drop1.z,
-            drop1.x, drop1.y - dropsize, drop1.z
-        );
-    }
-    for (let i = 0; i < dropCount / 15; i++) {
-        let dropsize = THREE.MathUtils.randFloat(dropsizemin, dropsizemax);
-        let drop = new THREE.Vector3(
-            THREE.MathUtils.randFloat(-8 , 8), //Breite
-            THREE.MathUtils.randFloat(0, worldheight), //Höhe
-            THREE.MathUtils.randFloat(30, worldwidth/2) //Länge
-        );
-        let drop1 = new THREE.Vector3(
-            THREE.MathUtils.randFloat(-8 , 8), //Breite
-            THREE.MathUtils.randFloat(0, worldheight), //Höhe
-            THREE.MathUtils.randFloat(-worldwidth / 2, -25) //Länge
-        );
-        raindropsunder.push(
-            drop.x, drop.y, drop.z,
-            drop.x, drop.y - dropsize, drop.z
-        );
-        raindropsupper.push(
-            drop.x, drop.y, drop.z,
-            drop.x, drop.y - dropsize, drop.z
-        );
         raindropsunder.push(
             drop1.x, drop1.y, drop1.z,
             drop1.x, drop1.y - dropsize, drop1.z
@@ -369,7 +355,7 @@ function loadWorldDay() {
     const height = 45;
 
     let metrolight = new THREE.RectAreaLight(0xE674FF, 2, width, height);
-    metrolight.position.set(5, 3.7, 20);
+    metrolight.position.set(5, 3.5, 20);
     metrolight.lookAt(5, 0, 20);
     scene.add(metrolight);
 
