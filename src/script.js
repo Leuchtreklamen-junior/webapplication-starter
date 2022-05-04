@@ -11,6 +11,8 @@ import {
     UnrealBloomPass
 } from 'https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/postprocessing/UnrealBloomPass.js';
 
+
+
 let container = document.querySelector(".scene");
 let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash,
     rainsound, thundersound, trainsound, announcment1, announcment2, announcment3, announcment4, soundarray = [],
@@ -70,6 +72,7 @@ let worldwidth = 70,
 
 function init() {
     loadWorldDay();
+    loadLights();
     loadControls();
     loadObjects();
     loadCharacter();
@@ -79,6 +82,7 @@ function init() {
     }
     //loadVideos();
     loadPictures();
+    //loadFont();
 
 }
 
@@ -157,6 +161,7 @@ function loadObjects() {
         scene.add(station4);
         scene.add(station5);
     });
+    
     loader.load("./src/3D/cocacola.glb", function (gltf) {
         let cocacola = gltf.scene;
         cocacola.position.set(-3, displacement + displacestation, 15);
@@ -169,6 +174,12 @@ function loadObjects() {
         barrier2.position.set(-3, displacement + displacestation, -4.4+(stationlength*3));
         scene.add(barrier);
         scene.add(barrier2);
+    });
+
+    loader.load("./src/3D/description.glb", function (gltf) {
+        let description = gltf.scene;
+        description.position.set(-2.3, displacement + displacestation + 0.2, 16);
+        scene.add(description);
     });
 }
 
@@ -277,8 +288,6 @@ function loadWorldDay() {
     loadingManager = new THREE.LoadingManager();
     pBar = document.querySelector(".progress");
 
-
-
     loadingManager.onProgress = function (item, loaded, total) {
         //console.log(item, loaded, total);
         let currentItem = loaded * (100 / total)
@@ -306,7 +315,6 @@ function loadWorldDay() {
 
     camera.position.set(characterx, displacement + displacestation + cameratargetheight, characterz + 2);
 
-
     let texture = new THREE.MeshStandardMaterial({
         color: 0x000000
     });
@@ -319,67 +327,6 @@ function loadWorldDay() {
     floortile.rotation.x = -Math.PI / 2;
     floortile.position.set(worldcenterx, 0, worldcenterz);
     scene.add(floortile);
-
-    //LIGHTS
-
-    //flash
-    flash = new THREE.PointLight(flashlightcolor, flashlightintensity, 470, 2);
-    flash.position.set(200, 300, 100);
-    scene.add(flash);
-
-    //AMBIENT
-    if (debug) {
-        const ambient = new THREE.AmbientLight(0xf2edd5, 1);
-        scene.add(ambient);
-    }
-
-    const axesHelper = new THREE.AxesHelper(5);
-    //scene.add(axesHelper);
-
-    //HEMISSPHERELIGHT
-    const light = new THREE.HemisphereLight(moonlightcolor, moonlightcolor, hemisphereLightstrength);
-
-    //moon
-    const moon = new THREE.DirectionalLight(moonlightcolor, moonlightstrenght);
-    moon.position.set(2, 10, 1);
-    moon.target.position.set(0, 0, 0);
-    moon.castShadow = true;
-
-    scene.add(moon.target);
-    scene.add(moon);
-    scene.add(light);
-
-
-    //metrolights
-    const width = 2.0;
-    const height = 45;
-
-    let metrolight = new THREE.RectAreaLight(0xE674FF, 2, width, height);
-    metrolight.position.set(5, 3.5, 20);
-    metrolight.lookAt(5, 0, 20);
-    scene.add(metrolight);
-
-    //Trainstationlight
-
-    const trainlightwidth = 3;
-    const trainlightheight = 45;
-
-    let stationlight = new THREE.RectAreaLight(0x99ffff, 5, trainlightwidth, trainlightheight);
-    stationlight.position.set(-3.5, 5, 20);
-    stationlight.lookAt(-3.5, 0, 20);
-
-    scene.add(stationlight);
-
-    //lighthelper
-    const sphereSize = 10;
-    const hemissphereLightHelper = new THREE.HemisphereLightHelper(light, sphereSize);
-    const helper = new THREE.DirectionalLightHelper(moon, 5);
-
-
-    if (debug) {
-        scene.add(hemissphereLightHelper);
-        scene.add(helper);
-    }
 
     //renderer
     renderer = new THREE.WebGLRenderer({
@@ -407,7 +354,6 @@ function loadWorldDay() {
     composer.addPass(bloomPass);
 
     //fog + background
-
     scene.background = new THREE.Color(backColor);
     if (fog) {
         scene.fog = new THREE.Fog(backColor, 1, 25);
@@ -426,6 +372,64 @@ function loadWorldDay() {
 
 }
 
+function loadLights(){
+    //LIGHTS
+    //flash
+    flash = new THREE.PointLight(flashlightcolor, flashlightintensity, 470, 2);
+    flash.position.set(200, 300, 100);
+    scene.add(flash);
+
+    //AMBIENT
+    if (debug) {
+        const ambient = new THREE.AmbientLight(0xf2edd5, 1);
+        scene.add(ambient);
+    }
+
+    const axesHelper = new THREE.AxesHelper(5);
+    //scene.add(axesHelper);
+
+    //HEMISSPHERELIGHT
+    const light = new THREE.HemisphereLight(moonlightcolor, moonlightcolor, hemisphereLightstrength);
+
+
+    //metrolights
+    const width = 2.0;
+    const height = 45;
+
+    let metrolight = new THREE.RectAreaLight(0xE674FF, 2, width, height);
+    metrolight.position.set(5, 3.7, 20);
+    metrolight.lookAt(5, 0, 20);
+    scene.add(metrolight);
+
+    //Trainstationlight
+
+    const trainlightwidth = 3;
+    const trainlightheight = 55;
+
+    let stationlight = new THREE.RectAreaLight(0x99ffff, 5, trainlightwidth, trainlightheight);
+    stationlight.position.set(-3.5, 5, 20);
+    stationlight.lookAt(-3.5, 0, 20);
+
+    scene.add(stationlight);
+
+    if (debug) {
+        scene.add(hemissphereLightHelper);
+        scene.add(helper);
+    }
+
+    //AdvertisingLight
+    let advertasingLight1 = new THREE.PointLight(0xffffff, 20, 2, 2);
+    advertasingLight1.position.set(-6.155, 2.565, 9.5);
+    scene.add(advertasingLight1);
+    let advertasingLight2 = new THREE.PointLight(0xffffff, 20, 2, 2);
+    advertasingLight2.position.set(-6.155, 2.565, 27.212);
+    scene.add(advertasingLight2);
+    let advertasingLight3 = new THREE.PointLight(0xffffff, 20, 2, 2);
+    advertasingLight3.position.set(-6.155, 2.565, 44.697);
+    scene.add(advertasingLight3);
+
+}
+
 //const pBar = document.querySelector(".progress");
 //updateProgressBar(pBar, 40);
 
@@ -435,7 +439,7 @@ function updateProgressBar(progressBar, value) {
     if (value == 100) {
         setTimeout(function () {
             startSequence();
-        }, 3000);
+        }, 2000);
     }
     //loadingbody = document.querySelector(".loadingBody")  
 }
@@ -609,10 +613,15 @@ function animate() {
             rain.position.y = worldheight;
         }
     }
-
-
     //camera
     orbitControls.update();
+
+    //videoRapTexture.needsUpdate = true;
+    //videoEnvTexture.needsUpdate = true;
+
+    //changes volume of videos by distance
+    //videoSoundHandler(movieRapCubeScreen, videoRap);
+    //videoSoundHandler(movieEnvCubeScreen, videoEnv);
 
     //Object Animations
     wagonmixer.update(delta);
@@ -622,7 +631,6 @@ function animate() {
 
     //render
     renderer.render(scene, camera);
-
 }
 
 //Keep Camera Centered on window Resize
@@ -821,6 +829,8 @@ function loadPictures() {
     var pictureRgbMesh3 = pictureRgbMesh1.clone();
     var pictureRgbMesh33 = pictureRgbMesh1.clone();
 
+
+
     // set the position of the image mesh in the x,y,z dimensions
     pictureElleMesh1.position.set(2.15, 5.06, 10.1);
     pictureElleMesh11.position.set(2.15, 5.06, 10.33);
@@ -834,7 +844,6 @@ function loadPictures() {
     pictureRgbMesh22.position.set(-8.15, 5.06, 28.04);
     pictureRgbMesh3.position.set(-8.15, 5.06, 45.3);
     pictureRgbMesh33.position.set(-8.15, 5.06, 45.53);
-
 
     pictureElleMesh1.rotateY(Math.PI);
     pictureElleMesh2.rotateY(Math.PI);
@@ -856,8 +865,30 @@ function loadPictures() {
     scene.add(pictureRgbMesh22);
     scene.add(pictureRgbMesh3);
     scene.add(pictureRgbMesh33);
+
+    // Fahrplan
+    var materialTrainScedule = new THREE.MeshLambertMaterial({
+        map: loader.load('./pictures/BahnPlan.jpg')
+    });
+    var geometryTrainScedule = new THREE.PlaneGeometry(0.95, 1.35);
+
+    var pictureTrainSceduleMesh1 = new THREE.Mesh(geometryTrainScedule, materialTrainScedule);
+    var pictureTrainSceduleMesh2 = pictureTrainSceduleMesh1.clone()
+    var pictureTrainSceduleMesh3 = pictureTrainSceduleMesh1.clone()
+
+    pictureTrainSceduleMesh1.position.set(-6.155, 2.565, 9.943);
+    pictureTrainSceduleMesh2.position.set(-6.155, 2.565, 27.655);
+    pictureTrainSceduleMesh3.position.set(-6.155, 2.565, 45.14);
+
+    pictureTrainSceduleMesh1.rotateY(Math.PI);
+    pictureTrainSceduleMesh2.rotateY(Math.PI);
+    pictureTrainSceduleMesh3.rotateY(Math.PI);
+
+    
+
+    scene.add(pictureTrainSceduleMesh1);
+    scene.add(pictureTrainSceduleMesh2);
+    scene.add(pictureTrainSceduleMesh3);
 }
 
-
 init();
-//orbitControls.addEventListener( 'change', console.log("frei") );
