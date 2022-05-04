@@ -428,6 +428,53 @@ function loadLights(){
     advertasingLight3.position.set(-6.155, 2.565, 44.697);
     scene.add(advertasingLight3);
 
+    //infoLights
+    let infoLightElle1 = new THREE.PointLight(0xffffff, 10, 2, 2);
+    let infoLightElle11 = new THREE.PointLight(0xffffff, 10, 2, 2);
+    let infoLightElle2 = new THREE.PointLight(0xffffff, 10, 2, 2);
+    let infoLightElle22 = new THREE.PointLight(0xffffff, 10, 2, 2);
+    let infoLightElle3 = new THREE.PointLight(0xffffff, 10, 2, 2);
+    let infoLightElle33 = new THREE.PointLight(0xffffff, 10, 2, 2);
+    let infoLightRgb1 = new THREE.PointLight(0xffffff, 10, 2, 2);
+    let infoLightRgb11 = new THREE.PointLight(0xffffff, 10, 2, 2);
+    let infoLightRgb2 = new THREE.PointLight(0xffffff, 10, 2, 2);
+    let infoLightRgb22 = new THREE.PointLight(0xffffff, 10, 2, 2);
+    let infoLightRgb3 = new THREE.PointLight(0xffffff, 10, 2, 2);
+    let infoLightRgb33 = new THREE.PointLight(0xffffff, 10, 2, 2);
+
+
+
+    infoLightElle1.position.set(2.15, 5, 9.3);
+    infoLightElle11.position.set(2.15, 5, 11.13);
+    infoLightElle2.position.set(2.15, 5, 9.3 + stationlength);
+    infoLightElle22.position.set(2.15, 5, 11.13 + stationlength);
+    infoLightElle3.position.set(2.15, 5, 9.3 + stationlength*2);
+    infoLightElle33.position.set(2.15, 5, 11.13 + stationlength*2);
+    infoLightRgb1.position.set(-8.15, 5, 9.3);
+    infoLightRgb11.position.set(-8.15, 5, 11.13);
+    infoLightRgb2.position.set(-8.15, 5, 9.3 + stationlength);
+    infoLightRgb22.position.set(-8.15, 5, 11.13 + stationlength);
+    infoLightRgb3.position.set(-8.15, 5, 9.3 + stationlength*2);
+    infoLightRgb33.position.set(-8.15, 5, 11.13 + stationlength*2);
+
+
+
+    scene.add(infoLightElle1);
+    scene.add(infoLightElle11);
+    scene.add(infoLightElle2);
+    scene.add(infoLightElle22);
+    scene.add(infoLightElle3);
+    scene.add(infoLightElle33);
+    scene.add(infoLightRgb1);
+    scene.add(infoLightRgb11);
+    scene.add(infoLightRgb2);
+    scene.add(infoLightRgb22);
+    scene.add(infoLightRgb3);
+    scene.add(infoLightRgb33);
+
+
+
+
 }
 
 //const pBar = document.querySelector(".progress");
@@ -844,7 +891,6 @@ function loadPictures() {
     pictureRgbMesh22.position.set(-8.15, 5.06, 28.04);
     pictureRgbMesh3.position.set(-8.15, 5.06, 45.3);
     pictureRgbMesh33.position.set(-8.15, 5.06, 45.53);
-
     pictureElleMesh1.rotateY(Math.PI);
     pictureElleMesh2.rotateY(Math.PI);
     pictureElleMesh3.rotateY(Math.PI);
