@@ -26,8 +26,7 @@ let worldwidth = 70,
     worldcenterz = 20,
 
     //light
-    moonlightstrenght = 1, //0.5 - 3
-    moonlightcolor = 0xbfcad8,
+    lightcolor = 0xbfcad8,
     hemisphereLightstrength = 0.2,
 
     //flash
@@ -51,8 +50,8 @@ let worldwidth = 70,
     displacestation = 1.1,
     texturequality = 2000,
 
-    characterx = -3,
-    characterz = 17,
+    characterx = -2,
+    characterz = -1.5,
 
     //camera
     camerafov = 90,
@@ -142,6 +141,11 @@ function loadObjects() {
     });
     loader.load("./src/3D/trainstation.glb", function (gltf) {
         let station = gltf.scene;
+        station.traverse(function (node) {
+            if (node.isMesh) {
+                node.receiveShadow = true;
+            }
+        });
         let station2 = station.clone();
         let station3 = station.clone();
         let station4 = station.clone();
@@ -168,7 +172,13 @@ function loadObjects() {
     });
     loader.load("./src/3D/description.glb", function (gltf) {
         let description = gltf.scene;
-        description.position.set(-2.3, displacement + displacestation + 0.2, 16);
+        description.traverse(function (node) {
+            if (node.isMesh) {
+                node.castShadow = true;
+            }
+        });
+        description.position.set(characterx - 0.8, displacement + displacestation + 0.2, characterz+0.4);
+        description.rotateY(Math.PI);
         scene.add(description);
     });
 }
@@ -237,7 +247,7 @@ function loadCharacter() {
             });
             const model = gltf.scene;
             model.position.set(characterx, displacement + displacestation, characterz);
-
+            model.rotateY(Math.PI/0.9);
 
             scene.add(model);
 
@@ -300,7 +310,7 @@ function loadWorldDay() {
         console.log("DEBUG MODE = TRUE")
     };
 
-    camera.position.set(characterx, displacement + displacestation + cameratargetheight, characterz + 2);
+    camera.position.set(characterx -0.5, displacement + displacestation + cameratargetheight+ 0.5, characterz + -2.5);
 
     let texture = new THREE.MeshStandardMaterial({
         color: 0x000000
@@ -364,6 +374,13 @@ function loadLights() {
     flash.position.set(200, 300, 100);
     scene.add(flash);
 
+    //startlight
+
+    const startlight = new THREE.PointLight(0xffffff, 2, 10, 2);
+    startlight.position.set(characterx - 2, displacestation + 2.5 , characterz -1);
+    startlight.castShadow = true;
+    scene.add(startlight);
+
     //AMBIENT
     const ambient = new THREE.AmbientLight(0xf2edd5, 0.2);
     scene.add(ambient);
@@ -373,7 +390,7 @@ function loadLights() {
     //scene.add(axesHelper);
 
     //HEMISSPHERELIGHT
-    const light = new THREE.HemisphereLight(moonlightcolor, moonlightcolor, hemisphereLightstrength);
+    const light = new THREE.HemisphereLight(lightcolor, lightcolor, hemisphereLightstrength);
 
     //metrolights
     const width = 2.0;
@@ -412,52 +429,43 @@ function loadLights() {
     scene.add(advertasingLight3);
 
     //infoLights
-    let infoLightElle1 = new THREE.PointLight(0xffffff, 10, 2, 2);
-    let infoLightElle11 = new THREE.PointLight(0xffffff, 10, 2, 2);
-    let infoLightElle2 = new THREE.PointLight(0xffffff, 10, 2, 2);
-    let infoLightElle22 = new THREE.PointLight(0xffffff, 10, 2, 2);
-    let infoLightElle3 = new THREE.PointLight(0xffffff, 10, 2, 2);
-    let infoLightElle33 = new THREE.PointLight(0xffffff, 10, 2, 2);
-    let infoLightRgb1 = new THREE.PointLight(0xffffff, 10, 2, 2);
-    let infoLightRgb11 = new THREE.PointLight(0xffffff, 10, 2, 2);
-    let infoLightRgb2 = new THREE.PointLight(0xffffff, 10, 2, 2);
-    let infoLightRgb22 = new THREE.PointLight(0xffffff, 10, 2, 2);
-    let infoLightRgb3 = new THREE.PointLight(0xffffff, 10, 2, 2);
-    let infoLightRgb33 = new THREE.PointLight(0xffffff, 10, 2, 2);
+    let color = 0xffffff;
+    let intensity = 10;
+    let range = 2;
+    let decay = 2;
+    let infoLightElle1 = new THREE.PointLight(color, intensity, range, decay);
+    let infoLightElle11 = new THREE.PointLight(color, intensity, range, decay);
+    let infoLightElle2 = new THREE.PointLight(color, intensity, range, decay);
+    let infoLightElle22 = new THREE.PointLight(color, intensity, range, decay);
+    let infoLightElle3 = new THREE.PointLight(color, intensity, range, decay);
+    let infoLightElle33 = new THREE.PointLight(color, intensity, range, decay);
+    let infoLightRgb1 = new THREE.PointLight(color, intensity, range, decay);
+    let infoLightRgb11 = new THREE.PointLight(color, intensity, range, decay);
+    let infoLightRgb2 = new THREE.PointLight(color, intensity, range, decay);
+    let infoLightRgb22 = new THREE.PointLight(color, intensity, range, decay);
+    let infoLightRgb3 = new THREE.PointLight(color, intensity, range, decay);
+    let infoLightRgb33 = new THREE.PointLight(color, intensity, range, decay);
 
+    let x1 = 2.15;
+    let x2 = -8.15;
+    let y = 5;
+    let z1 = 9.3;
+    let z2 = 11.13;
 
+    infoLightElle1.position.set(x1, y, z1);
+    infoLightElle11.position.set(x1, y, z2);
+    infoLightElle2.position.set(x1, y, z1 + stationlength);
+    infoLightElle22.position.set(x1, y, z2 + stationlength);
+    infoLightElle3.position.set(x1, y, z1 + stationlength * 2);
+    infoLightElle33.position.set(x1, y, z2 + stationlength * 2);
+    infoLightRgb1.position.set(x2, y, z1);
+    infoLightRgb11.position.set(x2, y, z2);
+    infoLightRgb2.position.set(x2, y, z1 + stationlength);
+    infoLightRgb22.position.set(x2, y, 11.13 + stationlength);
+    infoLightRgb3.position.set(x2, y, z1 + stationlength * 2);
+    infoLightRgb33.position.set(x2, y, z2 + stationlength * 2);
 
-    infoLightElle1.position.set(2.15, 5, 9.3);
-    infoLightElle11.position.set(2.15, 5, 11.13);
-    infoLightElle2.position.set(2.15, 5, 9.3 + stationlength);
-    infoLightElle22.position.set(2.15, 5, 11.13 + stationlength);
-    infoLightElle3.position.set(2.15, 5, 9.3 + stationlength*2);
-    infoLightElle33.position.set(2.15, 5, 11.13 + stationlength*2);
-    infoLightRgb1.position.set(-8.15, 5, 9.3);
-    infoLightRgb11.position.set(-8.15, 5, 11.13);
-    infoLightRgb2.position.set(-8.15, 5, 9.3 + stationlength);
-    infoLightRgb22.position.set(-8.15, 5, 11.13 + stationlength);
-    infoLightRgb3.position.set(-8.15, 5, 9.3 + stationlength*2);
-    infoLightRgb33.position.set(-8.15, 5, 11.13 + stationlength*2);
-
-
-
-    scene.add(infoLightElle1);
-    scene.add(infoLightElle11);
-    scene.add(infoLightElle2);
-    scene.add(infoLightElle22);
-    scene.add(infoLightElle3);
-    scene.add(infoLightElle33);
-    scene.add(infoLightRgb1);
-    scene.add(infoLightRgb11);
-    scene.add(infoLightRgb2);
-    scene.add(infoLightRgb22);
-    scene.add(infoLightRgb3);
-    scene.add(infoLightRgb33);
-
-
-
-
+    scene.add(infoLightElle1, infoLightElle11, infoLightElle2, infoLightElle22, infoLightElle3, infoLightElle33, infoLightRgb1, infoLightRgb11, infoLightRgb2, infoLightRgb22, infoLightRgb3, infoLightRgb33);
 }
 
 //const pBar = document.querySelector(".progress");
