@@ -11,8 +11,6 @@ import {
     UnrealBloomPass
 } from 'https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/postprocessing/UnrealBloomPass.js';
 
-
-
 let container = document.querySelector(".scene");
 let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash,
     rainsound, thundersound, trainsound, announcment1, announcment2, announcment3, announcment4, soundarray = [],
@@ -76,13 +74,9 @@ function init() {
     loadControls();
     loadObjects();
     loadCharacter();
-    if (raining) {
-        addRain();
-        loadaudio();
-    }
-    //loadVideos();
+    addRain();
+    loadaudio();
     loadPictures();
-    //loadFont();
 
 }
 
@@ -92,24 +86,26 @@ function loadObjects() {
         let billboard = gltf.scene;
         let billboard2 = billboard.clone();
         let billboard3 = billboard.clone();
+
         billboardmixer = new THREE.AnimationMixer(billboard);
         billboardmixer2 = new THREE.AnimationMixer(billboard2);
         billboardmixer3 = new THREE.AnimationMixer(billboard3);
+
         billboard.position.set(-13, -2, 3);
         billboard2.position.set(-13, -2, 23);
         billboard3.position.set(-13, -2, 43);
+
         let anim = gltf.animations[0];
         let action = billboardmixer.clipAction(anim);
         let action2 = billboardmixer2.clipAction(anim);
         let action3 = billboardmixer3.clipAction(anim);
-        scene.add(billboard);
-        scene.add(billboard2);
-        scene.add(billboard3);
+
+        scene.add(billboard, billboard2, billboard3);
+
         action.play();
         action2.play();
         action3.play();
     });
-
     loader.load("./src/3D/train.glb", function (gltf) {
         let wagon = gltf.scene;
         wagonmixer = new THREE.AnimationMixer(wagon);
@@ -151,17 +147,13 @@ function loadObjects() {
         let station4 = station.clone();
         let station5 = station.clone();
         station.position.set(-3, displacement, 5);
-        station2.position.set(-3, displacement, 5+stationlength);
-        station3.position.set(-3, displacement, 5+(stationlength*2));
-        station4.position.set(-3, displacement, 5+(stationlength*3));
-        station5.position.set(-3, displacement, 5-stationlength);
-        scene.add(station);
-        scene.add(station2);
-        scene.add(station3);
-        scene.add(station4);
-        scene.add(station5);
+        station2.position.set(-3, displacement, 5 + stationlength);
+        station3.position.set(-3, displacement, 5 + (stationlength * 2));
+        station4.position.set(-3, displacement, 5 + (stationlength * 3));
+        station5.position.set(-3, displacement, 5 - stationlength);
+        scene.add(station, station2, station3, station4, station5);
+
     });
-    
     loader.load("./src/3D/cocacola.glb", function (gltf) {
         let cocacola = gltf.scene;
         cocacola.position.set(-3, displacement + displacestation, 15);
@@ -171,11 +163,9 @@ function loadObjects() {
         let barrier = gltf.scene;
         let barrier2 = barrier.clone();
         barrier.position.set(-3, displacement + displacestation, -4.4);
-        barrier2.position.set(-3, displacement + displacestation, -4.4+(stationlength*3));
-        scene.add(barrier);
-        scene.add(barrier2);
+        barrier2.position.set(-3, displacement + displacestation, -4.4 + (stationlength * 3));
+        scene.add(barrier, barrier2);
     });
-
     loader.load("./src/3D/description.glb", function (gltf) {
         let description = gltf.scene;
         description.position.set(-2.3, displacement + displacestation + 0.2, 16);
@@ -231,13 +221,12 @@ function addRain() {
     rain1 = new THREE.LineSegments(raingeometry1, rainmaterial);
     rain.position.set(worldcenterx, 0, worldcenterz);
     rain1.position.set(worldcenterx, -worldheight, worldcenterz);
-    scene.add(rain);
-    scene.add(rain1);
+    if (raining) {
+        scene.add(rain, rain1);
+    }
 }
 
-
 function loadCharacter() {
-
     //load Model 
     let loader = new THREE.GLTFLoader(loadingManager);
     loader.load("./src/3D/anton.glb", function (gltf) {
@@ -281,9 +270,7 @@ function loadCharacter() {
         });
 }
 
-
 function loadWorldDay() {
-
     //loadingManager
     loadingManager = new THREE.LoadingManager();
     pBar = document.querySelector(".progress");
@@ -340,7 +327,6 @@ function loadWorldDay() {
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(renderer.domElement);
 
-
     const renderScene = new RenderPass(scene, camera);
 
     const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
@@ -369,10 +355,9 @@ function loadWorldDay() {
     orbitControls.maxPolarAngle = Math.PI / 2 + 0.1;
     //mouseLight.position.y += camera.position.y;
     //mouseLight.position.z += camera.position.z;
-
 }
 
-function loadLights(){
+function loadLights() {
     //LIGHTS
     //flash
     flash = new THREE.PointLight(flashlightcolor, flashlightintensity, 470, 2);
@@ -380,17 +365,15 @@ function loadLights(){
     scene.add(flash);
 
     //AMBIENT
-    if (debug) {
-        const ambient = new THREE.AmbientLight(0xf2edd5, 1);
-        scene.add(ambient);
-    }
+    const ambient = new THREE.AmbientLight(0xf2edd5, 0.2);
+    scene.add(ambient);
+
 
     const axesHelper = new THREE.AxesHelper(5);
     //scene.add(axesHelper);
 
     //HEMISSPHERELIGHT
     const light = new THREE.HemisphereLight(moonlightcolor, moonlightcolor, hemisphereLightstrength);
-
 
     //metrolights
     const width = 2.0;
@@ -485,7 +468,6 @@ function loadaudio() {
         rainsound.setLoop(true);
         rainsound.setVolume(tempsound);
         rainsound.position.set(-3, 10, 20);
-
     });
     audioLoader.load('./src/audio/thunder1.wav', function (buffer) {
         thundersound.setBuffer(buffer);
@@ -558,7 +540,6 @@ function muteAudio() {
         volumeSymbol.classList.remove("fa-volume-high");
         volumeSymbol.classList.add("fa-volume-xmark");
     }
-
 }
 
 function setVol() {
@@ -581,7 +562,6 @@ function setVol() {
     announcment4.setVolume(tempsound);
     thundersound.setVolume(tempsound);
     trainsound.setVolume(tempsound * 0.5);
-
 }
 
 //Animation
@@ -605,7 +585,6 @@ function animate() {
         rain.position.y -= rainspeed;
         rain1.position.y -= rainspeed;
 
-
         if (rain1.position.y < -worldheight) {
             rain1.position.y = worldheight;
         }
@@ -615,13 +594,6 @@ function animate() {
     }
     //camera
     orbitControls.update();
-
-    //videoRapTexture.needsUpdate = true;
-    //videoEnvTexture.needsUpdate = true;
-
-    //changes volume of videos by distance
-    //videoSoundHandler(movieRapCubeScreen, videoRap);
-    //videoSoundHandler(movieEnvCubeScreen, videoEnv);
 
     //Object Animations
     wagonmixer.update(delta);
@@ -715,88 +687,6 @@ function loadControls() {
     }, false);
 };
 
-
-// function loadVideos() {
-//     //Rap Video
-//     videoRap = document.getElementById("videoRap");
-//     videoRap.volume = 0.0001;
-//     videoRapTexture = new THREE.VideoTexture(videoRap);
-//     videoRapTexture.minFilter = THREE.LinearFilter;
-//     videoRapTexture.magFilter = THREE.LinearFilter;
-
-//     var movieRapMaterial = new THREE.MeshBasicMaterial({
-//         map: videoRapTexture,
-//         side: THREE.FrontSide,
-//         toneMapped: false,
-//     })
-
-//     let movieRapGeometry = new THREE.PlaneGeometry(0.95, 1.31);
-//     let movieRapCubeScreen = new THREE.Mesh(movieRapGeometry, movieRapMaterial);
-//     movieRapCubeScreen.rotateY(Math.PI);
-
-//     movieRapCubeScreen.position.set(-6.155, 2.565, 9.943);
-//     scene.add(movieRapCubeScreen);
-
-//     //Ski Video
-//     videoSki = document.getElementById("videoSki");
-//     videoSkiTexture = new THREE.VideoTexture(videoSki);
-//     videoSkiTexture.minFilter = THREE.LinearFilter;
-//     videoSkiTexture.magFilter = THREE.LinearFilter;
-
-//     var movieSkiMaterial = new THREE.MeshBasicMaterial({
-//         map: videoSkiTexture,
-//         side: THREE.FrontSide,
-//         toneMapped: false,
-//     })
-
-//     let movieSkiGeometry = new THREE.PlaneGeometry(0.95, 1.31);
-//     let movieSkiCubeScreen = new THREE.Mesh(movieSkiGeometry, movieSkiMaterial);
-//     movieSkiCubeScreen.rotateY(Math.PI);
-
-//     movieSkiCubeScreen.position.set(-6.155, 2.565, 27.655);
-//     scene.add(movieSkiCubeScreen);
-
-//     //Umwelt Video
-//     videoEnv = document.getElementById("videoEnv");
-//     videoEnv.volume = 0.0001;
-//     videoEnvTexture = new THREE.VideoTexture(videoEnv);
-//     videoEnvTexture.minFilter = THREE.LinearFilter;
-//     videoEnvTexture.magFilter = THREE.LinearFilter;
-
-//     var movieEnvMaterial = new THREE.MeshBasicMaterial({
-//         map: videoEnvTexture,
-//         side: THREE.FrontSide,
-//         toneMapped: false,
-//     })
-
-//     let movieEnvGeometry = new THREE.PlaneGeometry(0.94, 1.31);
-//     let movieEnvCubeScreen = new THREE.Mesh(movieEnvGeometry, movieEnvMaterial);
-//     movieEnvCubeScreen.rotateY(Math.PI);
-
-//     movieEnvCubeScreen.position.set(-6.155, 2.565, 45.14);
-//     scene.add(movieEnvCubeScreen);
-// }
-
-// function videoRapSoundHandler() {
-//     const characterPosition = characterControls.cameraTarget;
-//     const screenPosition = new THREE.Vector3(-6.155, 2.565, 9.943);
-//     const distance = characterPosition.distanceTo(screenPosition);
-//     const newDistance = distance * -1 + 4;
-//     if (newDistance > 0) {
-//         videoRap.volume = newDistance * 0.1;
-//     }
-// }
-
-// function videoEnvSoundHandler() {
-//     const characterPosition = characterControls.cameraTarget;
-//     const screenPosition = new THREE.Vector3(-6.155, 2.565, 45.14);
-//     const distance = characterPosition.distanceTo(screenPosition);
-//     const newDistance = distance * -1 + 4;
-//     if (newDistance > 0) {
-//         videoEnv.volume = newDistance * 0.1;
-//     }
-// }
-
 function loadPictures() {
     // Create a texture loader so we can load our image file
     var loader = new THREE.TextureLoader();
@@ -829,8 +719,6 @@ function loadPictures() {
     var pictureRgbMesh3 = pictureRgbMesh1.clone();
     var pictureRgbMesh33 = pictureRgbMesh1.clone();
 
-
-
     // set the position of the image mesh in the x,y,z dimensions
     pictureElleMesh1.position.set(2.15, 5.06, 10.1);
     pictureElleMesh11.position.set(2.15, 5.06, 10.33);
@@ -853,18 +741,7 @@ function loadPictures() {
     pictureRgbMesh3.rotateY(Math.PI);
 
     // add the image to the scene
-    scene.add(pictureElleMesh1);
-    scene.add(pictureElleMesh11);
-    scene.add(pictureElleMesh2);
-    scene.add(pictureElleMesh22);
-    scene.add(pictureElleMesh3);
-    scene.add(pictureElleMesh33);
-    scene.add(pictureRgbMesh1);
-    scene.add(pictureRgbMesh11);
-    scene.add(pictureRgbMesh2);
-    scene.add(pictureRgbMesh22);
-    scene.add(pictureRgbMesh3);
-    scene.add(pictureRgbMesh33);
+    scene.add(pictureElleMesh1, pictureElleMesh11, pictureElleMesh2, pictureElleMesh22, pictureElleMesh3, pictureElleMesh33, pictureRgbMesh1, pictureRgbMesh11, pictureRgbMesh2, pictureRgbMesh22, pictureRgbMesh3, pictureRgbMesh33);
 
     // Fahrplan
     var materialTrainScedule = new THREE.MeshLambertMaterial({
@@ -884,11 +761,7 @@ function loadPictures() {
     pictureTrainSceduleMesh2.rotateY(Math.PI);
     pictureTrainSceduleMesh3.rotateY(Math.PI);
 
-    
-
-    scene.add(pictureTrainSceduleMesh1);
-    scene.add(pictureTrainSceduleMesh2);
-    scene.add(pictureTrainSceduleMesh3);
+    scene.add(pictureTrainSceduleMesh1, pictureTrainSceduleMesh2, pictureTrainSceduleMesh3);
 }
 
 init();
