@@ -97,13 +97,30 @@ export class CharacterControls {
             var moveZ = this.walkDirection.z * velocity * delta;
 
 
-            if(this.model.position.z < 48 && this.model.position.z > -3.5 && this.model.position.x < 5.7 && this.model.position.x > -9){
+            if (this.model.position.z >= 48) {
+                this.model.position.z = 47.999;
+            } 
+            if (this.model.position.z <= -3.5) {
+                this.model.position.z = -3.499;
+            } 
 
-            this.model.position.x += moveX;
+            if (this.model.position.x >= 5.7) {
+                this.model.position.x = 5.699;
+            }
+            if (this.model.position.x <= -9) {
+                this.model.position.x = -8.999;
+            }
+
             this.model.position.z += moveZ;
+            this.model.position.x += moveX;
+
+
             
             this.updateCameraTarget(moveX, moveZ);
-            };
+
+    
+           
+            
         }
     }
 

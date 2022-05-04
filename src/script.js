@@ -13,13 +13,13 @@ import {
 
 let container = document.querySelector(".scene");
 let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash,
-    rainsound, thundersound, trainsound, announcment1, announcment2, announcment3, announcment4, soundarray = [], billboardmixer, billboardmixer2, billboardmixer3, wagonmixer, videoRap, videoSki, videoEnv, videoRapTexture, videoSkiTexture, videoEnvTexture,
-    temporarysound, rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1;
+    rainsound, thundersound, trainsound, announcment1, announcment2, announcment3, announcment4, soundarray = [],
+    billboardmixer, billboardmixer2, billboardmixer3, wagonmixer, temporarysound, rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1;
 
 //CONTROLLS
 
 //world
-let worldwidth = 100,
+let worldwidth = 70,
     worldheight = 20,
     backColor = 0x060616,
     worldcenterx = -3,
@@ -36,7 +36,7 @@ let worldwidth = 100,
 
     //rain and fog controlls
     raining = true,
-    dropCount = 40000, //200 - 40000
+    dropCount = 30000, //200 - 40000
     rainspeed = 0.2,
     dropsizemin = 0.05,
     dropsizemax = 0.2,
@@ -160,10 +160,10 @@ function loadObjects() {
 function addRain() {
     raindropsunder = [];
     raindropsupper = [];
-    for (let i = 0; i < dropCount; i++) {
+    for (let i = 0; i < dropCount / 2; i++) {
         let drop = new THREE.Vector3(
-            THREE.MathUtils.randFloatSpread(worldwidth), //Breite
-            THREE.MathUtils.randFloat(-1, worldheight), //Höhe
+            THREE.MathUtils.randFloat(8, worldwidth / 2), //Breite
+            THREE.MathUtils.randFloat(0, worldheight), //Höhe
             THREE.MathUtils.randFloatSpread(worldwidth) //Länge
         );
         let dropsize = THREE.MathUtils.randFloat(dropsizemin, dropsizemax);
@@ -176,20 +176,64 @@ function addRain() {
             drop.x, drop.y - dropsize, drop.z
         );
     }
+    for (let i = 0; i < dropCount / 2; i++) {
+        let drop1 = new THREE.Vector3(
+            THREE.MathUtils.randFloat(-worldwidth / 2, -8), //Breite
+            THREE.MathUtils.randFloat(0, worldheight), //Höhe
+            THREE.MathUtils.randFloatSpread(worldwidth) //Länge
+        );
+        let dropsize = THREE.MathUtils.randFloat(dropsizemin, dropsizemax);
+        raindropsunder.push(
+            drop1.x, drop1.y, drop1.z,
+            drop1.x, drop1.y - dropsize, drop1.z
+        );
+        raindropsupper.push(
+            drop1.x, drop1.y, drop1.z,
+            drop1.x, drop1.y - dropsize, drop1.z
+        );
+    }
+    for (let i = 0; i < dropCount / 15; i++) {
+        let dropsize = THREE.MathUtils.randFloat(dropsizemin, dropsizemax);
+        let drop = new THREE.Vector3(
+            THREE.MathUtils.randFloat(-8 , 8), //Breite
+            THREE.MathUtils.randFloat(0, worldheight), //Höhe
+            THREE.MathUtils.randFloat(30, worldwidth/2) //Länge
+        );
+        let drop1 = new THREE.Vector3(
+            THREE.MathUtils.randFloat(-8 , 8), //Breite
+            THREE.MathUtils.randFloat(0, worldheight), //Höhe
+            THREE.MathUtils.randFloat(-worldwidth / 2, -25) //Länge
+        );
+        raindropsunder.push(
+            drop.x, drop.y, drop.z,
+            drop.x, drop.y - dropsize, drop.z
+        );
+        raindropsupper.push(
+            drop.x, drop.y, drop.z,
+            drop.x, drop.y - dropsize, drop.z
+        );
+        raindropsunder.push(
+            drop1.x, drop1.y, drop1.z,
+            drop1.x, drop1.y - dropsize, drop1.z
+        );
+        raindropsupper.push(
+            drop1.x, drop1.y, drop1.z,
+            drop1.x, drop1.y - dropsize, drop1.z
+        );
+    }
     raingeometry = new THREE.BufferGeometry();
     raingeometry1 = new THREE.BufferGeometry();
     raingeometry.setAttribute("position", new THREE.Float32BufferAttribute(raindropsunder, 3));
     raingeometry1.setAttribute("position", new THREE.Float32BufferAttribute(raindropsupper, 3));
-
     let rainmaterial = new THREE.LineBasicMaterial({
         color: 0xaaaaaa,
         linewidth: 2,
         transparent: true
     });
-
     rain = new THREE.LineSegments(raingeometry, rainmaterial);
     rain1 = new THREE.LineSegments(raingeometry1, rainmaterial);
-    rain1.position.y = -worldheight;
+    rain.position.set(worldcenterx, 0, worldcenterz);
+    rain1.position.set(worldcenterx, -worldheight, worldcenterz);
     scene.add(rain);
     scene.add(rain1);
 }
@@ -287,7 +331,7 @@ function loadWorldDay() {
     floortile.castShadow = false;
     floortile.receiveShadow = true;
     floortile.rotation.x = -Math.PI / 2;
-    floortile.position.set(worldcenterx, 0, wo);
+    floortile.position.set(worldcenterx, 0, worldcenterz);
     scene.add(floortile);
 
     //LIGHTS
@@ -415,14 +459,14 @@ function startSequence() {
     document.querySelector(".controlls").classList.add("active");
     document.querySelector(".audioContainer").classList.add("active");
     rainsound.play();
-    setInterval(function(){
+    setInterval(function () {
         thundersound.play();
     }, 80000);
     rainsound.play();
-    setInterval(function(){
+    setInterval(function () {
         trainsound.play();
     }, 60000);
-    setInterval(function(){
+    setInterval(function () {
         const randomElement = soundarray[Math.floor(Math.random() * soundarray.length)];
         randomElement.play();
     }, 90000);
@@ -506,7 +550,7 @@ function muteAudio() {
         announcment3.setVolume(temporarysound);
         announcment4.setVolume(temporarysound);
         thundersound.setVolume(temporarysound);
-        trainsound.setVolume(temporarysound*0.5);
+        trainsound.setVolume(temporarysound * 0.5);
         volumeSlider.value = temporarysound * 100;
     } else {
         //mute
@@ -546,7 +590,7 @@ function setVol() {
     announcment3.setVolume(tempsound);
     announcment4.setVolume(tempsound);
     thundersound.setVolume(tempsound);
-    trainsound.setVolume(tempsound*0.5);
+    trainsound.setVolume(tempsound * 0.5);
 
 }
 
