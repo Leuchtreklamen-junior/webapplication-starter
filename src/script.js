@@ -419,7 +419,7 @@ export function loadPictures() {
     pictureThreeJS.rotateY(Math.PI);
 
     var materialSocialMedia = new THREE.MeshLambertMaterial({
-        map: loader.load('./pictures/socialMediaPeter.jpg')
+        map: loader.load('./pictures/SocialMediaPeter.jpg')
     });
     var geometrySocialMedia = new THREE.PlaneGeometry(0.95, 1.35);
     var pictureSocialMedia = new THREE.Mesh(geometrySocialMedia, materialSocialMedia);
@@ -723,7 +723,7 @@ function updateProgressBar(progressBar, value) {
     if (value == 100) {
         setTimeout(function () {
             startSequence();
-        }, 2000);
+        }, 200);
     }
     //loadingbody = document.querySelector(".loadingBody")  
 }
@@ -731,6 +731,7 @@ function updateProgressBar(progressBar, value) {
 function startSequence() {
     document.querySelector(".loadingBody").classList.remove("active");
     document.querySelector(".controlls").classList.add("active");
+    document.querySelector(".contact").classList.add("active");
     document.querySelector(".audioContainer").classList.add("active");
     rainsound.play();
     setInterval(function () {

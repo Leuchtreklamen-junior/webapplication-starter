@@ -48,7 +48,7 @@ canvas {
     position: absolute;
     bottom: 10px;
     left: 10px;
-    display: flex;
+    display: none;
     align-items: flex-end;
 }
 
@@ -226,8 +226,12 @@ button:hover {
     z-index: 2;
     bottom: 10px;
     right: 10px;
-    display: block;
+    display: none;
     font-size: x-large;
+}
+
+#contact.active{
+    display: block;
 }
 
 .key#spotify {
