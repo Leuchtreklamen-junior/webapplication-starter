@@ -40,7 +40,7 @@ let worldwidth = 100,
     rainspeed = 0.2,
     dropsizemin = 0.05,
     dropsizemax = 0.2,
-    fog = false,
+    fog = true,
 
     //starting volume sound
     tempsound = 0.1,
@@ -422,7 +422,7 @@ export function loadPictures() {
     pictureThreeJS.rotateY(Math.PI);
 
     var materialSocialMedia = new THREE.MeshLambertMaterial({
-        map: loader.load('./pictures/socialMediaPeter.jpg')
+        map: loader.load('./pictures/SocialMediaPeter.jpg')
     });
     var geometrySocialMedia = new THREE.PlaneGeometry(0.95, 1.35);
     var pictureSocialMedia = new THREE.Mesh(geometrySocialMedia, materialSocialMedia);
@@ -488,7 +488,7 @@ export function addRain() {
 export function loadCharacter() {
     //load Model 
     let loader = new THREE.GLTFLoader(loadingManager);
-    loader.load("./src/3D/anton.glb", function (gltf) {
+    loader.load("./src/3D/peter.glb", function (gltf) {
             gltf.scene.traverse(function (node) {
                 if (node.isMesh) {
                     node.castShadow = true;
