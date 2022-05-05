@@ -12,5 +12,4 @@ function toggelContactModal() {
         document.getElementById("cardcontainer").style.display = "flex";
         console.log("open");
     }
-
 }

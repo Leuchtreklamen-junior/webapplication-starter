@@ -12,10 +12,7 @@ import {
 } from 'https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/postprocessing/UnrealBloomPass.js';
 
 let container = document.querySelector(".scene");
-let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash,
-    rainsound, thundersound, trainsound, announcment1, announcment2, announcment3, announcment4, soundarray = [], danceSound,
-    passbytrain,
-    billboardmixer, billboardmixer2, billboardmixer3, temporarysound, rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1, disco;
+let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash, rainsound, thundersound, trainsound, announcment1, announcment2, announcment3, announcment4, soundarray = [], danceSound, passbytrain, billboardmixer, billboardmixer2, billboardmixer3, temporarysound, rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1, disco;
 
 //CONTROLLS
 
@@ -40,7 +37,7 @@ let worldwidth = 100,
     rainspeed = 0.2,
     dropsizemin = 0.05,
     dropsizemax = 0.2,
-    fog = false,
+    fog = true,
 
     //starting volume sound
     tempsound = 0.1,
@@ -123,7 +120,7 @@ export function loadObjects() {
         barrier2.position.set(-3, displacement + displacestation, -4.4 + (stationlength * 3));
         scene.add(barrier, barrier2);
     });
-    loader.load("./src/3D/description.glb", function (gltf) {
+    loader.load("./src/3D/descriptionAnton.glb", function (gltf) {
         let description = gltf.scene;
         description.traverse(function (node) {
             if (node.isMesh) {
@@ -166,7 +163,7 @@ export function loadaudio() {
     const audioLoader = new THREE.AudioLoader();
     audioLoader.load('./src/audio/rain.wav', function (buffer) {
         rainsound.setBuffer(buffer);
-        rainsound.setLoop(true);       
+        rainsound.setLoop(true);
         rainsound.setVolume(tempsound);
     });
     audioLoader.load('./src/audio/thunder1.wav', function (buffer) {
@@ -239,7 +236,7 @@ export function loadControls() {
             case " ": // SPACE
                 (keysPressed)[e.key.toLocaleLowerCase()] = true;
                 document.getElementById("space").classList.add("active");
-                
+
                 break;
             case "shift": // SHIFT
                 if (characterControls) {
@@ -271,7 +268,7 @@ export function loadControls() {
                 (keysPressed)[e.key.toLocaleLowerCase()] = false;
                 document.getElementById("D").classList.remove("active");
                 break;
-                case "q": //q
+            case "q": //q
                 (keysPressed)[e.key.toLocaleLowerCase()] = false;
                 document.getElementById("Q").classList.remove("active");
                 break;
@@ -428,7 +425,7 @@ export function loadPictures() {
     var pictureSocialMedia = new THREE.Mesh(geometrySocialMedia, materialSocialMedia);
     pictureSocialMedia.position.set(-6.155, 2.565, 45.364);
     pictureSocialMedia.rotateY(Math.PI);
-    
+
     scene.add(pictureTrainSceduleMesh1, pictureThreeJS, pictureSocialMedia);
 }
 
@@ -531,9 +528,9 @@ export function dance(x, y, z) {
     if (rand == 10) {
         disco.color.set(Math.random() * 0xffffff);
     }
-    if (!danceSound.isPlaying){
+    if (!danceSound.isPlaying) {
         danceSound.play();
-    }    
+    }
 }
 
 export function stopdance() {
@@ -633,7 +630,7 @@ export function loadLights() {
     scene.add(flash);
 
     //disco
-    disco = new THREE.SpotLight(0xff0000, 0 , 5, Math.PI / 4, 0.5, 1);
+    disco = new THREE.SpotLight(0xff0000, 0, 5, Math.PI / 4, 0.5, 1);
     disco.position.set(characterx, 3 + displacestation, characterz);
     disco.target.position.set(characterx, displacestation, characterz);
     disco.castShadow = true;
