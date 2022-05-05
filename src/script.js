@@ -40,7 +40,7 @@ let worldwidth = 100,
     rainspeed = 0.2,
     dropsizemin = 0.05,
     dropsizemax = 0.2,
-    fog = true,
+    fog = false,
 
     //starting volume sound
     tempsound = 0.1,
@@ -295,6 +295,58 @@ export function loadControls() {
                 break;
         }
     }, false);
+
+    //onclick buttons 
+    //mousdown
+    document.getElementById('W').addEventListener("mousedown", function () {
+        (keysPressed)["w"] = true;
+        document.getElementById("W").classList.add("active");
+    });
+    document.getElementById('A').addEventListener("mousedown", function () {
+        (keysPressed)["a"] = true;
+        document.getElementById("A").classList.add("active");
+    });
+    document.getElementById('S').addEventListener("mousedown", function () {
+        (keysPressed)["s"] = true;
+        document.getElementById("S").classList.add("active");
+    });
+    document.getElementById('D').addEventListener("mousedown", function () {
+        (keysPressed)["d"] = true;
+        document.getElementById("D").classList.add("active");
+    });
+    document.getElementById('shift').addEventListener("mousedown", function () {
+        (keysPressed)["shift"] = true;
+        document.getElementById("shift").classList.add("active");
+    });
+    document.getElementById('space').addEventListener("mousedown", function () {
+        (keysPressed)[" "] = true;
+        document.getElementById("space").classList.add("active");
+    });
+    //mouseup
+    document.getElementById('W').addEventListener("mouseup", function () {
+        (keysPressed)["w"] = false;
+        document.getElementById("W").classList.remove("active");
+    });
+    document.getElementById('A').addEventListener("mouseup", function () {
+        (keysPressed)["a"] = false;
+        document.getElementById("A").classList.remove("active");
+    });
+    document.getElementById('S').addEventListener("mouseup", function () {
+        (keysPressed)["s"] = false;
+        document.getElementById("S").classList.remove("active");
+    });
+    document.getElementById('D').addEventListener("mouseup", function () {
+        (keysPressed)["d"] = false;
+        document.getElementById("D").classList.remove("active");
+    });
+    document.getElementById('shift').addEventListener("mouseup", function () {
+        (keysPressed)["shift"] = false;
+        document.getElementById("shift").classList.remove("active");
+    });
+    document.getElementById('space').addEventListener("mouseup", function () {
+        (keysPressed)[" "] = false;
+        document.getElementById("space").classList.remove("active");
+    });
 };
 
 export function loadPictures() {
@@ -334,14 +386,14 @@ export function loadPictures() {
     pictureElleMesh11.position.set(2.15, 5.06, 10.33);
     pictureElleMesh2.position.set(2.15, 5.06, 27.81);
     pictureElleMesh22.position.set(2.15, 5.06, 28.04);
-    pictureElleMesh3.position.set(2.15, 5.06, 45.3);
-    pictureElleMesh33.position.set(2.15, 5.06, 45.53);
+    pictureElleMesh3.position.set(2.15, 5.06, 45.521);
+    pictureElleMesh33.position.set(2.15, 5.06, 45.753);
     pictureRgbMesh1.position.set(-8.15, 5.06, 10.1);
     pictureRgbMesh11.position.set(-8.15, 5.06, 10.33);
     pictureRgbMesh2.position.set(-8.15, 5.06, 27.81);
     pictureRgbMesh22.position.set(-8.15, 5.06, 28.04);
-    pictureRgbMesh3.position.set(-8.15, 5.06, 45.3);
-    pictureRgbMesh33.position.set(-8.15, 5.06, 45.53);
+    pictureRgbMesh3.position.set(-8.15, 5.06, 45.521);
+    pictureRgbMesh33.position.set(-8.15, 5.06, 45.753);
     pictureElleMesh1.rotateY(Math.PI);
     pictureElleMesh2.rotateY(Math.PI);
     pictureElleMesh3.rotateY(Math.PI);
@@ -357,20 +409,27 @@ export function loadPictures() {
         map: loader.load('./pictures/BahnPlan.jpg')
     });
     var geometryTrainScedule = new THREE.PlaneGeometry(0.95, 1.35);
-
     var pictureTrainSceduleMesh1 = new THREE.Mesh(geometryTrainScedule, materialTrainScedule);
-    var pictureTrainSceduleMesh2 = pictureTrainSceduleMesh1.clone()
-    var pictureTrainSceduleMesh3 = pictureTrainSceduleMesh1.clone()
-
     pictureTrainSceduleMesh1.position.set(-6.155, 2.565, 9.943);
-    pictureTrainSceduleMesh2.position.set(-6.155, 2.565, 27.655);
-    pictureTrainSceduleMesh3.position.set(-6.155, 2.565, 45.14);
-
     pictureTrainSceduleMesh1.rotateY(Math.PI);
-    pictureTrainSceduleMesh2.rotateY(Math.PI);
-    pictureTrainSceduleMesh3.rotateY(Math.PI);
 
-    scene.add(pictureTrainSceduleMesh1, pictureTrainSceduleMesh2, pictureTrainSceduleMesh3);
+    var materialThreeJS = new THREE.MeshLambertMaterial({
+        map: loader.load('./pictures/threejs.jpg')
+    });
+    var geometryThreeJS = new THREE.PlaneGeometry(0.95, 1.35);
+    var pictureThreeJS = new THREE.Mesh(geometryThreeJS, materialThreeJS);
+    pictureThreeJS.position.set(-6.155, 2.565, 27.654);
+    pictureThreeJS.rotateY(Math.PI);
+
+    var materialSocialMedia = new THREE.MeshLambertMaterial({
+        map: loader.load('./pictures/socialMediaPeter.jpg')
+    });
+    var geometrySocialMedia = new THREE.PlaneGeometry(0.95, 1.35);
+    var pictureSocialMedia = new THREE.Mesh(geometrySocialMedia, materialSocialMedia);
+    pictureSocialMedia.position.set(-6.155, 2.565, 45.364);
+    pictureSocialMedia.rotateY(Math.PI);
+    
+    scene.add(pictureTrainSceduleMesh1, pictureThreeJS, pictureSocialMedia);
 }
 
 export function addRain() {
