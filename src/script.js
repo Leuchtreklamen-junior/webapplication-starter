@@ -13,12 +13,13 @@ import {
 
 let container = document.querySelector(".scene");
 let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash,
-    rainsound, thundersound, trainsound, announcment1, announcment2, announcment3, announcment4, soundarray = [], passbytrain, 
+    rainsound, thundersound, trainsound, announcment1, announcment2, announcment3, announcment4, soundarray = [],
+    passbytrain,
     billboardmixer, billboardmixer2, billboardmixer3, temporarysound, rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1;
 
 //CONTROLLS
 
-    //world
+//world
 let worldwidth = 100,
     worldheight = 20,
     backColor = 0x060616,
@@ -129,21 +130,21 @@ export function loadObjects() {
                 node.castShadow = true;
             }
         });
-        description.position.set(characterx - 0.8, displacement + displacestation + 0.2, characterz+0.4);
+        description.position.set(characterx - 0.8, displacement + displacestation + 0.2, characterz + 0.4);
         description.rotateY(Math.PI);
         scene.add(description);
     });
     loader.load("./src/3D/deutscherBahnVerkehr.glb", function (gltf) {
         passbytrain = gltf.scene;
-        passbytrain.position.set(-11.1,displacement,301);
-        passbytrain.rotateY(Math.PI/2);
+        passbytrain.position.set(-11.1, displacement, 301);
+        passbytrain.rotateY(Math.PI / 2);
         scene.add(passbytrain);
 
         let standingtrain = passbytrain.clone();
-        standingtrain.position.set(5,displacement,-3.5);
+        standingtrain.position.set(5, displacement, -3.5);
         standingtrain.rotateY(Math.PI);
         scene.add(standingtrain);
-    }); 
+    });
 }
 
 export function loadaudio() {
@@ -271,6 +272,58 @@ export function loadControls() {
                 break;
         }
     }, false);
+
+    //onclick buttons 
+    //mousdown
+    document.getElementById('W').addEventListener("mousedown", function () {
+        (keysPressed)["w"] = true;
+        document.getElementById("W").classList.add("active");
+    });
+    document.getElementById('A').addEventListener("mousedown", function () {
+        (keysPressed)["a"] = true;
+        document.getElementById("A").classList.add("active");
+    });
+    document.getElementById('S').addEventListener("mousedown", function () {
+        (keysPressed)["s"] = true;
+        document.getElementById("S").classList.add("active");
+    });
+    document.getElementById('D').addEventListener("mousedown", function () {
+        (keysPressed)["d"] = true;
+        document.getElementById("D").classList.add("active");
+    });
+    document.getElementById('shift').addEventListener("mousedown", function () {
+        (keysPressed)["shift"] = true;
+        document.getElementById("shift").classList.add("active");
+    });
+    document.getElementById('space').addEventListener("mousedown", function () {
+        (keysPressed)[" "] = true;
+        document.getElementById("space").classList.add("active");
+    });
+    //mouseup
+    document.getElementById('W').addEventListener("mouseup", function () {
+        (keysPressed)["w"] = false;
+        document.getElementById("W").classList.remove("active");
+    });
+    document.getElementById('A').addEventListener("mouseup", function () {
+        (keysPressed)["a"] = false;
+        document.getElementById("A").classList.remove("active");
+    });
+    document.getElementById('S').addEventListener("mouseup", function () {
+        (keysPressed)["s"] = false;
+        document.getElementById("S").classList.remove("active");
+    });
+    document.getElementById('D').addEventListener("mouseup", function () {
+        (keysPressed)["d"] = false;
+        document.getElementById("D").classList.remove("active");
+    });
+    document.getElementById('shift').addEventListener("mouseup", function () {
+        (keysPressed)["shift"] = false;
+        document.getElementById("shift").classList.remove("active");
+    });
+    document.getElementById('space').addEventListener("mouseup", function () {
+        (keysPressed)[" "] = false;
+        document.getElementById("space").classList.remove("active");
+    });
 };
 
 export function loadPictures() {
@@ -345,7 +398,7 @@ export function loadPictures() {
     pictureTrainSceduleMesh1.rotateY(Math.PI);
     pictureTrainSceduleMesh2.rotateY(Math.PI);
     pictureTrainSceduleMesh3.rotateY(Math.PI);
-    
+
     scene.add(pictureTrainSceduleMesh1, pictureTrainSceduleMesh2, pictureTrainSceduleMesh3);
 }
 
@@ -413,7 +466,7 @@ export function loadCharacter() {
             });
             const model = gltf.scene;
             model.position.set(characterx, displacement + displacestation, characterz);
-            model.rotateY(Math.PI/0.9);
+            model.rotateY(Math.PI / 0.9);
             scene.add(model);
             const gltfAnimations = gltf.animations;
             const mixer = new THREE.AnimationMixer(model);
@@ -470,7 +523,7 @@ export function loadWorld() {
         console.log("DEBUG MODE = TRUE")
     };
 
-    camera.position.set(characterx -0.5, displacement + displacestation + cameratargetheight+ 0.5, characterz + -2.5);
+    camera.position.set(characterx - 0.5, displacement + displacestation + cameratargetheight + 0.5, characterz + -2.5);
 
     let texture = new THREE.MeshStandardMaterial({
         color: 0x000000
@@ -532,7 +585,7 @@ export function loadLights() {
 
     //startlight
     const startlight = new THREE.PointLight(0xffffff, 2, 7, 2);
-    startlight.position.set(characterx - 2, displacestation + 2.5 , characterz -1);
+    startlight.position.set(characterx - 2, displacestation + 2.5, characterz - 1);
     startlight.castShadow = true;
     scene.add(startlight);
 
@@ -642,9 +695,9 @@ function startSequence() {
     animate();
 }
 
-function animateTrain(){
+function animateTrain() {
     trainsound.play();
-    passbytrain.position.set(-11.1, displacement, -100); 
+    passbytrain.position.set(-11.1, displacement, -100);
 }
 
 //audio slider
@@ -745,7 +798,7 @@ function animate() {
     billboardmixer3.update(delta);
 
     //PassbyTrain 
-    if(passbytrain.position.z <= 300){
+    if (passbytrain.position.z <= 300) {
         passbytrain.position.z += 0.6;
     }
     //render
@@ -760,4 +813,3 @@ function onWindowResize() {
 }
 
 window.addEventListener("resize", onWindowResize);
-
