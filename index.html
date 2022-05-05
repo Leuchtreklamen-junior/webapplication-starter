@@ -11,7 +11,7 @@
 </head>
 
 <body>
-    <div class="loadingBody active">
+    <div class="loadingBody">
         <div><span id="loadingsSpan">LOADING....</span></div>
         <div class="progress">
             <div class="progress-value"></div>
@@ -25,7 +25,7 @@
                 <input type="range" min="0" max="100" value="10" class="slider" id="volumeSlider"></div>
         </div>
         <div>
-            
+
             <button class="key" id="muteButton">
                 <i id="volumeSymbol" class="fa-solid fa-volume-high"></i>
             </button>
@@ -36,15 +36,45 @@
         <button class="key shift" id="shift">Shift</button>
         <div class="movement">
             <div class="toprow">
+                <button class="key Q" id="Q">Q</button>
                 <button class="key fas fa-arrow-up" id="W"></button>
+                <button class="key E" id="E">E</button>
             </div>
             <div class="bottomrow">
                 <button class="key fas fa-arrow-left" id="A"></button>
                 <button class="key fas fa-arrow-down" id="S"></button>
-                <button class="key  fas fa-arrow-right" id="D"></button>
+                <button class="key fas fa-arrow-right" id="D"></button>
             </div>
         </div>
         <button class="key space" id="space">Space</button>
+    </div>
+    <button class="key fa-solid fa-at" id="contact"></button>
+    <div class="cardcontainer" id="cardcontainer">
+
+        <div id="card" class="card">
+            <div class="avatar">
+                <img id="avatarimg" src="./pictures/peter.png">
+            </div>
+            <div class="info">
+                <div class="flextop">
+                    <div class="name">
+                        <h1>Anton Rockenstein</h1>
+                    </div>
+                    <div class="aboutme">
+                        <div class="column"><i
+                                class="icon fa-solid fa-envelope"></i><span>rockenstein.anton@gmail.com</span></div>
+                        <div class="column"><i class="icon fa-solid fa-phone"></i><span>+4917697699917</span></div>
+                        <div class="column"><i class="icon fa-solid fa-location-pin"></i><span>Regensburg</span></div>
+                    </div>
+                </div>
+                <div class="bottomapps">
+                    <button class="key fa-brands fa-instagram" id="instagram"></button>
+                    <button class="key fa-brands fa-facebook-f" id="facebook"></button>
+                    <button class="key fa-brands fa-linkedin-in" id="linkedin"></button>
+                    <button class="key fa-brands fa-spotify" id="spotify"></button>
+                </div>
+            </div>
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/build/three.min.js"></script>
     <script src="./src/threejs/GLTFLoader.js"></script>

@@ -13,9 +13,9 @@ import {
 
 let container = document.querySelector(".scene");
 let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash,
-    rainsound, thundersound, trainsound, announcment1, announcment2, announcment3, announcment4, soundarray = [],
+    rainsound, thundersound, trainsound, announcment1, announcment2, announcment3, announcment4, soundarray = [], danceSound,
     passbytrain,
-    billboardmixer, billboardmixer2, billboardmixer3, temporarysound, rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1;
+    billboardmixer, billboardmixer2, billboardmixer3, temporarysound, rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1, disco;
 
 //CONTROLLS
 
@@ -160,14 +160,14 @@ export function loadaudio() {
     announcment3 = new THREE.Audio(listener);
     announcment4 = new THREE.Audio(listener);
     trainsound = new THREE.Audio(listener);
+    danceSound = new THREE.Audio(listener);
 
     // load a sound and set it as the audio object's buffer
     const audioLoader = new THREE.AudioLoader();
     audioLoader.load('./src/audio/rain.wav', function (buffer) {
         rainsound.setBuffer(buffer);
-        rainsound.setLoop(true);
+        rainsound.setLoop(true);       
         rainsound.setVolume(tempsound);
-        rainsound.position.set(-3, 10, 20);
     });
     audioLoader.load('./src/audio/thunder1.wav', function (buffer) {
         thundersound.setBuffer(buffer);
@@ -200,6 +200,12 @@ export function loadaudio() {
         announcment4.setVolume(tempsound);
     });
     soundarray.push(announcment1, announcment2, announcment3, announcment4);
+    audioLoader.load('./src/audio/music.mp3', function (buffer) {
+        danceSound.setBuffer(buffer);
+        danceSound.setLoop(true);
+        danceSound.setVolume(tempsound);
+    });
+
 }
 
 export function loadControls() {
@@ -222,9 +228,18 @@ export function loadControls() {
                 (keysPressed)[e.key.toLocaleLowerCase()] = true;
                 document.getElementById("D").classList.add("active");
                 break;
+            case "q": //q
+                (keysPressed)[e.key.toLocaleLowerCase()] = true;
+                document.getElementById("Q").classList.add("active");
+                break;
+            case "e": //e
+                (keysPressed)[e.key.toLocaleLowerCase()] = true;
+                document.getElementById("E").classList.add("active");
+                break;
             case " ": // SPACE
                 (keysPressed)[e.key.toLocaleLowerCase()] = true;
                 document.getElementById("space").classList.add("active");
+                
                 break;
             case "shift": // SHIFT
                 if (characterControls) {
@@ -255,6 +270,14 @@ export function loadControls() {
             case "d": //d
                 (keysPressed)[e.key.toLocaleLowerCase()] = false;
                 document.getElementById("D").classList.remove("active");
+                break;
+                case "q": //q
+                (keysPressed)[e.key.toLocaleLowerCase()] = false;
+                document.getElementById("Q").classList.remove("active");
+                break;
+            case "e": //e
+                (keysPressed)[e.key.toLocaleLowerCase()] = false;
+                document.getElementById("E").classList.remove("active");
                 break;
             case " ": // SPACE
                 (keysPressed)[e.key.toLocaleLowerCase()] = false;
@@ -483,7 +506,7 @@ export function loadCharacter() {
             }).forEach(function (a) {
                 animationsMap.set(a.name, mixer.clipAction(a));
             });
-            characterControls = new CharacterControls(model, mixer, animationsMap, orbitControls, camera, "lookaround");
+            characterControls = new CharacterControls(model, mixer, animationsMap, orbitControls, camera, "idle2");
             if (debug) {
                 const skeletonhelper = new THREE.SkeletonHelper(model);
                 scene.add(skeletonhelper);
@@ -498,6 +521,25 @@ export function loadCharacter() {
         function (err) {
             console.error('Error Loading Model');
         });
+}
+
+export function dance(x, y, z) {
+    let rand = Math.round(Math.random() * 10);
+    disco.position.set(x, displacestation + 3, z);
+    disco.target.position.set(x, y, z);
+    disco.intensity = 5;
+    if (rand == 10) {
+        disco.color.set(Math.random() * 0xffffff);
+    }
+    if (!danceSound.isPlaying){
+        danceSound.play();
+    }    
+}
+
+export function stopdance() {
+    disco.intensity = 0;
+    disco.color.set(0x000000);
+    danceSound.pause();
 }
 
 export function loadWorld() {
@@ -589,6 +631,13 @@ export function loadLights() {
     flash = new THREE.PointLight(flashlightcolor, flashlightintensity, 470, 2);
     flash.position.set(200, 300, 100);
     scene.add(flash);
+
+    //disco
+    disco = new THREE.SpotLight(0xff0000, 0 , 5, Math.PI / 4, 0.5, 1);
+    disco.position.set(characterx, 3 + displacestation, characterz);
+    disco.target.position.set(characterx, displacestation, characterz);
+    disco.castShadow = true;
+    scene.add(disco, disco.target);
 
     //startlight
     const startlight = new THREE.PointLight(0xffffff, 2, 7, 2);
