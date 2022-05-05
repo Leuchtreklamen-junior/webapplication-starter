@@ -386,27 +386,27 @@ export function loadPictures() {
         map: loader.load('./pictures/BahnPlan.jpg')
     });
     var geometryTrainScedule = new THREE.PlaneGeometry(0.95, 1.35);
-
     var pictureTrainSceduleMesh1 = new THREE.Mesh(geometryTrainScedule, materialTrainScedule);
-    var pictureTrainSceduleMesh2 = pictureTrainSceduleMesh1.clone()
-
     pictureTrainSceduleMesh1.position.set(-6.155, 2.565, 9.943);
-    pictureTrainSceduleMesh2.position.set(-6.155, 2.565, 27.655);
-
     pictureTrainSceduleMesh1.rotateY(Math.PI);
-    pictureTrainSceduleMesh2.rotateY(Math.PI);
 
-    scene.add(pictureTrainSceduleMesh1, pictureTrainSceduleMesh2);
+    var materialThreeJS = new THREE.MeshLambertMaterial({
+        map: loader.load('./pictures/threejs.jpg')
+    });
+    var geometryThreeJS = new THREE.PlaneGeometry(0.95, 1.35);
+    var pictureThreeJS = new THREE.Mesh(geometryThreeJS, materialThreeJS);
+    pictureThreeJS.position.set(-6.155, 2.565, 27.654);
+    pictureThreeJS.rotateY(Math.PI);
 
     var materialSocialMedia = new THREE.MeshLambertMaterial({
         map: loader.load('./pictures/socialMediaPeter.jpg')
     });
     var geometrySocialMedia = new THREE.PlaneGeometry(0.95, 1.35);
     var pictureSocialMedia = new THREE.Mesh(geometrySocialMedia, materialSocialMedia);
-    pictureSocialMedia.position.set(-6.155, 2.565, 45.365);
+    pictureSocialMedia.position.set(-6.155, 2.565, 45.364);
     pictureSocialMedia.rotateY(Math.PI);
     
-    scene.add(pictureSocialMedia);
+    scene.add(pictureTrainSceduleMesh1, pictureThreeJS, pictureSocialMedia);
 }
 
 export function addRain() {
