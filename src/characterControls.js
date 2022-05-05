@@ -1,5 +1,7 @@
-//import THREE from '/src/threejs/three.min.js';
-// import { A, D, DIRECTIONS, S, W } from './utils'
+import {
+    dance,
+    stopdance
+} from "./script.js";
 
 export class CharacterControls {
 
@@ -11,7 +13,7 @@ export class CharacterControls {
 
     //constants 
     fadeDuration = 0.5;
-    runVelocity = 4;
+    runVelocity = 3;
     walkVelocity = 1.5;
 
     constructor(model, mixer, animationsMap, orbitControl, camera, currentAction) {
@@ -41,11 +43,24 @@ export class CharacterControls {
             play = "run";
         } else
         if (keysPressed["w"] || keysPressed["a"] || keysPressed["s"] || keysPressed["d"]) {
-            play = "walk1";
+            play = "walk";
+        } else
+        if (keysPressed[" "]) {
+            play = "dance"
+            dance(this.cameraTarget.x, this.cameraTarget.y, this.cameraTarget.z);
+        } else
+        if (keysPressed["e"]) {
+            play = "extra1"
+        } else
+        if (keysPressed["q"]) {
+            play = "extra2"
         } else {
-            play = "idlebreath";
+            play = "idle1";
+            stopdance();
         }
-        
+
+
+
         if (this.currentAction != play) {
             const toPlay = this.animationsMap.get(play);
             const current = this.animationsMap.get(this.currentAction);
@@ -63,7 +78,7 @@ export class CharacterControls {
 
         this.mixer.update(delta);
 
-        if (this.currentAction == "run" || this.currentAction == "walk1") {
+        if (this.currentAction == "run" || this.currentAction == "walk") {
             // calculate towards camera direction
             var angleYCameraDirection = Math.atan2((this.camera.position.x - this.model.position.x), (this.camera.position.z - this.model.position.z));
             // diagonal movement angle offset
@@ -80,17 +95,18 @@ export class CharacterControls {
 
             // run/walk velocity
             var velocity = this.currentAction == 'run' ? this.runVelocity : this.walkVelocity;
-            
+
             // move model & camera
             var moveX = this.walkDirection.x * velocity * delta;
             var moveZ = this.walkDirection.z * velocity * delta;
 
+            //boundaries
             if (this.model.position.z >= 48) {
                 this.model.position.z = 47.999;
-            } 
+            }
             if (this.model.position.z <= -3.5) {
                 this.model.position.z = -3.499;
-            } 
+            }
             if (this.model.position.x >= 3.2) {
                 this.model.position.x = 3.199;
             }
@@ -99,7 +115,7 @@ export class CharacterControls {
             }
             this.model.position.z += moveZ;
             this.model.position.x += moveX;
-            this.updateCameraTarget(moveX, moveZ);       
+            this.updateCameraTarget(moveX, moveZ);
         }
     }
 
@@ -114,7 +130,7 @@ export class CharacterControls {
         this.orbitControl.target = this.cameraTarget;
     }
 
-    getCharacterPosition(){
+    getCharacterPosition() {
         return this.cameraTarget;
     }
 

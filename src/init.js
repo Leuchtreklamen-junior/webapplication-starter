@@ -1,6 +1,9 @@
 import {
     loadCharacter, loadControls, loadLights, loadObjects, loadPictures, loadWorld, loadaudio, addRain
-} from "./script.js"
+} from "./script.js";
+import {
+    contact
+} from "./contact.js";
 
 function init() {
     loadWorld();
@@ -11,6 +14,7 @@ function init() {
     addRain();
     loadaudio();
     loadPictures();
+    contact();
 }
 
 init();
