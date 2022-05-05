@@ -40,7 +40,7 @@ let worldwidth = 100,
     rainspeed = 0.2,
     dropsizemin = 0.05,
     dropsizemax = 0.2,
-    fog = true,
+    fog = false,
 
     //starting volume sound
     tempsound = 0.1,
@@ -363,14 +363,14 @@ export function loadPictures() {
     pictureElleMesh11.position.set(2.15, 5.06, 10.33);
     pictureElleMesh2.position.set(2.15, 5.06, 27.81);
     pictureElleMesh22.position.set(2.15, 5.06, 28.04);
-    pictureElleMesh3.position.set(2.15, 5.06, 45.3);
-    pictureElleMesh33.position.set(2.15, 5.06, 45.53);
+    pictureElleMesh3.position.set(2.15, 5.06, 45.521);
+    pictureElleMesh33.position.set(2.15, 5.06, 45.753);
     pictureRgbMesh1.position.set(-8.15, 5.06, 10.1);
     pictureRgbMesh11.position.set(-8.15, 5.06, 10.33);
     pictureRgbMesh2.position.set(-8.15, 5.06, 27.81);
     pictureRgbMesh22.position.set(-8.15, 5.06, 28.04);
-    pictureRgbMesh3.position.set(-8.15, 5.06, 45.3);
-    pictureRgbMesh33.position.set(-8.15, 5.06, 45.53);
+    pictureRgbMesh3.position.set(-8.15, 5.06, 45.521);
+    pictureRgbMesh33.position.set(-8.15, 5.06, 45.753);
     pictureElleMesh1.rotateY(Math.PI);
     pictureElleMesh2.rotateY(Math.PI);
     pictureElleMesh3.rotateY(Math.PI);
@@ -389,17 +389,24 @@ export function loadPictures() {
 
     var pictureTrainSceduleMesh1 = new THREE.Mesh(geometryTrainScedule, materialTrainScedule);
     var pictureTrainSceduleMesh2 = pictureTrainSceduleMesh1.clone()
-    var pictureTrainSceduleMesh3 = pictureTrainSceduleMesh1.clone()
 
     pictureTrainSceduleMesh1.position.set(-6.155, 2.565, 9.943);
     pictureTrainSceduleMesh2.position.set(-6.155, 2.565, 27.655);
-    pictureTrainSceduleMesh3.position.set(-6.155, 2.565, 45.14);
 
     pictureTrainSceduleMesh1.rotateY(Math.PI);
     pictureTrainSceduleMesh2.rotateY(Math.PI);
-    pictureTrainSceduleMesh3.rotateY(Math.PI);
 
-    scene.add(pictureTrainSceduleMesh1, pictureTrainSceduleMesh2, pictureTrainSceduleMesh3);
+    scene.add(pictureTrainSceduleMesh1, pictureTrainSceduleMesh2);
+
+    var materialSocialMedia = new THREE.MeshLambertMaterial({
+        map: loader.load('./pictures/socialMediaPeter.jpg')
+    });
+    var geometrySocialMedia = new THREE.PlaneGeometry(0.95, 1.35);
+    var pictureSocialMedia = new THREE.Mesh(geometrySocialMedia, materialSocialMedia);
+    pictureSocialMedia.position.set(-6.155, 2.565, 45.365);
+    pictureSocialMedia.rotateY(Math.PI);
+    
+    scene.add(pictureSocialMedia);
 }
 
 export function addRain() {
