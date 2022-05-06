@@ -96,16 +96,13 @@ Tasten:
 Die Bahnansagen für die passenden Informationstafeln wurden in einen Array abgespeichert und werden zufällig in einem festgelegten Intervall abgespielt.
 Die Blitzanimation sowie die Regenpartikel werden ebenfalls durch einen Zufallsgenerator gesteuert.
 
-
 ## Probleme 
 1. Aufgrund der Menge und Größe der Medien (Bilder, Audio, Objekte) benötigt die Website einen relativ großen Arbeitsspeicher und ausreichende Grafikunterstützung. Obwohl die Website so aufgebaut ist, dass sie theoretisch auch auf einem Handy genutzt werden könnte, kann kein Handy die Website flüssig darstellen.
 Wir gehen davon aus, dass die Mindestanforderungen derzeit eine Gforce GTX 1050Ti und 8 GB RAM sind. In Zukunft könnten wir uns noch um die Komprimierung der Objekte oder das Hosting der Website über Server kümmern. 
 2.  Die Datenmenge führt auch zu langen Ladezeiten, wenn die Internetverbindung schlecht ist. 
 3.  Der Browser hat ein Problem mit dem Abspielen der Audiospuren beim ersten Laden der Seite. Oft reicht es, eine beliebige Taste zu drücken, aber häufiger hilft nur das Neuladen der Seite.
 
-
 ## Hosting
-
 Die Webseite wird aktuell von [GitHub.io](https://leuchtreklamen-junior.github.io/webapplication-starter/) gehosted. (06.05.2022)
 
 
