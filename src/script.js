@@ -503,7 +503,7 @@ export function addRain() {
 export function loadCharacter() {
     //load Model 
     let loader = new THREE.GLTFLoader(loadingManager);
-    loader.load("./src/3D/peter.glb", function (gltf) {
+    loader.load("./src/3D/anton.glb", function (gltf) {
             gltf.scene.traverse(function (node) {
                 if (node.isMesh) {
                     node.castShadow = true;
@@ -871,7 +871,7 @@ function animate() {
 
     //PassbyTrain 
     if (passbytrain.position.z <= 300) {
-        passbytrain.position.z += 0.6;
+        passbytrain.position.z += 0.5;
     }
     //render
     renderer.render(scene, camera);
