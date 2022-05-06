@@ -1,4 +1,4 @@
-# Trainstation(english)
+# Trainstation(english) by Anton Rockenstein and Peter Trenkle
 
 In this project for the WebApplications course at the University of Regensburg we decided to implement a digital business card in the form of a 3D world. The goal of this page is to provide the user with several pieces of information about us and at the same time demonstrate our skills through experience. The page can then be used as an attachment for job applications or similar.
 Once on the site, the user has no real task but to simply stay in the 3D world, look at everything at their leisure and learn various details.
@@ -37,18 +37,16 @@ Buttons:
 - Extra2: E
 
 ## Problems 
-
 1. due to the amount and size of media (images, audio, objects), the website requires a relatively large amount of RAM and sufficient graphics support. Although the website is built in such a way that it could theoretically be used on a cell phone, no cell phone can display the website smoothly.
 We assume that the minimum requirements are currently a Gforce GTX 1050Ti and 16 GB of RAM. In the future, we could still take care of compressing the objects or hosting the website through servers. 
 2. the amount of data also leads to long loading times when the internet connection is poor. 
 3. the browser has a problem with playing the audio tracks when the page is first loaded. Often it is enough to press any key, but more often only reloading the page helps.
 
 ## Hosting
-
 The website is currently hosted by [GitHub.io](https://leuchtreklamen-junior.github.io/webapplication-starter/). (06.05.2022)
 
 
-# Trainstation(deutsch)
+# Trainstation(deutsch) von Anton Rockenstein und Peter Trenkle
 
 In diesem Projekt für den Kurs WebApplications der Universität Regensburg haben wir uns dafür entschieden eine Digitale Visitenkarte in Form einer 3D Welt zu implementieren. Ziel dieser Seite ist es dem Nutzer mehrere Informationen über uns zu vermitteln und gleichzeitig durch die Erfahrung unsere Fähigkeiten zu demonstrieren. Die Seite kann dann zum Beispiel bei Bewerbungen oder ähnlichen als Anhang verwendet werden.
 Einmal auf der Website angekommen hat der Nutzer keine richtige Aufgabe sondern soll sich einfach in der 3D Welt aufhalten, sich alles in Ruhe anschauen und verschiedene Details erfahren.
@@ -81,13 +79,16 @@ Bilder:
 ## Features
 Tasten:
 - Bewegungen: W, A, S, D
-- Rennen: Shift + W/A/S/D
-- Tanzen: Leertaste
+- Rennen: Shift + W/A/S/D 
+- Tanzen: Leertaste (zusätzlich wird Muisk abgespielt [Future - Life Is Good (Official Music Video) ft. Drake](https://www.youtube.com/watch?v=l0U7SxXHkPY&ab_channel=FutureVEVO))
 - Extra1: Q
 - Extra2: E
 
-## Probleme 
+Die Bahnansagen für die passenden Informationstafeln wurden in einen Array abgespeichert und werden zufällig in einem festgelegten Intervall abgespielt.
+Die Blitzanimation sowie die Regenpartikel werden ebenfalls durch einen Zufallsgenerator gesteuert.
 
+
+## Probleme 
 1. Aufgrund der Menge und Größe der Medien (Bilder, Audio, Objekte) benötigt die Website einen relativ großen Arbeitsspeicher und ausreichende Grafikunterstützung. Obwohl die Website so aufgebaut ist, dass sie theoretisch auch auf einem Handy genutzt werden könnte, kann kein Handy die Website flüssig darstellen.
 Wir gehen davon aus, dass die Mindestanforderungen derzeit eine Gforce GTX 1050Ti und 8 GB RAM sind. In Zukunft könnten wir uns noch um die Komprimierung der Objekte oder das Hosting der Website über Server kümmern. 
 2.  Die Datenmenge führt auch zu langen Ladezeiten, wenn die Internetverbindung schlecht ist. 
