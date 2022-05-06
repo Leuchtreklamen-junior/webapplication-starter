@@ -319,6 +319,14 @@ export function loadControls() {
         (keysPressed)[" "] = true;
         document.getElementById("space").classList.add("active");
     });
+    document.getElementById('E').addEventListener("mousedown", function () {
+        (keysPressed)["e"] = true;
+        document.getElementById("E").classList.add("active");
+    });
+    document.getElementById('Q').addEventListener("mousedown", function () {
+        (keysPressed)["q"] = true;
+        document.getElementById("Q").classList.add("active");
+    });
     //mouseup
     document.getElementById('W').addEventListener("mouseup", function () {
         (keysPressed)["w"] = false;
@@ -343,6 +351,14 @@ export function loadControls() {
     document.getElementById('space').addEventListener("mouseup", function () {
         (keysPressed)[" "] = false;
         document.getElementById("space").classList.remove("active");
+    });
+    document.getElementById('E').addEventListener("mouseup", function () {
+        (keysPressed)["e"] = false;
+        document.getElementById("E").classList.remove("active");
+    });
+    document.getElementById('Q').addEventListener("mouseup", function () {
+        (keysPressed)["q"] = false;
+        document.getElementById("Q").classList.remove("active");
     });
 };
 
@@ -401,31 +417,33 @@ export function loadPictures() {
     //add the image to the scene
     scene.add(pictureElleMesh1, pictureElleMesh11, pictureElleMesh2, pictureElleMesh22, pictureElleMesh3, pictureElleMesh33, pictureRgbMesh1, pictureRgbMesh11, pictureRgbMesh2, pictureRgbMesh22, pictureRgbMesh3, pictureRgbMesh33);
 
+    //three.js AD
+    var materialThreeJS = new THREE.MeshLambertMaterial({
+        map: loader.load('./pictures/threejs.jpg')
+    });
+    var geometryThreeJS = new THREE.PlaneGeometry(0.95, 1.35);
+    var pictureThreeJS = new THREE.Mesh(geometryThreeJS, materialThreeJS);
+    pictureThreeJS.position.set(-6.155, 2.565, 9.943);
+    pictureThreeJS.rotateY(Math.PI);
+
+    //social media
+    var materialSocialMedia = new THREE.MeshLambertMaterial({
+        map: loader.load('./pictures/SocialMediaPeter.jpg')
+    });
+    var geometrySocialMedia = new THREE.PlaneGeometry(0.95, 1.35);
+    var pictureSocialMedia = new THREE.Mesh(geometrySocialMedia, materialSocialMedia);
+    pictureSocialMedia.position.set(-6.155, 2.565, 27.654);
+    pictureSocialMedia.rotateY(Math.PI);
+
     //train scedule
     var materialTrainScedule = new THREE.MeshLambertMaterial({
         map: loader.load('./pictures/BahnPlan.jpg')
     });
     var geometryTrainScedule = new THREE.PlaneGeometry(0.95, 1.35);
     var pictureTrainSceduleMesh1 = new THREE.Mesh(geometryTrainScedule, materialTrainScedule);
-    pictureTrainSceduleMesh1.position.set(-6.155, 2.565, 9.943);
+    pictureTrainSceduleMesh1.position.set(-6.155, 2.565, 45.364);
     pictureTrainSceduleMesh1.rotateY(Math.PI);
-
-    var materialThreeJS = new THREE.MeshLambertMaterial({
-        map: loader.load('./pictures/threejs.jpg')
-    });
-    var geometryThreeJS = new THREE.PlaneGeometry(0.95, 1.35);
-    var pictureThreeJS = new THREE.Mesh(geometryThreeJS, materialThreeJS);
-    pictureThreeJS.position.set(-6.155, 2.565, 27.654);
-    pictureThreeJS.rotateY(Math.PI);
-
-    var materialSocialMedia = new THREE.MeshLambertMaterial({
-        map: loader.load('./pictures/SocialMediaPeter.jpg')
-    });
-    var geometrySocialMedia = new THREE.PlaneGeometry(0.95, 1.35);
-    var pictureSocialMedia = new THREE.Mesh(geometrySocialMedia, materialSocialMedia);
-    pictureSocialMedia.position.set(-6.155, 2.565, 45.364);
-    pictureSocialMedia.rotateY(Math.PI);
-
+    
     scene.add(pictureTrainSceduleMesh1, pictureThreeJS, pictureSocialMedia);
 }
 
@@ -485,7 +503,7 @@ export function addRain() {
 export function loadCharacter() {
     //load Model 
     let loader = new THREE.GLTFLoader(loadingManager);
-    loader.load("./src/3D/anton.glb", function (gltf) {
+    loader.load("./src/3D/peter.glb", function (gltf) {
             gltf.scene.traverse(function (node) {
                 if (node.isMesh) {
                     node.castShadow = true;
