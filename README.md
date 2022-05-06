@@ -48,6 +48,9 @@ We assume that the minimum requirements are currently a Gforce GTX 1050Ti and 16
 2. the amount of data also leads to long loading times when the internet connection is poor. 
 3. the browser has a problem with playing the audio tracks when the page is first loaded. Often it is enough to press any key, but more often only reloading the page helps.
 
+## Video
+[Youtube](https://youtu.be/nKbsdz3CxPI)
+
 ## Hosting
 The website is currently hosted by [GitHub.io](https://leuchtreklamen-junior.github.io/webapplication-starter/). (06.05.2022)
 
@@ -101,6 +104,9 @@ Die Blitzanimation sowie die Regenpartikel werden ebenfalls durch einen Zufallsg
 Wir gehen davon aus, dass die Mindestanforderungen derzeit eine Gforce GTX 1050Ti und 8 GB RAM sind. In Zukunft könnten wir uns noch um die Komprimierung der Objekte oder das Hosting der Website über Server kümmern. 
 2.  Die Datenmenge führt auch zu langen Ladezeiten, wenn die Internetverbindung schlecht ist. 
 3.  Der Browser hat ein Problem mit dem Abspielen der Audiospuren beim ersten Laden der Seite. Oft reicht es, eine beliebige Taste zu drücken, aber häufiger hilft nur das Neuladen der Seite.
+
+## Video
+[Youtube](https://youtu.be/nKbsdz3CxPI)
 
 ## Hosting
 Die Webseite wird aktuell von [GitHub.io](https://leuchtreklamen-junior.github.io/webapplication-starter/) gehosted. (06.05.2022)
