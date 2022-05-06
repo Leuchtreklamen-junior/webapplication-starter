@@ -17,7 +17,7 @@ html {
     height: 400vh;
     width: 100%;
     background-color: var(--backgroundcolor);
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Lato', 
 }
 
 body {
@@ -78,8 +78,15 @@ button:hover {
     z-index: 10;
 }
 
-.loadingSpan {
+#loadingSpan {
+    margin-left: 30px;
+    display: block;
     color: #fff;
+    font-size: xx-large;
+    height: 40px;
+    font-family:'Courier New', Courier, monospace;
+    text-shadow: 0 0 2px 0 #FFFFFF;
+ 
 }
 
 .loadingBody.active {
@@ -95,7 +102,7 @@ button:hover {
     padding: 0 5px;
     display: flex;
     height: 40px;
-    width: 500px;
+    width: 40%;
 }
 
 .progress-value {
@@ -193,7 +200,7 @@ button:hover {
 }
 
 .icon {
-    padding-right:20px;
+    padding-right: 20px;
     padding-left: 10px;
 }
 
@@ -230,7 +237,7 @@ button:hover {
     font-size: x-large;
 }
 
-#contact.active{
+#contact.active {
     display: block;
 }
 
@@ -300,3 +307,147 @@ button:hover {
         width: 100%;
     }
 }
+
+.loadingcontainer {
+    display: flex;
+    width: 40%;
+    align-items: baseline;
+    margin-bottom: 20px;
+    justify-content: center;
+    
+  }
+  
+  .dash {
+    margin-left: 10px;
+    width: 10px;
+    height: 5px;
+    border-radius: 5px;
+    background: #FFFFFF;
+    box-shadow: 0 0 5px 0 #FFFFFF;
+  }
+  
+  .uno {
+    margin-right: -9px;
+    transform-origin: center left;
+    animation: spin 3s linear infinite;  
+  }
+  
+  .dos {
+    transform-origin: center right;
+    animation: spin2 3s linear infinite;
+    animation-delay: .2s;
+  }
+  
+  .tres {
+    transform-origin: center right;
+    animation: spin3 3s linear infinite;
+    animation-delay: .3s;
+  }
+  
+  .cuatro {
+    transform-origin: center right;
+    animation: spin4 3s linear infinite;
+    animation-delay: .4s;
+  }
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(360deg);
+    }
+    30% {
+      transform: rotate(370deg);
+    }
+    35% {
+      transform: rotate(360deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  @keyframes spin2 {
+    0% {
+      transform: rotate(0deg);
+    }
+    20% {
+      transform: rotate(0deg);
+    }
+    30% {
+      transform: rotate(-180deg);
+    }
+    35% {
+      transform: rotate(-190deg);
+    }
+    40% {
+      transform: rotate(-180deg);
+    }
+    78% {
+      transform: rotate(-180deg);
+    }
+    95% {
+      transform: rotate(-360deg);
+    }
+    98% {
+      transform: rotate(-370deg);
+    }
+    100% {
+      transform: rotate(-360deg);
+    }
+  }
+  
+  @keyframes spin3 {
+    0% {
+      transform: rotate(0deg);
+    }
+    27% {
+      transform: rotate(0deg);  
+    }
+    40% {
+      transform: rotate(180deg);
+    }
+    45% {
+      transform: rotate(190deg);
+    }
+    50% {
+      transform: rotate(180deg);
+    }
+    62% {
+      transform: rotate(180deg);
+    }
+    75% {
+      transform: rotate(360deg);
+    }
+    80% {
+      transform: rotate(370deg);
+    }
+    85% {
+      transform: rotate(360deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  @keyframes spin4 {
+    0% {
+      transform: rotate(0deg);
+    }
+    38% {
+      transform: rotate(0deg);
+    }
+    60% {
+      transform: rotate(-360deg);
+    }
+    65% {
+      transform: rotate(-370deg);
+    }
+    75% {
+      transform: rotate(-360deg);
+    }
+    100% {
+      transform: rotate(-360deg);
+    }
+  }
