@@ -3,7 +3,8 @@
 In this project for the WebApplications course at the University of Regensburg we decided to implement a digital business card in the form of a 3D world. The goal of this page is to provide the user with several pieces of information about us and at the same time demonstrate our skills through experience. The page can then be used as an attachment for job applications or similar.
 Once on the site, the user has no real task but to simply stay in the 3D world, look at everything at their leisure and learn various details.
 
-The website is built in such a way that we can both modify and customize it very easily afterwards to use it in our further careers. 
+The website is built in such a way that we can both modify and customize it very easily afterwards to use it in our further careers.
+We have created two avatars and always created the objects and descriptions twice, so that each of us has his personal website. (must be changed in the code manually)
 
 As an idea, we started by creating our avatars. The site [Ready Player Me](https://readyplayer.me) provides a configurator where you can build your own avatar. This is then saved as an .fbx file and can be opened in [Blender](https://www.blender.org). Here you have to save all textures of the avatar in a separate textures folder to apply them again after the animation. For animation the avatar is then uploaded to [Mixamo](https://www.mixamo.com). Here you can choose different movements, which will be saved directly to the avatar. We have chosen here an idle (standing movement), a running movement, a racing movement, a dance movement and two extra movements. The individual animations can then be put back together in Blender and saved as a .glb file.
 
@@ -27,6 +28,14 @@ Images:
 - Social Media [Social Media Logo](https://de.freepik.com/vektoren-kostenlos/social-media-logo-sammlung_10363321.htm#query=social%20media%20icons&position=15&from_view=keyword)
 - Fahrplan [ICE Train](https://www.test.de/file/image/15/15/a8ff082c-7f6a-4879-b6ce-134c58856db5-web/5730272_t202104062sb04_Bahn_600;a3-2.png)
 
+## Features
+Buttons:
+- Movements: W, A, S, D
+- Run: Shift + W/A/S/D
+- Dance: Spacebar
+- Extra1: Q
+- Extra2: E
+
 ## Problems 
 
 1. due to the amount and size of media (images, audio, objects), the website requires a relatively large amount of RAM and sufficient graphics support. Although the website is built in such a way that it could theoretically be used on a cell phone, no cell phone can display the website smoothly.
@@ -44,7 +53,8 @@ The website is currently hosted by [GitHub.io](https://leuchtreklamen-junior.git
 In diesem Projekt für den Kurs WebApplications der Universität Regensburg haben wir uns dafür entschieden eine Digitale Visitenkarte in Form einer 3D Welt zu implementieren. Ziel dieser Seite ist es dem Nutzer mehrere Informationen über uns zu vermitteln und gleichzeitig durch die Erfahrung unsere Fähigkeiten zu demonstrieren. Die Seite kann dann zum Beispiel bei Bewerbungen oder ähnlichen als Anhang verwendet werden.
 Einmal auf der Website angekommen hat der Nutzer keine richtige Aufgabe sondern soll sich einfach in der 3D Welt aufhalten, sich alles in Ruhe anschauen und verschiedene Details erfahren.
 
-Die Website ist so aufgebaut, dass wir sie beide im nachhinein sehr leicht modifizieren und individuell anpassen können, um sie auch in unserer weiteren Karriere zu nutzen. 
+Die Website ist so aufgebaut, dass wir sie beide im nachhinein sehr leicht modifizieren und individuell anpassen können, um sie auch in unserer weiteren Karriere zu nutzen.
+Wir haben zwei Avatare erstellt und die Objekte und Beschreibungen immer zwei mal erstellt, sodass jeder von uns seine persönliche Webseite hat. (muss im code Händisch verändert werden)
 
 Als Idee haben wir damit angefangen unsere Avatare zu erstellen. Die Seite [Ready Player Me](https://readyplayer.me) stellt einen Konfigurator zur Verfügung, in dem man sich seinen eigenen Avatar zusammenbauen kann. Dieser wird dann als .fbx Datei abgespeichert und kann in [Blender](https://www.blender.org) geöffnet werden. Hier muss man alle Texturen des Avatars in einem separaten Textures Ordner abspeichern um diese dann nach der Animation wieder anzuwenden. Zur Animation wird dann der Avatar in [Mixamo](https://www.mixamo.com) hochgeladen. Hier kann man sich verschiedene Bewegungen heraussuchen, welche dann direkt auf den Avatar abgespeichert werden. Wir haben uns hier für ein Idle (Stehbewegung), eine Laufbewegung, eine Rennbewegung, eine Tanzbewegung und zwei extra Bewegungen entschieden. Die einzelnen Animationen können dann wieder in Blender zusammengefügt und als .glb Datei abgespeichert werden.
 
@@ -67,6 +77,14 @@ Bilder:
 - Three.js Werbung [Three.js Logo](https://discourse.threejs.org/t/three-js-svg-logo/21835)
 - Social Media [Social Media Logo](https://de.freepik.com/vektoren-kostenlos/social-media-logo-sammlung_10363321.htm#query=social%20media%20icons&position=15&from_view=keyword)
 - Fahrplan [ICE Train](https://www.test.de/file/image/15/15/a8ff082c-7f6a-4879-b6ce-134c58856db5-web/5730272_t202104062sb04_Bahn_600;a3-2.png)
+
+## Features
+Tasten:
+- Bewegungen: W, A, S, D
+- Rennen: Shift + W/A/S/D
+- Tanzen: Leertaste
+- Extra1: Q
+- Extra2: E
 
 ## Probleme 
 
