@@ -1,18 +1,10 @@
 import {
     CharacterControls
 } from "./characterControls.js";
-import {
-    EffectComposer
-} from 'https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/postprocessing/EffectComposer.js';
-import {
-    RenderPass
-} from 'https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/postprocessing/RenderPass.js';
-import {
-    UnrealBloomPass
-} from 'https://cdn.jsdelivr.net/npm/three@0.122/examples/jsm/postprocessing/UnrealBloomPass.js';
 
 let container = document.querySelector(".scene");
-let camera, renderer, composer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash, rainsound, thundersound, trainsound, announcment1, announcment2, announcment3, announcment4, soundarray = [], danceSound, passbytrain, billboardmixer, billboardmixer2, billboardmixer3, temporarysound, rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1, disco;
+let camera, renderer, scene, clock, orbitControls, characterControls, keysPressed, loadingManager, pBar, flash, rainsound, thundersound, trainsound, announcment1, announcment2, announcment3, announcment4, soundarray = [],
+    danceSound, passbytrain, billboardmixer, billboardmixer2, billboardmixer3, temporarysound, rain, rain1, raindropsunder, raindropsupper, raingeometry, raingeometry1, disco;
 
 //CONTROLLS
 
@@ -26,6 +18,11 @@ let worldwidth = 100,
     //light
     lightcolor = 0xbfcad8,
     hemisphereLightstrength = 0.2,
+    stationlightcolor = 0x99ffff,
+    stationlightstrenght = 5,
+
+    ambientlightstrenght = 0.2,
+    ambientlightcolor = 0xf2edd5,
 
     //flash
     flashlightcolor = 0x062d89,
@@ -34,10 +31,13 @@ let worldwidth = 100,
     //rain and fog controlls
     raining = true,
     dropCount = 10000, //200 - 20000
+    raincolor = 0xaaaaaa,
     rainspeed = 0.2,
     dropsizemin = 0.05,
     dropsizemax = 0.2,
     fog = true,
+    fognear = 1,
+    fogfar = 25,
 
     //starting volume sound
     tempsound = 0.1,
@@ -56,6 +56,11 @@ let worldwidth = 100,
     cameranearlimit = 1,
     camerafarlimitrender = 200,
     cameranearlimitrender = 0.1,
+
+    //audiorepeat
+    timeannouncementrepeat = 90000,
+    timetrainrepeat = 70000,
+    timethunderrepeat = 30000,
 
     //stationlength
     stationlength = 17.71,
@@ -443,7 +448,7 @@ export function loadPictures() {
     var pictureTrainSceduleMesh1 = new THREE.Mesh(geometryTrainScedule, materialTrainScedule);
     pictureTrainSceduleMesh1.position.set(-6.155, 2.565, 45.364);
     pictureTrainSceduleMesh1.rotateY(Math.PI);
-    
+
     scene.add(pictureTrainSceduleMesh1, pictureThreeJS, pictureSocialMedia);
 }
 
@@ -487,7 +492,7 @@ export function addRain() {
     raingeometry.setAttribute("position", new THREE.Float32BufferAttribute(raindropsunder, 3));
     raingeometry1.setAttribute("position", new THREE.Float32BufferAttribute(raindropsupper, 3));
     let rainmaterial = new THREE.LineBasicMaterial({
-        color: 0xaaaaaa,
+        color: raincolor,
         linewidth: 2,
         transparent: true
     });
@@ -583,16 +588,11 @@ export function loadWorld() {
 
     camera = new THREE.PerspectiveCamera(fov, aspect, nearlimit, farlimit);
 
-    if (debug) {
-        console.log("DEBUG MODE = TRUE")
-    };
-
     camera.position.set(characterx - 0.5, displacement + displacestation + cameratargetheight + 0.5, characterz + -2.5);
-
+    //floor
     let texture = new THREE.MeshStandardMaterial({
         color: 0x000000
     });
-
     let geometry = new THREE.PlaneGeometry(worldwidth, worldwidth);
     const floortile = new THREE.Mesh(geometry, texture);
     floortile.geometry.attributes.uv2 = floortile.geometry.attributes.uv;
@@ -601,7 +601,6 @@ export function loadWorld() {
     floortile.rotation.x = -Math.PI / 2;
     floortile.position.set(worldcenterx, 0, worldcenterz);
     scene.add(floortile);
-
     //renderer
     renderer = new THREE.WebGLRenderer({
         antialias: true,
@@ -613,22 +612,11 @@ export function loadWorld() {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(renderer.domElement);
-    const renderScene = new RenderPass(scene, camera);
-    const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
-    bloomPass.threshold = 0;
-    bloomPass.strength = 1;
-    bloomPass.radius = 0;
-    composer = new EffectComposer(renderer);
-    composer.renderToScreen = false;
-    composer.addPass(renderScene);
-    composer.addPass(bloomPass);
-
     //fog + background
     scene.background = new THREE.Color(backColor);
     if (fog) {
-        scene.fog = new THREE.Fog(backColor, 1, 25);
+        scene.fog = new THREE.Fog(backColor, fognear, fogfar);
     }
-
     //orbitcontrols
     orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
     orbitControls.enableDamping = true;
@@ -637,8 +625,6 @@ export function loadWorld() {
     orbitControls.enablePan = false;
     orbitControls.target.set(characterx, displacement + displacestation + cameratargetheight, characterz);
     orbitControls.maxPolarAngle = Math.PI / 2 + 0.1;
-    //mouseLight.position.y += camera.position.y;
-    //mouseLight.position.z += camera.position.z;
 }
 
 export function loadLights() {
@@ -661,7 +647,7 @@ export function loadLights() {
     scene.add(startlight);
 
     //AMBIENT
-    const ambient = new THREE.AmbientLight(0xf2edd5, 0.2);
+    const ambient = new THREE.AmbientLight(ambientlightcolor, ambientlightstrenght);
     scene.add(ambient);
 
     const axesHelper = new THREE.AxesHelper(5);
@@ -673,17 +659,10 @@ export function loadLights() {
     //Trainstationlight
     const lightwidth = 3;
     const lightheight = 55;
-
-    let stationlight = new THREE.RectAreaLight(0x99ffff, 5, lightwidth, lightheight);
+    let stationlight = new THREE.RectAreaLight(stationlightcolor, stationlightstrenght, lightwidth, lightheight);
     stationlight.position.set(-3.5, 5, 20);
     stationlight.lookAt(-3.5, 0, 20);
-
     scene.add(stationlight);
-
-    if (debug) {
-        scene.add(hemissphereLightHelper);
-        scene.add(helper);
-    }
 
     //AdvertisingLight
     let advertasingLight1 = new THREE.PointLight(0xffffff, 20, 2, 2);
@@ -754,15 +733,15 @@ function startSequence() {
     rainsound.play();
     setInterval(function () {
         thundersound.play();
-    }, 80000);
+    }, timethunderrepeat);
     rainsound.play();
     setInterval(function () {
         animateTrain();
-    }, 60000);
+    }, timetrainrepeat);
     setInterval(function () {
         const randomElement = soundarray[Math.floor(Math.random() * soundarray.length)];
         randomElement.play();
-    }, 90000);
+    }, timeannouncementrepeat);
 
     animate();
 }
@@ -773,10 +752,9 @@ function animateTrain() {
 }
 
 //audio slider
-var volumeSlider = document.getElementById("volumeSlider");
-var muteButton = document.getElementById("muteButton");
-var volumeSymbol = document.getElementById("volumeSymbol");
-
+const volumeSlider = document.getElementById("volumeSlider");
+const muteButton = document.getElementById("muteButton");
+const volumeSymbol = document.getElementById("volumeSymbol");
 muteButton.addEventListener("click", muteAudio);
 volumeSlider.addEventListener("input", setVol);
 
@@ -884,7 +862,6 @@ function onWindowResize() {
     camera.aspect = container.clientWidth / container.clientHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(container.clientWidth, container.clientHeight);
-    composer.setSize(container.clientWidth, container.clientHeight);
 }
 
 window.addEventListener("resize", onWindowResize);
