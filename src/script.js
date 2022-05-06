@@ -792,7 +792,8 @@ function muteAudio() {
         announcment3.setVolume(temporarysound);
         announcment4.setVolume(temporarysound);
         thundersound.setVolume(temporarysound);
-        trainsound.setVolume(temporarysound * 0.5);
+        danceSound.setVolume(temporarysound);
+        trainsound.setVolume(temporarysound * 0.3);
         volumeSlider.value = temporarysound * 100;
     } else {
         //mute
@@ -806,6 +807,7 @@ function muteAudio() {
         announcment3.setVolume(0);
         announcment4.setVolume(0);
         thundersound.setVolume(0);
+        danceSound.setVolume(0);
         trainsound.setVolume(0);
         volumeSymbol.classList.remove("fa-volume-high");
         volumeSymbol.classList.add("fa-volume-xmark");
@@ -831,7 +833,8 @@ function setVol() {
     announcment3.setVolume(tempsound);
     announcment4.setVolume(tempsound);
     thundersound.setVolume(tempsound);
-    trainsound.setVolume(tempsound * 0.5);
+    trainsound.setVolume(tempsound * 0.3);
+    danceSound.setVolume(tempsound);
 }
 
 function animate() {

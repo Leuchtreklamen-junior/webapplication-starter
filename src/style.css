@@ -326,25 +326,25 @@ button:hover {
     box-shadow: 0 0 5px 0 #FFFFFF;
   }
   
-  .uno {
+  .one {
     margin-right: -9px;
     transform-origin: center left;
     animation: spin 3s linear infinite;  
   }
   
-  .dos {
+  .two {
     transform-origin: center right;
     animation: spin2 3s linear infinite;
     animation-delay: .2s;
   }
   
-  .tres {
+  .thr {
     transform-origin: center right;
     animation: spin3 3s linear infinite;
     animation-delay: .3s;
   }
   
-  .cuatro {
+  .fou {
     transform-origin: center right;
     animation: spin4 3s linear infinite;
     animation-delay: .4s;
