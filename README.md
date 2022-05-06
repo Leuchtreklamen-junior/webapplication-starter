@@ -16,6 +16,9 @@ Objects:
 - Information board [Sketchfab](https://sketchfab.com)
 - Advertising board [Sketchfab](https://sketchfab.com) + display customized
 - Advertising display [Sketchfab](https://sketchfab.com)
+- Cola [Sketchfab](https://sketchfab.com)
+- Seats [Sketchfab](https://sketchfab.com)
+- Trashcan [Sketchfab](https://sketchfab.com)
 - Lamps [Sketchfab](https://sketchfab.com)
 - Breakaway [Sketchfab](https://sketchfab.com)
 - Textures [Blenderkit](https://blenderkit.com)
@@ -32,9 +35,12 @@ Images:
 Buttons:
 - Movements: W, A, S, D
 - Run: Shift + W/A/S/D
-- Dance: Spacebar
+- Dance: Spacebar (additional Muisk is played [Future - Life Is Good (Official Music Video) ft. Drake](https://www.youtube.com/watch?v=l0U7SxXHkPY&ab_channel=FutureVEVO)
 - Extra1: Q
 - Extra2: E
+
+The railroad announcements for the matching information panels were stored in an array and are played randomly at a specified interval.
+The lightning animation as well as the rain particles are also controlled by a random generator.
 
 ## Problems 
 1. due to the amount and size of media (images, audio, objects), the website requires a relatively large amount of RAM and sufficient graphics support. Although the website is built in such a way that it could theoretically be used on a cell phone, no cell phone can display the website smoothly.
@@ -64,6 +70,9 @@ Objekte:
 - Informationstafel [Sketchfab](https://sketchfab.com)
 - Werbetafel [Sketchfab](https://sketchfab.com) + Anzeige angepasst
 - Werbeanzeige [Sketchfab](https://sketchfab.com)
+- Cola [Sketchfab](https://sketchfab.com)
+- Sitze[Sketchfab](https://sketchfab.com)
+- Mülleimer [Sketchfab](https://sketchfab.com)
 - Lampen [Sketchfab](https://sketchfab.com)
 - Absprerrung [Sketchfab](https://sketchfab.com)
 - Texturen [Blenderkit](https://blenderkit.com)
